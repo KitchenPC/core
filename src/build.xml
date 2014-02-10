@@ -1,0 +1,32 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Properties -->
+  <PropertyGroup>
+    <Configuration>Staging</Configuration>
+    <SolutionDir>.</SolutionDir>
+  </PropertyGroup>
+
+  <!-- Targets -->
+  <Target Name="Clean">
+    <RemoveDir Directories="Core/bin" Condition=" Exists('Core/bin') " />
+    <RemoveDir Directories="Core/obj" Condition=" Exists('Core/obj') " />
+    <RemoveDir Directories="DB/bin" Condition=" Exists('DB/bin') " />
+    <RemoveDir Directories="DB/obj" Condition=" Exists('DB/obj') " />
+    <RemoveDir Directories="UnitTests/bin" Condition=" Exists('UnitTests/bin') " />
+    <RemoveDir Directories="UnitTests/obj" Condition=" Exists('UnitTests/obj') " />
+    <Delete Files="TestResult.xml" />
+  </Target>
+  
+  <Target Name="Build">
+    <!-- Build Core -->
+    <Message Importance="High" Text="Building Core..." />
+    <MSBuild Projects="Core/Core.csproj" Properties="Configuration=$(Configuration);Optimize=True" />
+
+    <!-- Build Core -->
+    <Message Importance="High" Text="Building DB Adapter..." />
+    <MSBuild Projects="DB/DB.csproj" Properties="Configuration=$(Configuration);Optimize=True" />
+    
+    <!-- Build UnitTests -->
+    <Message Importance="High" Text="Building Unit Tests..." />
+    <MSBuild Projects="UnitTests/UnitTests.csproj" Properties="Configuration=$(Configuration);Optimize=True" />
+  </Target>
+</Project>

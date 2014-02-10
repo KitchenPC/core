@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{51CD9FFD-2615-4E55-90D5-C18B1BF7FE07}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KitchenPC</RootNamespace>
+    <AssemblyName>KitchenPC</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>False</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>False</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsInferRequires>False</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>False</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
+    <OutputPath>bin\Staging\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Amount.cs" />
+    <Compile Include="Categorization\Analyzer.cs" />
+    <Compile Include="Categorization\AnalyzerResult.cs" />
+    <Compile Include="Categorization\CategorizationResult.cs" />
+    <Compile Include="Categorization\CategorizationEngine.cs" />
+    <Compile Include="Categorization\Enums.cs" />
+    <Compile Include="Categorization\IDBLoader.cs" />
+    <Compile Include="Categorization\IIngredientCommonality.cs" />
+    <Compile Include="Categorization\IngredientToken.cs" />
+    <Compile Include="Categorization\IRecipeClassification.cs" />
+    <Compile Include="Categorization\IToken.cs" />
+    <Compile Include="Categorization\Ranking.cs" />
+    <Compile Include="Categorization\RecipeIndex.cs" />
+    <Compile Include="Categorization\TextToken.cs" />
+    <Compile Include="Categorization\TimeToken.cs" />
+    <Compile Include="Categorization\Tokenizer.cs" />
+    <Compile Include="Context\AlphaTree.cs" />
+    <Compile Include="Context\Configuration.cs" />
+    <Compile Include="Context\ConfigurationBuilder.cs" />
+    <Compile Include="Context\ConnectorVertex.cs" />
+    <Compile Include="Context\DBContextBuilder.cs" />
+    <Compile Include="Context\DBModelerLoader.cs" />
+    <Compile Include="Context\IConfigurationBuilder.cs" />
+    <Compile Include="Context\IngredientNode.cs" />
+    <Compile Include="Context\IngredientParser.cs" />
+    <Compile Include="Context\ISearchProvider.cs" />
+    <Compile Include="Context\StaticContextBuilder.cs" />
+    <Compile Include="Context\StaticFormLoader.cs" />
+    <Compile Include="Context\StaticIngredientLoader.cs" />
+    <Compile Include="Context\StaticAnomalyLoader.cs" />
+    <Compile Include="Context\StaticModelerLoader.cs" />
+    <Compile Include="Context\StaticPrepLoader.cs" />
+    <Compile Include="Context\StaticSearch.cs" />
+    <Compile Include="Context\StaticUnitLoader.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="FormConversion.cs" />
+    <Compile Include="Fractions.cs" />
+    <Compile Include="Ingredients\Ingredient.cs" />
+    <Compile Include="Ingredients\IngredientAggregation.cs" />
+    <Compile Include="Ingredients\IngredientForm.cs" />
+    <Compile Include="Ingredients\IngredientFormsCollection.cs" />
+    <Compile Include="Ingredients\IngredientMetadata.cs" />
+    <Compile Include="Ingredients\IngredientSection.cs" />
+    <Compile Include="Ingredients\IngredientUsage.cs" />
+    <Compile Include="Ingredients\IngredientUsageCollection.cs" />
+    <Compile Include="Menus\GetMenuOptions.cs" />
+    <Compile Include="Menus\Menu.cs" />
+    <Compile Include="Menus\MenuMove.cs" />
+    <Compile Include="Menus\MenuResult.cs" />
+    <Compile Include="Modeler\CompiledModel.cs" />
+    <Compile Include="Modeler\IModelerLoader.cs" />
+    <Compile Include="Modeler\IngredientBinding.cs" />
+    <Compile Include="Modeler\IngredientNode.cs" />
+    <Compile Include="Modeler\IngredientUsage.cs" />
+    <Compile Include="Modeler\Model.cs" />
+    <Compile Include="Modeler\ModelerQuery.cs" />
+    <Compile Include="Modeler\ModelingSession.cs" />
+    <Compile Include="Modeler\PantryItem.cs" />
+    <Compile Include="Modeler\RatingBinding.cs" />
+    <Compile Include="Modeler\RecipeBinding.cs" />
+    <Compile Include="Modeler\RecipeNode.cs" />
+    <Compile Include="Modeler\RecipeRating.cs" />
+    <Compile Include="Modeler\SuggestedRecipe.cs" />
+    <Compile Include="Modeler\UserProfile.cs" />
+    <Compile Include="NLP\Anomalies.cs" />
+    <Compile Include="NLP\AnomalousIngredientNode.cs" />
+    <Compile Include="NLP\AnomalousMatch.cs" />
+    <Compile Include="NLP\AnomalousNode.cs" />
+    <Compile Include="NLP\ConnectorVertex.cs" />
+    <Compile Include="NLP\CustomUnitNode.cs" />
+    <Compile Include="NLP\DefaultPairings.cs" />
+    <Compile Include="NLP\DefaultTracer.cs" />
+    <Compile Include="NLP\Enums.cs" />
+    <Compile Include="NLP\FormNode.cs" />
+    <Compile Include="NLP\FormSynonyms.cs" />
+    <Compile Include="NLP\IGrammar.cs" />
+    <Compile Include="NLP\IngredientNode.cs" />
+    <Compile Include="NLP\IngredientSynonyms.cs" />
+    <Compile Include="NLP\ISynonymLoader.cs" />
+    <Compile Include="NLP\ITracer.cs" />
+    <Compile Include="NLP\MatchData.cs" />
+    <Compile Include="NLP\NameIngredientPair.cs" />
+    <Compile Include="NLP\NlpTracer.cs" />
+    <Compile Include="NLP\NoMatch.cs" />
+    <Compile Include="NLP\NumericNode.cs" />
+    <Compile Include="NLP\NumericVocab.cs" />
+    <Compile Include="NLP\Pairings.cs" />
+    <Compile Include="NLP\PartialMatch.cs" />
+    <Compile Include="NLP\PrepNode.cs" />
+    <Compile Include="NLP\PrepNotes.cs" />
+    <Compile Include="NLP\Preps.cs" />
+    <Compile Include="NLP\Result.cs" />
+    <Compile Include="NLP\SynonymTree.cs" />
+    <Compile Include="NLP\Template.cs" />
+    <Compile Include="NLP\TemplateStatistics.cs" />
+    <Compile Include="NLP\Tokens\AmtToken.cs" />
+    <Compile Include="NLP\Tokens\AnomToken.cs" />
+    <Compile Include="NLP\Tokens\FormToken.cs" />
+    <Compile Include="NLP\Tokens\IngToken.cs" />
+    <Compile Include="NLP\Tokens\PrepToken.cs" />
+    <Compile Include="NLP\Tokens\StaticToken.cs" />
+    <Compile Include="NLP\Tokens\UnitToken.cs" />
+    <Compile Include="NLP\UnitNode.cs" />
+    <Compile Include="NLP\UnitSynonyms.cs" />
+    <Compile Include="Provisioning\DataStore.cs" />
+    <Compile Include="Context\DBContext.cs" />
+    <Compile Include="Context\IConfiguration.cs" />
+    <Compile Include="Context\IDBAdapter.cs" />
+    <Compile Include="Context\IKPCContext.cs" />
+    <Compile Include="Context\IngredientSource.cs" />
+    <Compile Include="Context\KPCContext.cs" />
+    <Compile Include="Context\StaticContext.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Fluent\Menus.cs" />
+    <Compile Include="Fluent\Modeler.cs" />
+    <Compile Include="Fluent\Queue.cs" />
+    <Compile Include="Fluent\Recipes.cs" />
+    <Compile Include="Fluent\ShoppingLists.cs" />
+    <Compile Include="Linq\Enumerable.cs" />
+    <Compile Include="Modeler\DBSnapshot.cs" />
+    <Compile Include="Modeler\IUserProfile.cs" />
+    <Compile Include="Modeler\ModelerProxy.cs" />
+    <Compile Include="Modeler\RatingGraph.cs" />
+    <Compile Include="NLP\AlphaTree.cs" />
+    <Compile Include="NLP\Parser.cs" />
+    <Compile Include="NLP\Match.cs" />
+    <Compile Include="NLP\Tokens\NumericToken.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Provisioning\DTO\Favorites.cs" />
+    <Compile Include="Provisioning\DTO\IngredientForms.cs" />
+    <Compile Include="Provisioning\DTO\IngredientMetadata.cs" />
+    <Compile Include="Provisioning\DTO\Ingredients.cs" />
+    <Compile Include="Provisioning\DTO\Menus.cs" />
+    <Compile Include="Provisioning\DTO\NlpAnomalousIngredients.cs" />
+    <Compile Include="Provisioning\DTO\NlpDefaultPairings.cs" />
+    <Compile Include="Provisioning\DTO\NlpFormSynonyms.cs" />
+    <Compile Include="Provisioning\DTO\NlpIngredientSynonyms.cs" />
+    <Compile Include="Provisioning\DTO\NlpPrepNotes.cs" />
+    <Compile Include="Provisioning\DTO\NlpUnitSynonyms.cs" />
+    <Compile Include="Provisioning\DTO\QueuedRecipes.cs" />
+    <Compile Include="Provisioning\DTO\RecipeData.cs" />
+    <Compile Include="Provisioning\DTO\RecipeIngredients.cs" />
+    <Compile Include="Provisioning\DTO\RecipeMetadata.cs" />
+    <Compile Include="Provisioning\DTO\RecipeRatings.cs" />
+    <Compile Include="Provisioning\DTO\Recipes.cs" />
+    <Compile Include="Provisioning\DTO\ShoppingListItems.cs" />
+    <Compile Include="Provisioning\DTO\ShoppingLists.cs" />
+    <Compile Include="Provisioning\IProvisionSource.cs" />
+    <Compile Include="Provisioning\IProvisioner.cs" />
+    <Compile Include="Provisioning\IProvisionTarget.cs" />
+    <Compile Include="Recipes\Enums.cs" />
+    <Compile Include="Recipes\ReadRecipeOptions.cs" />
+    <Compile Include="Recipes\Recipe.cs" />
+    <Compile Include="Recipes\RecipeBrief.cs" />
+    <Compile Include="Recipes\RecipeQuery.cs" />
+    <Compile Include="Recipes\RecipeResult.cs" />
+    <Compile Include="Recipes\RecipeTag.cs" />
+    <Compile Include="Recipes\RecipeTags.cs" />
+    <Compile Include="Recipes\SearchResults.cs" />
+    <Compile Include="ShoppingLists\Enums.cs" />
+    <Compile Include="ShoppingLists\GetShoppingListOptions.cs" />
+    <Compile Include="ShoppingLists\IShoppingListSource.cs" />
+    <Compile Include="ShoppingLists\ShoppingList.cs" />
+    <Compile Include="ShoppingLists\ShoppingListItem.cs" />
+    <Compile Include="ShoppingLists\ShoppingListModification.cs" />
+    <Compile Include="ShoppingLists\ShoppingListResult.cs" />
+    <Compile Include="ShoppingLists\ShoppingListUpdateCommand.cs" />
+    <Compile Include="AuthIdentity.cs" />
+    <Compile Include="Unit.cs" />
+    <Compile Include="UnitConverter.cs" />
+    <Compile Include="Weight.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="license.md" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

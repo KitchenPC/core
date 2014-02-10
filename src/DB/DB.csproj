@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F9AC98DE-512F-4491-90D8-B21CBE0F3F2A}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>KitchenPC.DB</RootNamespace>
+    <AssemblyName>KitchenPC.DB</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\packages\FluentNHibernate.1.4.0.0\lib\net35\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security">
+      <HintPath>..\packages\Npgsql.2.0.14.2\lib\net45\Mono.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql">
+      <HintPath>..\packages\Npgsql.2.0.14.2\lib\net45\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="policy.2.0.Npgsql">
+      <HintPath>..\packages\Npgsql.2.0.14.2\lib\net45\policy.2.0.Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DatabaseAdapter.cs" />
+    <Compile Include="DatabaseAdapterBuilder.cs" />
+    <Compile Include="DatabaseExporter.cs" />
+    <Compile Include="EnumMapper.cs" />
+    <Compile Include="Models\Favorites.cs" />
+    <Compile Include="Models\IngredientForms.cs" />
+    <Compile Include="Models\IngredientMetadata.cs" />
+    <Compile Include="Models\Ingredients.cs" />
+    <Compile Include="Models\Menus.cs" />
+    <Compile Include="Models\NlpAnomalousIngredients.cs" />
+    <Compile Include="Models\NlpDefaultPairings.cs" />
+    <Compile Include="Models\NlpFormSynonyms.cs" />
+    <Compile Include="Models\NlpIngredientSynonyms.cs" />
+    <Compile Include="Models\NlpPrepNotes.cs" />
+    <Compile Include="Models\NlpUnitSynonyms.cs" />
+    <Compile Include="Models\QueuedRecipes.cs" />
+    <Compile Include="Models\RecipeIngredients.cs" />
+    <Compile Include="Models\RecipeMetadata.cs" />
+    <Compile Include="Models\RecipeRatings.cs" />
+    <Compile Include="Models\Recipes.cs" />
+    <Compile Include="Models\ShoppingListItems.cs" />
+    <Compile Include="Models\ShoppingLists.cs" />
+    <Compile Include="NLP\AnomalyLoader.cs" />
+    <Compile Include="NLP\FormLoader.cs" />
+    <Compile Include="NLP\IngredientLoader.cs" />
+    <Compile Include="NLP\IngredientGraphTransformer.cs" />
+    <Compile Include="NLP\PrepLoader.cs" />
+    <Compile Include="NLP\UnitLoader.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DatabaseImporter.cs" />
+    <Compile Include="NHSearch.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{51cd9ffd-2615-4e55-90d5-c18b1bf7fe07}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="license.md" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
