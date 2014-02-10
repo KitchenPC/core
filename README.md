@@ -14,4 +14,4 @@ How To Get Started
 
 Getting started is simple, and data can be loaded locally from an XML file for testing.  Sample data is included with the source, which includes a few dozen recipes, along with sample menus and shopping lists.
 
-The best way to get up and running is to read the blog post titled [Getting Started with KitchenPC](http://blog.kitchenpc.com/) which includes an introduction to core concepts as well as several samples.
+The best way to get up and running is to read the blog post titled [Getting Started with KitchenPC](http://blog.kitchenpc.com/2014/02/10/getting-started-with-kitchenpc/) which includes an introduction to core concepts as well as several samples.
