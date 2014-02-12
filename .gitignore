@@ -1,0 +1,7 @@
+src/Core/bin/
+src/Core/obj/
+src/DB/bin/
+src/DB/obj/
+src/UnitTests/bin/
+src/UnitTests/obj/
+*.suo
