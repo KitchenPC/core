@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{51CD9FFD-2615-4E55-90D5-C18B1BF7FE07}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{E7D7ADC3-D224-40DD-959A-C71310250806}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DB", "DB\DB.csproj", "{F9AC98DE-512F-4491-90D8-B21CBE0F3F2A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTest", "ConsoleTest\ConsoleTest.csproj", "{CDC3516D-1AD9-43F4-ACA4-7621D8E42045}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,12 +34,6 @@ Global
 		{F9AC98DE-512F-4491-90D8-B21CBE0F3F2A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F9AC98DE-512F-4491-90D8-B21CBE0F3F2A}.Staging|Any CPU.ActiveCfg = Release|Any CPU
 		{F9AC98DE-512F-4491-90D8-B21CBE0F3F2A}.Staging|Any CPU.Build.0 = Release|Any CPU
-		{CDC3516D-1AD9-43F4-ACA4-7621D8E42045}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CDC3516D-1AD9-43F4-ACA4-7621D8E42045}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CDC3516D-1AD9-43F4-ACA4-7621D8E42045}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CDC3516D-1AD9-43F4-ACA4-7621D8E42045}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CDC3516D-1AD9-43F4-ACA4-7621D8E42045}.Staging|Any CPU.ActiveCfg = Release|Any CPU
-		{CDC3516D-1AD9-43F4-ACA4-7621D8E42045}.Staging|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

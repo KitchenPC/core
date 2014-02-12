@@ -13,7 +13,7 @@ Write-Host "Initializing KitchenPC Dev Shell, Please Wait..." -NoNewLine
 $host.ui.RawUI.WindowTitle = "KitchenPC Dev Shell"
 
 New-PSDrive -name kpc -PSProvider FileSystem -root $enlistment >$null
-Set-Alias vs "kpc:\KitchenPC.sln"
+Set-Alias vs "kpc:\src\KitchenPC.sln"
 
 function cd..
 {
@@ -42,7 +42,7 @@ function Build
    {
      switch ($args[0].ToUpper())
      {
-        "DEBUG"   { msbuild .\build.xml /t:Build /p:Configuration=Staging /verbosity:minimal }
+        "DEBUG"   { msbuild .\build.xml /t:Build /p:Configuration=Debug /verbosity:minimal }
         "RELEASE" { msbuild .\build.xml /t:Build /p:Configuration=Release /verbosity:minimal }
      }
    }
