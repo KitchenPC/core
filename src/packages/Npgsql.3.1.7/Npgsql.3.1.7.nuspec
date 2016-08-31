@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>Npgsql</id>
+    <version>3.1.7</version>
+    <authors>Npgsql</authors>
+    <owners>Npgsql</owners>
+    <licenseUrl>https://raw.githubusercontent.com/npgsql/npgsql/develop/LICENSE.txt</licenseUrl>
+    <iconUrl>http://www.npgsql.org/img/postgresql.gif</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Npgsql</description>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5" />
+      <group targetFramework=".NETFramework4.5.1" />
+      <group targetFramework="Unsupported0.0">
+        <dependency id="System.Collections.Concurrent" version="4.0.12" />
+        <dependency id="System.Console" version="4.0.0" />
+        <dependency id="System.ComponentModel.TypeConverter" version="4.1.0" />
+        <dependency id="System.Data.Common" version="4.1.0" />
+        <dependency id="System.Diagnostics.Contracts" version="4.0.1" />
+        <dependency id="System.Globalization.Extensions" version="4.0.1" />
+        <dependency id="System.Linq" version="4.1.0" />
+        <dependency id="System.Net.NameResolution" version="4.0.0" />
+        <dependency id="System.Net.Primitives" version="4.0.11" />
+        <dependency id="System.Net.Sockets" version="4.1.0" />
+        <dependency id="System.Net.Security" version="4.0.0" />
+        <dependency id="System.Net.NetworkInformation" version="4.1.0" />
+        <dependency id="System.Runtime" version="4.1.0" />
+        <dependency id="System.Runtime.InteropServices" version="4.1.0" />
+        <dependency id="System.Runtime.InteropServices.RuntimeInformation" version="4.0.0" />
+        <dependency id="System.Runtime.Numerics" version="4.0.1" />
+        <dependency id="System.Reflection" version="4.1.0" />
+        <dependency id="System.Reflection.Extensions" version="4.0.1" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
+        <dependency id="System.Text.Encoding.Extensions" version="4.0.11" />
+        <dependency id="System.Text.RegularExpressions" version="4.1.0" />
+        <dependency id="System.Threading" version="4.0.11" />
+        <dependency id="System.Threading.Thread" version="4.0.0" />
+        <dependency id="System.Threading.Timer" version="4.0.1" />
+        <dependency id="Microsoft.Win32.Primitives" version="4.0.1" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>
