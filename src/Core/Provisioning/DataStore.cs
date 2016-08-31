@@ -71,7 +71,7 @@ namespace KitchenPC.Data
       public Dictionary<Guid, IngredientMetadata> GetIndexedIngredientMetadata()
       {
          if (indexedIngredientMetadata == null)
-            indexedIngredientMetadata = IngredientMetadata.ToDictionary(i => i.IngredientMetadataId);
+            indexedIngredientMetadata = IngredientMetadata.ToDictionary(i => i.IngredientId);
 
          return indexedIngredientMetadata;
       }
