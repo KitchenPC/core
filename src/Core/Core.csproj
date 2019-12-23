@@ -4,7 +4,7 @@
     <ProjectGuid>{51CD9FFD-2615-4E55-90D5-C18B1BF7FE07}</ProjectGuid>
     <RootNamespace>KitchenPC</RootNamespace>
     <AssemblyName>KitchenPC</AssemblyName>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFrameworks>netstandard20;net461</TargetFrameworks>
     <FileUpgradeFlags />
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
@@ -73,11 +73,5 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.8" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Services" />
   </ItemGroup>
 </Project>

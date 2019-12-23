@@ -3,7 +3,7 @@
     <ProjectGuid>{F9AC98DE-512F-4491-90D8-B21CBE0F3F2A}</ProjectGuid>
     <RootNamespace>KitchenPC.DB</RootNamespace>
     <AssemblyName>KitchenPC.DB</AssemblyName>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFrameworks>netstandard20;net461</TargetFrameworks>
     <AssemblyTitle>KitchenPC.DB</AssemblyTitle>
     <Company>KitchenPC</Company>
     <Product>DB</Product>
@@ -40,9 +40,6 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Transactions" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
