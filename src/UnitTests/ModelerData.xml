@@ -797,7 +797,7 @@
       <Usage RecipeId="4140a462-216e-4573-b721-c5b74818a568" IngredientId="e4a6be66-c98d-458e-b14c-6ebbc3735822" Name="celery" Qty="1.411" Unit="Ounce" />
       <Usage RecipeId="4140a462-216e-4573-b721-c5b74818a568" IngredientId="ef42831d-6af6-4cde-8029-444c8ecbd527" Name="carrots" Qty="2.152" Unit="Ounce" />
       <Usage RecipeId="4140a462-216e-4573-b721-c5b74818a568" IngredientId="9168409d-3143-4ec0-9455-8b7088b4a7cb" Name="garlic" Qty="0.212" Unit="Ounce" />
-      <Usage RecipeId="4140a462-216e-4573-b721-c5b74818a568" IngredientId="f2bf7d35-2592-48a0-ba2b-3ee4adcfd509" Name="butternut squash" Qty="Infinity" Unit="Unit" />
+      <Usage RecipeId="4140a462-216e-4573-b721-c5b74818a568" IngredientId="f2bf7d35-2592-48a0-ba2b-3ee4adcfd509" Name="butternut squash" Qty="1" Unit="Unit" />
       <Usage RecipeId="4140a462-216e-4573-b721-c5b74818a568" IngredientId="d664be25-2120-42da-8fdd-68f297f2cfc3" Name="canned white beans" Qty="16" Unit="Ounce" />
       <Usage RecipeId="2439d37c-f5b2-4ddc-9a76-8891a016cdd0" IngredientId="36c15463-631a-4f7d-9222-f18ca6de5a83" Name="peanut butter" Qty="2.258" Unit="Ounce" />
       <Usage RecipeId="2439d37c-f5b2-4ddc-9a76-8891a016cdd0" IngredientId="f69d3b5e-56a4-4529-8db5-118f77c47f66" Name="grapes" Qty="0.608" Unit="Ounce" />

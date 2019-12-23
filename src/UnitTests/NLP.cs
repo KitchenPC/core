@@ -9,7 +9,7 @@ namespace KitchenPC.UnitTests
    {
       Parser parser;
 
-      [TestFixtureSetUp]
+      [SetUp]
       public void Setup()
       {
          //Initialize all the maps

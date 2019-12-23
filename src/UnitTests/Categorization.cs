@@ -105,7 +105,7 @@ namespace KitchenPC.UnitTests
    {
       CategorizationEngine engine;
 
-      [TestFixtureSetUp]
+      [SetUp]
       public void Setup()
       {
          engine = new CategorizationEngine(new MockCategorizationDBLoader());

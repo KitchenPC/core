@@ -20,7 +20,7 @@ namespace KitchenPC.UnitTests
 
       IKPCContext _context;
 
-      [TestFixtureSetUp]
+      [SetUp]
       public void Setup()
       {
          Trace.Write("Creating DB Snapshot from XML file... ");

@@ -4,4 +4,6 @@ src/DB/bin/
 src/DB/obj/
 src/UnitTests/bin/
 src/UnitTests/obj/
+src/packages/
 *.suo
+*/.vs
