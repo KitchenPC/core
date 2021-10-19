@@ -17,7 +17,7 @@ namespace KitchenPC.DB.Models
    {
       public NlpAnomalousIngredientsMap()
       {
-         Id(x => x.AnomalousIngredientId)
+         Id(x => x.AnomalousIngredientId, "id")
             .GeneratedBy.GuidComb()
             .UnsavedValue(Guid.Empty);
 

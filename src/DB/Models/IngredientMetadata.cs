@@ -45,7 +45,7 @@ namespace KitchenPC.DB.Models
    {
       public IngredientMetadataMap()
       {
-         Id(x => x.IngredientMetadataId)
+         Id(x => x.IngredientMetadataId, "id")
             .GeneratedBy.GuidComb()
             .UnsavedValue(Guid.Empty);
 

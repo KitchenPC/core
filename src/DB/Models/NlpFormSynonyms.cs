@@ -15,7 +15,7 @@ namespace KitchenPC.DB.Models
    {
       public NlpFormSynonymsMap()
       {
-         Id(x => x.FormSynonymId)
+         Id(x => x.FormSynonymId, "id")
             .GeneratedBy.GuidComb()
             .UnsavedValue(Guid.Empty);
 

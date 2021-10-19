@@ -4,7 +4,7 @@ namespace KitchenPC.Recipes
 {
    public class SearchResults
    {
-      public RecipeBrief[] Briefs;
+      public RecipeBrief[] Briefs { get; set; }
 
       public Int64 TotalCount { get; set; }
 

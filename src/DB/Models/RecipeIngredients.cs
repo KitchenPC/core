@@ -22,7 +22,7 @@ namespace KitchenPC.DB.Models
    {
       public RecipeIngredientsMap()
       {
-         Id(x => x.RecipeIngredientId)
+         Id(x => x.RecipeIngredientId, "id")
             .GeneratedBy.GuidComb()
             .UnsavedValue(Guid.Empty);
 

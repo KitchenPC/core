@@ -64,6 +64,7 @@ namespace KitchenPC.DB
             .Database(DatabaseConfiguration)
             .Mappings(m => m.FluentMappings
                .AddFromAssemblyOf<DatabaseAdapter>()
+               .AddFromAssembly(System.Reflection.Assembly.GetEntryAssembly()) // TODO: Allow configuration for which assemblies are used for mappings
                .Conventions.Add(conventions));
 
          nhConfig = config.BuildConfiguration();

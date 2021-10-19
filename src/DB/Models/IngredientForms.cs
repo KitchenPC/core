@@ -43,7 +43,7 @@ namespace KitchenPC.DB.Models
    {
       public IngredientFormsMap()
       {
-         Id(x => x.IngredientFormId)
+         Id(x => x.IngredientFormId, "formid")
             .GeneratedBy.GuidComb()
             .UnsavedValue(Guid.Empty);
 

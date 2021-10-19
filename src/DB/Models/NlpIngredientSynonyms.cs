@@ -15,7 +15,7 @@ namespace KitchenPC.DB.Models
    {
       public NlpIngredientSynonymsMap()
       {
-         Id(x => x.IngredientSynonymId)
+         Id(x => x.IngredientSynonymId, "id")
             .GeneratedBy.GuidComb()
             .UnsavedValue(Guid.Empty);
 
