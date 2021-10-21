@@ -1,7 +1,6 @@
-namespace KitchenPC.Data.DTO
+namespace KitchenPC.Core.Provisioning.DTO;
+
+public class NlpPrepNotes
 {
-   public class NlpPrepNotes
-   {
-      public string Name { get; set; }
-   }
+   public string Name { get; set; }
 }

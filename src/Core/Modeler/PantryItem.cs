@@ -1,34 +1,33 @@
 using System;
 
-namespace KitchenPC.Modeler
+namespace KitchenPC.Core.Modeler;
+
+public struct PantryItem
 {
-   public struct PantryItem
+   public Guid IngredientId; //KPC Shopping Ingredient ID
+   public Single? Amt; //Optional amount of ingredient, expressed in default units for ingredient
+
+   public PantryItem(Ingredients.IngredientUsage usage)
    {
-      public Guid IngredientId; //KPC Shopping Ingredient ID
-      public Single? Amt; //Optional amount of ingredient, expressed in default units for ingredient
+      IngredientId = usage.Ingredient.Id;
 
-      public PantryItem(Ingredients.IngredientUsage usage)
+      //Need to convert IngredientUsage into proper Pantry form
+      if (usage.Amount != null)
       {
-         IngredientId = usage.Ingredient.Id;
-
-         //Need to convert IngredientUsage into proper Pantry form
-         if (usage.Amount != null)
+         var toUnit = Unit.GetDefaultUnitType(usage.Ingredient.ConversionType);
+         if (UnitConverter.CanConvert(usage.Form.FormUnitType, toUnit))
          {
-            var toUnit = Unit.GetDefaultUnitType(usage.Ingredient.ConversionType);
-            if (UnitConverter.CanConvert(usage.Form.FormUnitType, toUnit))
-            {
-               Amt = UnitConverter.Convert(usage.Amount, toUnit).SizeHigh; //Always take high amount for pantry items
-            }
-            else //Find conversion path
-            {
-               var amount = FormConversion.GetNativeAmountForUsage(usage.Ingredient, usage);
-               Amt = UnitConverter.Convert(amount, toUnit).SizeHigh; //Always take high amount for pantry items
-            }
+            Amt = UnitConverter.Convert(usage.Amount, toUnit).SizeHigh; //Always take high amount for pantry items
          }
-         else
+         else //Find conversion path
          {
-            Amt = null;
+            var amount = FormConversion.GetNativeAmountForUsage(usage.Ingredient, usage);
+            Amt = UnitConverter.Convert(amount, toUnit).SizeHigh; //Always take high amount for pantry items
          }
+      }
+      else
+      {
+         Amt = null;
       }
    }
 }

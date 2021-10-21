@@ -1,10 +1,10 @@
-﻿using KitchenPC.Ingredients;
+﻿using KitchenPC.Core.Ingredients;
 
-namespace KitchenPC.Categorization
+namespace KitchenPC.Core.Categorization
 {
    internal class IngredientToken : IToken
    {
-      readonly Ingredient ing;
+      private readonly Ingredient ing;
 
       public IngredientToken(Ingredient ing)
       {

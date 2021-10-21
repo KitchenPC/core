@@ -1,42 +1,41 @@
 using System.Collections.Generic;
-using KitchenPC.Ingredients;
+using KitchenPC.Core.Ingredients;
 
-namespace KitchenPC.NLP
+namespace KitchenPC.Core.NLP;
+
+public class Pairings
 {
-   public class Pairings
+   private readonly IDictionary<NameIngredientPair, IngredientForm> pairs;
+
+   public Pairings()
    {
-      readonly IDictionary<NameIngredientPair, IngredientForm> pairs;
+      pairs = new Dictionary<NameIngredientPair, IngredientForm>();
+   }
 
-      public Pairings()
+   public void Add(NameIngredientPair key, IngredientForm value)
+   {
+      pairs.Add(key, value);
+   }
+
+   public bool ContainsKey(NameIngredientPair key)
+   {
+      return pairs.ContainsKey(key);
+   }
+
+   public bool TryGetValue(NameIngredientPair key, out IngredientForm value)
+   {
+      return pairs.TryGetValue(key, out value);
+   }
+
+   public IngredientForm this[NameIngredientPair key]
+   {
+      get
       {
-         pairs = new Dictionary<NameIngredientPair, IngredientForm>();
+         return pairs[key];
       }
-
-      public void Add(NameIngredientPair key, IngredientForm value)
+      set
       {
-         pairs.Add(key, value);
-      }
-
-      public bool ContainsKey(NameIngredientPair key)
-      {
-         return pairs.ContainsKey(key);
-      }
-
-      public bool TryGetValue(NameIngredientPair key, out IngredientForm value)
-      {
-         return pairs.TryGetValue(key, out value);
-      }
-
-      public IngredientForm this[NameIngredientPair key]
-      {
-         get
-         {
-            return pairs[key];
-         }
-         set
-         {
-            pairs[key] = value;
-         }
+         pairs[key] = value;
       }
    }
 }

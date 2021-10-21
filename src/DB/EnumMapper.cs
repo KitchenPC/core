@@ -5,30 +5,18 @@ using FluentNHibernate.Mapping;
 using NHibernate.SqlTypes;
 using NHibernate.Type;
 
-namespace KitchenPC.DB
-{
-   public class EnumMapper<T> : EnumStringType<T>
-   {
-      public override SqlType SqlType
-      {
-         get
-         {
-            return new SqlType(DbType.Object);
-         }
-      }
+namespace KitchenPC.DB;
 
-      public static IPropertyConvention Convention
-      {
-         get
+public class EnumMapper<T> : EnumStringType<T>
+{
+   public override SqlType SqlType => new(DbType.Object);
+
+   public static IPropertyConvention Convention =>
+      ConventionBuilder.Property.When(
+         c => c.Expect(x => x.Type == typeof (GenericEnumMapper<T>)),
+         x =>
          {
-            return ConventionBuilder.Property.When(
-               c => c.Expect(x => x.Type == typeof (GenericEnumMapper<T>)),
-               x =>
-               {
-                  x.CustomType<EnumMapper<T>>();
-                  x.CustomSqlType((typeof (T).Name));
-               });
-         }
-      }
-   }
+            x.CustomType<EnumMapper<T>>();
+            x.CustomSqlType((typeof (T).Name));
+         });
 }

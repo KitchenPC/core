@@ -1,58 +1,57 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using KitchenPC.Data;
-using KitchenPC.Ingredients;
-using KitchenPC.NLP;
+using KitchenPC.Core.Ingredients;
+using KitchenPC.Core.NLP;
+using KitchenPC.Core.Provisioning;
 
-namespace KitchenPC.Context
+namespace KitchenPC.Core.Context;
+
+public class StaticFormLoader : ISynonymLoader<FormNode>
 {
-   public class StaticFormLoader : ISynonymLoader<FormNode>
+   private readonly DataStore store;
+
+   public StaticFormLoader(DataStore store)
    {
-      readonly DataStore store;
+      this.store = store;
+   }
 
-      public StaticFormLoader(DataStore store)
+   public IEnumerable<FormNode> LoadSynonyms()
+   {
+      var formSyn = store.NlpFormSynonyms
+         .OrderBy(p => p.Name)
+         .Select(s => s.Name)
+         .Distinct()
+         .ToList();
+
+      return new List<FormNode>(formSyn.Select(s => new FormNode(s)));
+   }
+
+   public Pairings LoadFormPairings()
+   {
+      var forms = store.GetIndexedIngredientForms();
+      var formSyn = store.NlpFormSynonyms;
+      var pairings = new Pairings();
+
+      foreach (var syn in formSyn)
       {
-         this.store = store;
+         var f = forms[syn.FormId];
+
+         var name = syn.Name;
+         var ing = syn.IngredientId;
+         var form = f.IngredientFormId;
+         var convType = f.UnitType;
+         var displayName = f.FormDisplayName;
+         var unitName = f.UnitName;
+         int convMultiplier = f.ConvMultiplier;
+         var formAmt = f.FormAmount;
+         var formUnit = f.FormUnit;
+         var amount = new Amount(formAmt, formUnit);
+
+         pairings.Add(
+            new NameIngredientPair(name, ing),
+            new IngredientForm(form, ing, convType, displayName, unitName, convMultiplier, amount));
       }
 
-      public IEnumerable<FormNode> LoadSynonyms()
-      {
-         var formSyn = store.NlpFormSynonyms
-            .OrderBy(p => p.Name)
-            .Select(s => s.Name)
-            .Distinct()
-            .ToList();
-
-         return new List<FormNode>(formSyn.Select(s => new FormNode(s)));
-      }
-
-      public Pairings LoadFormPairings()
-      {
-         var forms = store.GetIndexedIngredientForms();
-         var formSyn = store.NlpFormSynonyms;
-         var pairings = new Pairings();
-
-         foreach (var syn in formSyn)
-         {
-            var f = forms[syn.FormId];
-
-            var name = syn.Name;
-            var ing = syn.IngredientId;
-            var form = f.IngredientFormId;
-            var convType = f.UnitType;
-            var displayName = f.FormDisplayName;
-            var unitName = f.UnitName;
-            int convMultiplier = f.ConvMultiplier;
-            var formAmt = f.FormAmount;
-            var formUnit = f.FormUnit;
-            var amount = new Amount(formAmt, formUnit);
-
-            pairings.Add(
-               new NameIngredientPair(name, ing),
-               new IngredientForm(form, ing, convType, displayName, unitName, convMultiplier, amount));
-         }
-
-         return pairings;
-      }
+      return pairings;
    }
 }

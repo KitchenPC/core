@@ -1,11 +1,11 @@
 using System;
 using System.IO;
 
-namespace KitchenPC.NLP.Tokens
+namespace KitchenPC.Core.NLP.Tokens
 {
    public class AnomToken : IGrammar
    {
-      static Anomalies data;
+      private static Anomalies data;
 
       public bool Read(Stream stream, MatchData matchData)
       {

@@ -1,31 +1,30 @@
 using System;
-using KitchenPC.Ingredients;
+using KitchenPC.Core.Ingredients;
 
-namespace KitchenPC.Data.DTO
+namespace KitchenPC.Core.Provisioning.DTO;
+
+public class IngredientForms
 {
-   public class IngredientForms
-   {
-      public Guid IngredientFormId { get; set; }
-      public Guid IngredientId { get; set; }
-      public short ConvMultiplier { get; set; }
-      public float FormAmount { get; set; }
-      public Units UnitType { get; set; }
-      public string UnitName { get; set; }
-      public Units FormUnit { get; set; }
-      public string FormDisplayName { get; set; }
+   public Guid IngredientFormId { get; set; }
+   public Guid IngredientId { get; set; }
+   public short ConvMultiplier { get; set; }
+   public float FormAmount { get; set; }
+   public Units UnitType { get; set; }
+   public string UnitName { get; set; }
+   public Units FormUnit { get; set; }
+   public string FormDisplayName { get; set; }
 
-      public static IngredientForm ToIngredientForm(IngredientForms dtoForm)
+   public static IngredientForm ToIngredientForm(IngredientForms dtoForm)
+   {
+      return new IngredientForm
       {
-         return new IngredientForm
-         {
-            FormId = dtoForm.IngredientFormId,
-            FormUnitType = dtoForm.UnitType,
-            ConversionMultiplier = dtoForm.ConvMultiplier,
-            FormDisplayName = dtoForm.FormDisplayName,
-            FormUnitName = dtoForm.UnitName,
-            IngredientId = dtoForm.IngredientId,
-            FormAmount = new Amount(dtoForm.FormAmount, dtoForm.FormUnit)
-         };
-      }
+         FormId = dtoForm.IngredientFormId,
+         FormUnitType = dtoForm.UnitType,
+         ConversionMultiplier = dtoForm.ConvMultiplier,
+         FormDisplayName = dtoForm.FormDisplayName,
+         FormUnitName = dtoForm.UnitName,
+         IngredientId = dtoForm.IngredientId,
+         FormAmount = new Amount(dtoForm.FormAmount, dtoForm.FormUnit)
+      };
    }
 }

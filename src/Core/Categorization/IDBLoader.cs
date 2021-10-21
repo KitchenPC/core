@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace KitchenPC.Categorization
+namespace KitchenPC.Core.Categorization
 {
    public interface IDBLoader
    {

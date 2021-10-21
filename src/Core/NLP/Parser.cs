@@ -4,83 +4,82 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using log4net;
 
-namespace KitchenPC.NLP
+namespace KitchenPC.Core.NLP;
+
+public class Parser
 {
-   public class Parser
+   public delegate void NoMatchEvent(NoMatch result, string usage);
+
+   private List<Template> templates;
+   private static readonly Regex reWhitespace = new Regex(@"[ ]{2,}", RegexOptions.Compiled);
+
+   public static ILog Log = LogManager.GetLogger(typeof (Parser));
+   public NoMatchEvent OnNoMatch;
+   public TemplateStatistics Stats { get; private set; }
+
+   private static void ReplaceAccents(ref string input)
    {
-      public delegate void NoMatchEvent(NoMatch result, string usage);
+      if (String.IsNullOrEmpty(input))
+         return;
 
-      List<Template> templates;
-      static readonly Regex reWhitespace = new Regex(@"[ ]{2,}", RegexOptions.Compiled);
+      input = Regex.Replace(input, @"[\xC0-\xC5\xE0-\xE5]", "a"); //Replace with "a"
+      input = Regex.Replace(input, @"[\xC8-\xCB\xE8-\xEB]", "e"); //Replace with "e"
+      input = Regex.Replace(input, @"[\xCC-\xCF\xEC-\xEF]", "i"); //Replace with "i"
+      input = Regex.Replace(input, @"[\xD1\xF1]", "n"); //Replace with "n"
+      input = Regex.Replace(input, @"[\xD2-\xD6\xF2-\xF6]", "o"); //Replace with "o"
+      input = Regex.Replace(input, @"[\xD9-\xDC\xF9-\xFC]", "u"); //Replace with "u"
+      input = Regex.Replace(input, @"[\xDD\xDF\xFF]", "y"); //Replace with "y"
+   }
 
-      public static ILog Log = LogManager.GetLogger(typeof (Parser));
-      public NoMatchEvent OnNoMatch;
-      public TemplateStatistics Stats { get; private set; }
+   public void LoadTemplates(params Template[] templates)
+   {
+      this.templates = new List<Template>(templates.Length);
+      Stats = new TemplateStatistics();
 
-      static void ReplaceAccents(ref string input)
+      foreach (var t in templates)
       {
-         if (String.IsNullOrEmpty(input))
-            return;
-
-         input = Regex.Replace(input, @"[\xC0-\xC5\xE0-\xE5]", "a"); //Replace with "a"
-         input = Regex.Replace(input, @"[\xC8-\xCB\xE8-\xEB]", "e"); //Replace with "e"
-         input = Regex.Replace(input, @"[\xCC-\xCF\xEC-\xEF]", "i"); //Replace with "i"
-         input = Regex.Replace(input, @"[\xD1\xF1]", "n"); //Replace with "n"
-         input = Regex.Replace(input, @"[\xD2-\xD6\xF2-\xF6]", "o"); //Replace with "o"
-         input = Regex.Replace(input, @"[\xD9-\xDC\xF9-\xFC]", "u"); //Replace with "u"
-         input = Regex.Replace(input, @"[\xDD\xDF\xFF]", "y"); //Replace with "y"
+         NlpTracer.Trace(TraceLevel.Debug, "Loaded Template: {0}", t);
+         this.templates.Add(t);
+         Stats.RecordTemplate(t);
       }
+   }
 
-      public void LoadTemplates(params Template[] templates)
+   public IEnumerable<Result> ParseAll(params String[] input)
+   {
+      return input.Select(Parse);
+   }
+
+   public Result Parse(string input)
+   {
+      ReplaceAccents(ref input);
+      var normalizedInput = reWhitespace.Replace(input, " ").ToLower(); //Replace 2 or more spaces with a single space since whitespace doesn't really matter
+
+      //Loop through all loaded templates looking for a match - return that match, or return null if unknown
+      var bestResult = MatchResult.NoMatch;
+      foreach (var t in templates)
       {
-         this.templates = new List<Template>(templates.Length);
-         Stats = new TemplateStatistics();
-
-         foreach (var t in templates)
+         var result = t.Parse(normalizedInput);
+         if (result is Match)
          {
-            NlpTracer.Trace(TraceLevel.Debug, "Loaded Template: {0}", t);
-            this.templates.Add(t);
-            Stats.RecordTemplate(t);
+            Stats[t]++;
+            return result;
          }
-      }
-
-      public IEnumerable<Result> ParseAll(params String[] input)
-      {
-         return input.Select(Parse);
-      }
-
-      public Result Parse(string input)
-      {
-         ReplaceAccents(ref input);
-         var normalizedInput = reWhitespace.Replace(input, " ").ToLower(); //Replace 2 or more spaces with a single space since whitespace doesn't really matter
-
-         //Loop through all loaded templates looking for a match - return that match, or return null if unknown
-         var bestResult = MatchResult.NoMatch;
-         foreach (var t in templates)
+         else
          {
-            var result = t.Parse(normalizedInput);
-            if (result is Match)
+            if (result.Status > bestResult)
             {
-               Stats[t]++;
-               return result;
-            }
-            else
-            {
-               if (result.Status > bestResult)
-               {
-                  bestResult = result.Status;
-               }
+               bestResult = result.Status;
             }
          }
-
-         NlpTracer.Trace(TraceLevel.Info, "Could not find match for usage: {0}", input);
-         var ret = new NoMatch(input, bestResult);
-         if (this.OnNoMatch != null)
-         {
-            OnNoMatch(ret, input);
-         }
-
-         return ret; //TODO: Save best match to get error code
       }
+
+      NlpTracer.Trace(TraceLevel.Info, "Could not find match for usage: {0}", input);
+      var ret = new NoMatch(input, bestResult);
+      if (this.OnNoMatch != null)
+      {
+         OnNoMatch(ret, input);
+      }
+
+      return ret; //TODO: Save best match to get error code
    }
 }

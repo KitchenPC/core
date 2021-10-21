@@ -1,15 +1,14 @@
 ﻿using System.IO;
 
-namespace KitchenPC.NLP
+namespace KitchenPC.Core.NLP;
+
+public interface IGrammar
 {
-   public interface IGrammar
-   {
-      /// <summary>
-      /// Reads stream of ingredient usage being parsed and modifies IngredientUsage as fit
-      /// </summary>
-      /// <param name="stream">Stream containing input</param>
-      /// <param name="usage">Usage to modify when data becomes known</param>
-      /// <returns></returns>
-      bool Read(Stream stream, MatchData usage);
-   }
+   /// <summary>
+   /// Reads stream of ingredient usage being parsed and modifies IngredientUsage as fit
+   /// </summary>
+   /// <param name="stream">Stream containing input</param>
+   /// <param name="usage">Usage to modify when data becomes known</param>
+   /// <returns></returns>
+   bool Read(Stream stream, MatchData usage);
 }

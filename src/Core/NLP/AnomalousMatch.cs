@@ -1,20 +1,19 @@
 ﻿using System;
-using KitchenPC.Ingredients;
+using KitchenPC.Core.Ingredients;
 
-namespace KitchenPC.NLP
+namespace KitchenPC.Core.NLP;
+
+public class AnomalousMatch : Match
 {
-   public class AnomalousMatch : Match
+   private readonly AnomalousResult anomaly;
+
+   public AnomalousMatch(string input, AnomalousResult anomaly, IngredientUsage usage) : base(input, usage)
    {
-      readonly AnomalousResult anomaly;
+      this.anomaly = anomaly;
+   }
 
-      public AnomalousMatch(string input, AnomalousResult anomaly, IngredientUsage usage) : base(input, usage)
-      {
-         this.anomaly = anomaly;
-      }
-
-      public override string ToString()
-      {
-         return String.Format("[AnomalousMatch] ({0}) Usage: {1}", anomaly, usage);
-      }
+   public override string ToString()
+   {
+      return String.Format("[AnomalousMatch] ({0}) Usage: {1}", anomaly, usage);
    }
 }

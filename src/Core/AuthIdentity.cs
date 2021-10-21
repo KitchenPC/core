@@ -4,83 +4,82 @@ using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 
-namespace KitchenPC
+namespace KitchenPC.Core;
+
+/// <summary>Represents a user identity within a KitchenPC context.  This identity can be stored locally or within the KitchenPC network.</summary>
+public class AuthIdentity : IIdentity
 {
-    /// <summary>Represents a user identity within a KitchenPC context.  This identity can be stored locally or within the KitchenPC network.</summary>
-    public class AuthIdentity : IIdentity
+    public static AuthIdentity Anonymous { get; } = new AuthIdentity(Guid.Empty, null);
+
+    public Guid UserId { get; private set; }
+    public string Name { get; private set; }
+
+    public AuthIdentity()
     {
-        public static AuthIdentity Anonymous { get; } = new AuthIdentity(Guid.Empty, null);
+    }
 
-        public Guid UserId { get; private set; }
-        public string Name { get; private set; }
+    public AuthIdentity(Guid id, string name)
+    {
+        UserId = id;
+        Name = name;
+    }
 
-        public AuthIdentity()
+    public string AuthenticationType
+    {
+        get
         {
+            return "KPCAuth";
         }
+    }
 
-        public AuthIdentity(Guid id, string name)
+    public bool IsAuthenticated
+    {
+        get
         {
-            UserId = id;
-            Name = name;
+            return UserId != Guid.Empty;
         }
+    }
 
-        public string AuthenticationType
+    public static string CreateHash(string value)
+    {
+        var hasher = MD5.Create();
+        var bytes = hasher.ComputeHash(Encoding.Unicode.GetBytes(value));
+        return Convert.ToBase64String(bytes);
+    }
+
+    public override string ToString()
+    {
+        if (IsAuthenticated)
         {
-            get
-            {
-                return "KPCAuth";
-            }
+            return String.Format("{0} ({1})", Name, UserId.ToString());
         }
-
-        public bool IsAuthenticated
+        else
         {
-            get
-            {
-                return UserId != Guid.Empty;
-            }
+            return "<Anonymous>";
         }
+    }
 
-        public static string CreateHash(string value)
-        {
-            var hasher = MD5.Create();
-            var bytes = hasher.ComputeHash(Encoding.Unicode.GetBytes(value));
-            return Convert.ToBase64String(bytes);
-        }
+    public static Byte[] Serialize(AuthIdentity identity)
+    {
+        var g = identity.UserId.ToByteArray();
+        var u = Encoding.UTF8.GetBytes(identity.Name);
 
-        public override string ToString()
-        {
-            if (IsAuthenticated)
-            {
-                return String.Format("{0} ({1})", Name, UserId.ToString());
-            }
-            else
-            {
-                return "<Anonymous>";
-            }
-        }
+        return g.Concat(u).ToArray();
+    }
 
-        public static Byte[] Serialize(AuthIdentity identity)
-        {
-            var g = identity.UserId.ToByteArray();
-            var u = Encoding.UTF8.GetBytes(identity.Name);
+    public static AuthIdentity Deserialize(Byte[] bytes)
+    {
+        if (bytes.Length < 17)
+            throw new ArgumentException("AuthIdentity must be at least 17 bytes.");
 
-            return g.Concat(u).ToArray();
-        }
+        var g = new byte[16];
+        var u = new byte[bytes.Length - 16];
 
-        public static AuthIdentity Deserialize(Byte[] bytes)
-        {
-            if (bytes.Length < 17)
-                throw new ArgumentException("AuthIdentity must be at least 17 bytes.");
+        Buffer.BlockCopy(bytes, 0, g, 0, 16);
+        Buffer.BlockCopy(bytes, 16, u, 0, u.Length);
 
-            var g = new byte[16];
-            var u = new byte[bytes.Length - 16];
-
-            Buffer.BlockCopy(bytes, 0, g, 0, 16);
-            Buffer.BlockCopy(bytes, 16, u, 0, u.Length);
-
-            return new AuthIdentity(
-               new Guid(g),
-               Encoding.UTF8.GetString(u));
-        }
+        return new AuthIdentity(
+            new Guid(g),
+            Encoding.UTF8.GetString(u));
     }
 }

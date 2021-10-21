@@ -1,7 +1,6 @@
-﻿namespace KitchenPC.NLP
+﻿namespace KitchenPC.Core.NLP;
+
+public interface ITracer
 {
-   public interface ITracer
-   {
-      void Trace(TraceLevel level, string message, params object[] args);
-   }
+   void Trace(TraceLevel level, string message, params object[] args);
 }

@@ -1,74 +1,73 @@
 ﻿using System;
-using KitchenPC.Recipes;
+using KitchenPC.Core.Recipes;
 
-namespace KitchenPC.Menus
+namespace KitchenPC.Core.Menus;
+
+public struct Menu
 {
-    public struct Menu
+    public Guid? Id { get; set; }
+    public String Title { get; set; }
+    public RecipeBrief[] Recipes { get; set; } //Can be null
+
+    public static Menu FromId(Guid menuId)
     {
-        public Guid? Id { get; set; }
-        public String Title { get; set; }
-        public RecipeBrief[] Recipes { get; set; } //Can be null
+        return new Menu(menuId, null);
+    }
 
-        public static Menu FromId(Guid menuId)
+    private static readonly Menu favorites = new Menu(null, "Favorites");
+
+    public static Menu Favorites
+    {
+        get
         {
-            return new Menu(menuId, null);
+            return favorites;
         }
+    }
 
-        static readonly Menu favorites = new Menu(null, "Favorites");
+    public Menu(Guid? id, String title)
+    {
+        Id = id;
+        Title = title;
+        Recipes = null;
+    }
 
-        public static Menu Favorites
+    public Menu(Menu menu)
+    {
+        Id = menu.Id;
+        Title = menu.Title;
+        Recipes = null;
+
+        if (menu.Recipes != null)
         {
-            get
-            {
-                return favorites;
-            }
+            Recipes = new RecipeBrief[menu.Recipes.Length];
+            menu.Recipes.CopyTo(Recipes, 0);
         }
+    }
 
-        public Menu(Guid? id, String title)
-        {
-            Id = id;
-            Title = title;
-            Recipes = null;
-        }
+    public override string ToString()
+    {
+        var count = (Recipes != null ? Recipes.Length : 0);
 
-        public Menu(Menu menu)
-        {
-            Id = menu.Id;
-            Title = menu.Title;
-            Recipes = null;
+        return String.Format("{0} ({1} {2}",
+            Title,
+            count,
+            count != 1 ? "recipes" : "recipe");
+    }
 
-            if (menu.Recipes != null)
-            {
-                Recipes = new RecipeBrief[menu.Recipes.Length];
-                menu.Recipes.CopyTo(Recipes, 0);
-            }
-        }
+    public override bool Equals(object obj)
+    {
+        if (false == (obj is Menu))
+            return false;
 
-        public override string ToString()
-        {
-            var count = (Recipes != null ? Recipes.Length : 0);
+        var menu = (Menu)obj;
+        if (this.Id.HasValue || menu.Id.HasValue)
+            return this.Id.Equals(menu.Id);
 
-            return String.Format("{0} ({1} {2}",
-               Title,
-               count,
-               count != 1 ? "recipes" : "recipe");
-        }
+        return this.Title.Equals(menu.Title);
+    }
 
-        public override bool Equals(object obj)
-        {
-            if (false == (obj is Menu))
-                return false;
-
-            var menu = (Menu)obj;
-            if (this.Id.HasValue || menu.Id.HasValue)
-                return this.Id.Equals(menu.Id);
-
-            return this.Title.Equals(menu.Title);
-        }
-
-        public override int GetHashCode()
-        {
-            return this.Id.HasValue ? this.Id.Value.GetHashCode() : this.Title.GetHashCode();
-        }
+    public override int GetHashCode()
+    {
+        return this.Id.HasValue ? this.Id.Value.GetHashCode() : this.Title.GetHashCode();
     }
 }

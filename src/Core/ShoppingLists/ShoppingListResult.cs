@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace KitchenPC.ShoppingLists
+namespace KitchenPC.Core.ShoppingLists;
+
+public class ShoppingListResult
 {
-   public class ShoppingListResult
-   {
-      public Guid? NewShoppingListId;
-      public ShoppingList List;
-   }
+   public Guid? NewShoppingListId;
+   public ShoppingList List;
 }

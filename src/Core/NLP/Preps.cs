@@ -3,53 +3,52 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KitchenPC.NLP
+namespace KitchenPC.Core.NLP;
+
+public class Preps : IEnumerable<PrepNode>
 {
-   public class Preps : IEnumerable<PrepNode>
+   private readonly List<PrepNode> notes;
+
+   public Preps()
    {
-      readonly List<PrepNode> notes;
+      notes = new List<PrepNode>();
+   }
 
-      public Preps()
+   public bool HasValue
+   {
+      get
       {
-         notes = new List<PrepNode>();
+         return notes.Count != 0;
+      }
+   }
+
+   public void Add(PrepNode prep)
+   {
+      notes.Add(prep);
+   }
+
+   public void Remove(PrepNode node)
+   {
+      notes.Remove(node);
+   }
+
+   public override string ToString()
+   {
+      if (notes.Count == 0)
+      {
+         return String.Empty;
       }
 
-      public bool HasValue
-      {
-         get
-         {
-            return notes.Count != 0;
-         }
-      }
+      return String.Join("//", notes.Select(p => { return p.Prep; }).ToArray());
+   }
 
-      public void Add(PrepNode prep)
-      {
-         notes.Add(prep);
-      }
+   public IEnumerator<PrepNode> GetEnumerator()
+   {
+      return notes.GetEnumerator();
+   }
 
-      public void Remove(PrepNode node)
-      {
-         notes.Remove(node);
-      }
-
-      public override string ToString()
-      {
-         if (notes.Count == 0)
-         {
-            return String.Empty;
-         }
-
-         return String.Join("//", notes.Select(p => { return p.Prep; }).ToArray());
-      }
-
-      public IEnumerator<PrepNode> GetEnumerator()
-      {
-         return notes.GetEnumerator();
-      }
-
-      IEnumerator IEnumerable.GetEnumerator()
-      {
-         return notes.GetEnumerator();
-      }
+   IEnumerator IEnumerable.GetEnumerator()
+   {
+      return notes.GetEnumerator();
    }
 }

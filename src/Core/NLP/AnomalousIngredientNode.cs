@@ -1,6 +1,6 @@
 using System;
 
-namespace KitchenPC.NLP
+namespace KitchenPC.Core.NLP
 {
    public class AnomalousIngredientNode : IngredientNode
    {

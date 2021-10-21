@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using KitchenPC.Recipes;
+using KitchenPC.Core.Recipes;
 
-namespace KitchenPC.Categorization
+namespace KitchenPC.Core.Categorization
 {
    public class Analyzer
    {
-      const float TOLERANCE = .05f;
+      private const float TOLERANCE = .05f;
 
-      float I;
-      float invI;
+      private float I;
+      private float invI;
 
       public RecipeIndex BreakfastIndex;
       public RecipeIndex LunchIndex;
       public RecipeIndex DinnerIndex;
       public RecipeIndex DessertIndex;
 
-      Dictionary<Guid, IRecipeClassification> trainingData;
+      private Dictionary<Guid, IRecipeClassification> trainingData;
 
       public void LoadTrainingData(IDBLoader loader)
       {
@@ -68,7 +68,7 @@ namespace KitchenPC.Categorization
          return result;
       }
 
-      void Compete(Recipe entry, RecipeIndex first, RecipeIndex second, Ranking winsBr, Ranking winsLu, Ranking winsDi, Ranking winsDe)
+      private void Compete(Recipe entry, RecipeIndex first, RecipeIndex second, Ranking winsBr, Ranking winsLu, Ranking winsDi, Ranking winsDe)
       {
          var res = GetPrediction(entry, first, second);
          if (res > .5f - TOLERANCE && res < .5f + TOLERANCE)
@@ -83,7 +83,7 @@ namespace KitchenPC.Categorization
          if (winner == DessertIndex) winsDe.Score += diff;
       }
 
-      static AnalyzerResult GetWinner(Ranking winsBr, Ranking winsLu, Ranking winsDi, Ranking winsDe, out Ranking firstPlace, out Ranking secondPlace)
+      private static AnalyzerResult GetWinner(Ranking winsBr, Ranking winsLu, Ranking winsDi, Ranking winsDe, out Ranking firstPlace, out Ranking secondPlace)
       {
          var meals = new Ranking[] {winsBr, winsLu, winsDi, winsDe};
          var sorted = (from m in meals orderby m.Score descending select m).ToArray();
@@ -96,7 +96,7 @@ namespace KitchenPC.Categorization
          return ret;
       }
 
-      float GetPrediction(Recipe recipe, RecipeIndex first, RecipeIndex second)
+      private float GetPrediction(Recipe recipe, RecipeIndex first, RecipeIndex second)
       {
          invI = I = 0; //Reset I/invI
          var tokens = Tokenizer.Tokenize(recipe);
@@ -113,7 +113,7 @@ namespace KitchenPC.Categorization
          return prediction;
       }
 
-      void CalcProbability(float cat1count, float cat1total, float cat2count, float cat2total)
+      private void CalcProbability(float cat1count, float cat1total, float cat2count, float cat2total)
       {
          const float s = 1f;
          const float x = .5f;
@@ -127,7 +127,7 @@ namespace KitchenPC.Categorization
          LogProbability(fw);
       }
 
-      void LogProbability(float prob)
+      private void LogProbability(float prob)
       {
          if (float.IsNaN(prob)) return;
 
@@ -135,7 +135,7 @@ namespace KitchenPC.Categorization
          invI = invI == 0 ? (1 - prob) : invI*(1 - prob);
       }
 
-      float CombineProbability()
+      private float CombineProbability()
       {
          return I/(I + invI);
       }

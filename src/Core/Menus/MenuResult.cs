@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace KitchenPC.Menus
-{
-   public class MenuResult
-   {
-      public bool MenuCreated;
-      public bool MenuUpdated;
+namespace KitchenPC.Core.Menus;
 
-      public Guid? NewMenuId;
-   }
+public class MenuResult
+{
+   public bool MenuCreated { get; set; }
+   public bool MenuUpdated { get; set; }
+
+   public Guid? NewMenuId { get; set; }
 }

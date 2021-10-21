@@ -1,53 +1,52 @@
-﻿using KitchenPC.Ingredients;
+﻿using KitchenPC.Core.Ingredients;
 
-namespace KitchenPC.NLP
+namespace KitchenPC.Core.NLP;
+
+public struct DefaultPairings
 {
-   public struct DefaultPairings
+   private static readonly DefaultPairings empty = new DefaultPairings();
+
+   public static DefaultPairings Empty
    {
-      static readonly DefaultPairings empty = new DefaultPairings();
-
-      public static DefaultPairings Empty
+      get
       {
-         get
-         {
-            return empty;
-         }
+         return empty;
       }
+   }
 
-      public IngredientForm Unit;
-      public IngredientForm Volume;
-      public IngredientForm Weight;
+   public IngredientForm Unit;
+   public IngredientForm Volume;
+   public IngredientForm Weight;
 
-      public bool IsEmpty
+   public bool IsEmpty
+   {
+      get
       {
-         get
-         {
-            return (Unit == null && Volume == null && Weight == null);
-         }
+         return (Unit == null && Volume == null && Weight == null);
       }
+   }
 
-      public bool HasUnit
+   public bool HasUnit
+   {
+      get
       {
-         get
-         {
-            return Unit != null;
-         }
+         return Unit != null;
       }
+   }
 
-      public bool HasVolume
+   public bool HasVolume
+   {
+      get
       {
-         get
-         {
-            return Volume != null;
-         }
+         return Volume != null;
       }
+   }
 
-      public bool HasWeight
+   public bool HasWeight
+   {
+      get
       {
-         get
-         {
-            return Weight != null;
-         }
+         return Weight != null;
       }
    }
 }

@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using KitchenPC.Context;
-using KitchenPC.Recipes;
+using KitchenPC.Core.Context;
+using KitchenPC.Core.Recipes;
 using log4net;
 
-namespace KitchenPC.Modeler
+namespace KitchenPC.Core.Modeler
 {
    /// <summary>
    /// Represents a modeling session for a given user with a given pantry.
@@ -14,28 +14,28 @@ namespace KitchenPC.Modeler
    /// </summary>
    public class ModelingSession
    {
-      const int MAX_SUGGESTIONS = 15;
-      const double COOLING_RATE = 0.9999;
-      const float MISSING_ING_PUNISH = 5.0f;
-      const float NEW_ING_PUNISH = 2.0f;
-      const float EMPTY_RECIPE_AMOUNT = 0.50f;
+      private const int MAX_SUGGESTIONS = 15;
+      private const double COOLING_RATE = 0.9999;
+      private const float MISSING_ING_PUNISH = 5.0f;
+      private const float NEW_ING_PUNISH = 2.0f;
+      private const float EMPTY_RECIPE_AMOUNT = 0.50f;
 
-      readonly Random random = new Random();
-      readonly IngredientNode[] pantryIngredients;
-      readonly Dictionary<IngredientNode, float?> pantryAmounts;
-      readonly List<IngredientNode> ingBlacklist;
-      readonly Dictionary<RecipeNode, byte> ratings;
+      private readonly Random random = new Random();
+      private readonly IngredientNode[] pantryIngredients;
+      private readonly Dictionary<IngredientNode, float?> pantryAmounts;
+      private readonly List<IngredientNode> ingBlacklist;
+      private readonly Dictionary<RecipeNode, byte> ratings;
 
-      readonly bool[] favTags; //Truth table of fav tags
-      readonly int[] favIngs; //Array of top 5 fav ings by id
+      private readonly bool[] favTags; //Truth table of fav tags
+      private readonly int[] favIngs; //Array of top 5 fav ings by id
 
-      readonly RecipeTags AllowedTags; //Copy of profile
+      private readonly RecipeTags AllowedTags; //Copy of profile
 
-      Dictionary<IngredientNode, IngredientUsage> totals; //Hold totals for each scoring round so we don't have to reallocate map every time
+      private Dictionary<IngredientNode, IngredientUsage> totals; //Hold totals for each scoring round so we don't have to reallocate map every time
 
-      readonly DBSnapshot db;
-      readonly IKPCContext context;
-      readonly IUserProfile profile;
+      private readonly DBSnapshot db;
+      private readonly IKPCContext context;
+      private readonly IUserProfile profile;
       public static ILog Log = LogManager.GetLogger(typeof (ModelingSession));
 
       /// <summary>
@@ -214,7 +214,7 @@ namespace KitchenPC.Modeler
       /// <summary>
       /// Judges a set of recipes based on a scale and its efficiency with regards to the current pantry.  The lower the score, the better.
       /// </summary>
-      double GetScore(RecipeNode[] currentSet, byte scale)
+      private double GetScore(RecipeNode[] currentSet, byte scale)
       {
          double wasted = 0; //Add 1.0 for ingredients that don't exist in pantry, add percentage of leftover otherwise
          float avgRating = 0; //Average rating for all recipes in the set (0-4)
@@ -362,7 +362,7 @@ namespace KitchenPC.Modeler
       /// <summary>
       /// Initializes currentSet with random recipes from the available recipe pool.
       /// </summary>
-      void InitSet(RecipeNode[] currentSet)
+      private void InitSet(RecipeNode[] currentSet)
       {
          var inUse = new List<Guid>(currentSet.Length);
 
@@ -388,7 +388,7 @@ namespace KitchenPC.Modeler
       /// <summary>
       /// Swap out a random recipe with another one from the available pool
       /// </summary>
-      RecipeNode[] GetNextSet(RecipeNode[] currentSet)
+      private RecipeNode[] GetNextSet(RecipeNode[] currentSet)
       {
          var rndIndex = random.Next(currentSet.Length);
          var existingRecipe = currentSet[rndIndex];
@@ -435,7 +435,7 @@ namespace KitchenPC.Modeler
       /// Finds a random recipe in the available recipe pool
       /// </summary>
       /// <returns></returns>
-      RecipeNode Fish()
+      private RecipeNode Fish()
       {
          RecipeNode recipeNode;
 

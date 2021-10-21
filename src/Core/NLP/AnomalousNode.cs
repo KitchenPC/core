@@ -1,14 +1,13 @@
-﻿namespace KitchenPC.NLP
-{
-   public class AnomalousNode
-   {
-      public string Name;
-      public AnomalousIngredientNode Ingredient;
+﻿namespace KitchenPC.Core.NLP;
 
-      public AnomalousNode(string name, AnomalousIngredientNode ing)
-      {
-         Name = name;
-         Ingredient = ing;
-      }
+public class AnomalousNode
+{
+   public string Name;
+   public AnomalousIngredientNode Ingredient;
+
+   public AnomalousNode(string name, AnomalousIngredientNode ing)
+   {
+      Name = name;
+      Ingredient = ing;
    }
 }

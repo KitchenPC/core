@@ -1,42 +1,41 @@
 using System.Collections.Generic;
-using KitchenPC.Modeler;
+using KitchenPC.Core.Modeler;
 
-namespace KitchenPC.Context
+namespace KitchenPC.Core.Context;
+
+public class DBModelerLoader : IModelerLoader
 {
-   public class DBModelerLoader : IModelerLoader
+   private readonly IDBAdapter adapter;
+   private IEnumerable<RecipeBinding> recipedata;
+   private IEnumerable<IngredientBinding> ingredientdata;
+   private IEnumerable<RatingBinding> ratingdata;
+
+   public DBModelerLoader(IDBAdapter adapter)
    {
-      readonly IDBAdapter adapter;
-      IEnumerable<RecipeBinding> recipedata;
-      IEnumerable<IngredientBinding> ingredientdata;
-      IEnumerable<RatingBinding> ratingdata;
+      this.adapter = adapter;
+   }
 
-      public DBModelerLoader(IDBAdapter adapter)
-      {
-         this.adapter = adapter;
-      }
+   public IEnumerable<RecipeBinding> LoadRecipeGraph()
+   {
+      if (recipedata == null)
+         recipedata = adapter.LoadRecipeGraph();
 
-      public IEnumerable<RecipeBinding> LoadRecipeGraph()
-      {
-         if (recipedata == null)
-            recipedata = adapter.LoadRecipeGraph();
+      return recipedata;
+   }
 
-         return recipedata;
-      }
+   public IEnumerable<IngredientBinding> LoadIngredientGraph()
+   {
+      if (ingredientdata == null)
+         ingredientdata = adapter.LoadIngredientGraph();
 
-      public IEnumerable<IngredientBinding> LoadIngredientGraph()
-      {
-         if (ingredientdata == null)
-            ingredientdata = adapter.LoadIngredientGraph();
+      return ingredientdata;
+   }
 
-         return ingredientdata;
-      }
+   public IEnumerable<RatingBinding> LoadRatingGraph()
+   {
+      if (ratingdata == null)
+         ratingdata = adapter.LoadRatingGraph();
 
-      public IEnumerable<RatingBinding> LoadRatingGraph()
-      {
-         if (ratingdata == null)
-            ratingdata = adapter.LoadRatingGraph();
-
-         return ratingdata;
-      }
+      return ratingdata;
    }
 }

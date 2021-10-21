@@ -1,14 +1,13 @@
-﻿using KitchenPC.Recipes;
+﻿using KitchenPC.Core.Recipes;
 
-namespace KitchenPC.Categorization
+namespace KitchenPC.Core.Categorization;
+
+public interface IRecipeClassification
 {
-   public interface IRecipeClassification
-   {
-      Recipe Recipe { get; }
+   Recipe Recipe { get; }
 
-      bool IsBreakfast { get; }
-      bool IsLunch { get; }
-      bool IsDinner { get; }
-      bool IsDessert { get; }
-   }
+   bool IsBreakfast { get; }
+   bool IsLunch { get; }
+   bool IsDinner { get; }
+   bool IsDessert { get; }
 }

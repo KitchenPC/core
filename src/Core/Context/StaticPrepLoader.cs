@@ -1,37 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using KitchenPC.Data;
-using KitchenPC.NLP;
+using KitchenPC.Core.NLP;
+using KitchenPC.Core.Provisioning;
 
-namespace KitchenPC.Context
+namespace KitchenPC.Core.Context;
+
+public class StaticPrepLoader : ISynonymLoader<PrepNode>
 {
-   public class StaticPrepLoader : ISynonymLoader<PrepNode>
+   private readonly DataStore store;
+
+   public StaticPrepLoader(DataStore store)
    {
-      readonly DataStore store;
+      this.store = store;
+   }
 
-      public StaticPrepLoader(DataStore store)
-      {
-         this.store = store;
-      }
+   public IEnumerable<PrepNode> LoadSynonyms()
+   {
+      var forms = store.NlpFormSynonyms.Select(p => p.Name);
+      var preps = store.NlpPrepNotes.Select(p => p.Name);
 
-      public IEnumerable<PrepNode> LoadSynonyms()
-      {
-         var forms = store.NlpFormSynonyms.Select(p => p.Name);
-         var preps = store.NlpPrepNotes.Select(p => p.Name);
+      var ret = forms
+         .Concat(preps)
+         .Distinct()
+         .Select(p => new PrepNode(p))
+         .ToList();
 
-         var ret = forms
-            .Concat(preps)
-            .Distinct()
-            .Select(p => new PrepNode(p))
-            .ToList();
+      return ret;
+   }
 
-         return ret;
-      }
-
-      public Pairings LoadFormPairings()
-      {
-         throw new NotImplementedException();
-      }
+   public Pairings LoadFormPairings()
+   {
+      throw new NotImplementedException();
    }
 }

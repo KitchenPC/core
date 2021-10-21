@@ -1,137 +1,136 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using KitchenPC.Ingredients;
+using KitchenPC.Core.Ingredients;
 
-namespace KitchenPC.Recipes
+namespace KitchenPC.Core.Recipes;
+
+public class Recipe
 {
-    public class Recipe
+    private readonly IngredientUsageCollection _ingredients;
+
+    public Guid Id { get; set; }
+    public Guid OwnerId { get; set; }
+    public String OwnerAlias { get; set; }
+    public String Title { get; set; }
+    public String Description { get; set; }
+    public String ImageUrl { get; set; }
+    public String Credit { get; set; }
+    public String CreditUrl { get; set; }
+    public String Permalink { get; set; }
+    public String Method { get; set; }
+    public DateTime DateEntered { get; set; }
+    public short? PrepTime { get; set; } = 0;
+    public short? CookTime { get; set; } = 0;
+    public short AvgRating { get; set; } = 0;
+    public Rating UserRating { get; set; } = Rating.None;
+    public short ServingSize { get; set; } = 4;
+    public int Comments { get; set; } = 0;
+    public RecipeTags Tags { get; set; }
+    public bool PublicEdit { get; set; }
+    public bool AllowDelete { get; set; }
+    public int InMenus { get; set; }
+
+    public static Recipe FromId(Guid recipeId)
     {
-        readonly IngredientUsageCollection _ingredients;
+        return new Recipe(recipeId, null, null, null);
+    }
 
-        public Guid Id { get; set; }
-        public Guid OwnerId { get; set; }
-        public String OwnerAlias { get; set; }
-        public String Title { get; set; }
-        public String Description { get; set; }
-        public String ImageUrl { get; set; }
-        public String Credit { get; set; }
-        public String CreditUrl { get; set; }
-        public String Permalink { get; set; }
-        public String Method { get; set; }
-        public DateTime DateEntered { get; set; }
-        public short? PrepTime { get; set; } = 0;
-        public short? CookTime { get; set; } = 0;
-        public short AvgRating { get; set; } = 0;
-        public Rating UserRating { get; set; } = Rating.None;
-        public short ServingSize { get; set; } = 4;
-        public int Comments { get; set; } = 0;
-        public RecipeTags Tags { get; set; }
-        public bool PublicEdit { get; set; }
-        public bool AllowDelete { get; set; }
-        public int InMenus { get; set; }
-
-        public static Recipe FromId(Guid recipeId)
+    public IngredientUsage[] Ingredients
+    {
+        get
         {
-            return new Recipe(recipeId, null, null, null);
+            return _ingredients.ToArray();
         }
-
-        public IngredientUsage[] Ingredients
+        set
         {
-            get
-            {
-                return _ingredients.ToArray();
-            }
-            set
-            {
-                _ingredients.Clear();
+            _ingredients.Clear();
 
-                if (value != null)
-                {
-                    foreach (var usage in value)
-                        _ingredients.Add(usage);
-                }
+            if (value != null)
+            {
+                foreach (var usage in value)
+                    _ingredients.Add(usage);
             }
         }
+    }
 
-        public Recipe(Guid id, String title, String description, String imageurl)
+    public Recipe(Guid id, String title, String description, String imageurl)
+    {
+        _ingredients = new IngredientUsageCollection();
+
+        Id = id;
+        Title = title;
+        Description = description;
+        ImageUrl = imageurl;
+    }
+
+    public Recipe() : this(Guid.Empty, null, null, null)
+    {
+    }
+
+    public void AddIngredient(IngredientUsage ingredient)
+    {
+        _ingredients.Add(ingredient);
+    }
+
+    public void AddIngredients(IEnumerable<IngredientUsage> ingredients)
+    {
+        foreach (var ingredientUsage in ingredients)
         {
-            _ingredients = new IngredientUsageCollection();
+            AddIngredient(ingredientUsage);
+        }
+    }
 
-            Id = id;
-            Title = title;
-            Description = description;
-            ImageUrl = imageurl;
+    public static void Validate(Recipe recipe)
+    {
+        if (String.IsNullOrEmpty(recipe.Title) || recipe.Title.Trim().Length == 0)
+        {
+            throw new InvalidRecipeDataException("A recipe title is required.");
         }
 
-        public Recipe() : this(Guid.Empty, null, null, null)
+        if (recipe.PrepTime < 0)
         {
+            throw new InvalidRecipeDataException("PrepTime must be equal to or greater than zero.");
         }
 
-        public void AddIngredient(IngredientUsage ingredient)
+        if (recipe.CookTime < 0)
         {
-            _ingredients.Add(ingredient);
+            throw new InvalidRecipeDataException("CookTime must be equal to or greater than zero.");
         }
 
-        public void AddIngredients(IEnumerable<IngredientUsage> ingredients)
+        if (recipe.ServingSize <= 0)
         {
-            foreach (var ingredientUsage in ingredients)
-            {
-                AddIngredient(ingredientUsage);
-            }
+            throw new InvalidRecipeDataException("ServingSize must be greater than zero.");
         }
 
-        public static void Validate(Recipe recipe)
+        if (recipe.Ingredients == null || recipe.Ingredients.Length == 0)
         {
-            if (String.IsNullOrEmpty(recipe.Title) || recipe.Title.Trim().Length == 0)
-            {
-                throw new InvalidRecipeDataException("A recipe title is required.");
-            }
+            throw new InvalidRecipeDataException("Recipes must contain at least one ingredient.");
+        }
 
-            if (recipe.PrepTime < 0)
-            {
-                throw new InvalidRecipeDataException("PrepTime must be equal to or greater than zero.");
-            }
+        if (recipe.Tags == null || recipe.Tags.Length == 0)
+        {
+            throw new InvalidRecipeDataException("Recipes must contain at least one tag.");
+        }
 
-            if (recipe.CookTime < 0)
-            {
-                throw new InvalidRecipeDataException("CookTime must be equal to or greater than zero.");
-            }
+        if (recipe.Description != null && recipe.Description.Length > 250)
+        {
+            recipe.Description = recipe.Description.Substring(0, 250) + "...";
+        }
 
-            if (recipe.ServingSize <= 0)
+        if (recipe.CreditUrl != null)
+        {
+            const string pattern = @"^https?\://(?<domain>[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3})(/\S*)?$";
+            var m = Regex.Match(recipe.CreditUrl, pattern);
+            if (m.Success && m.Groups["domain"].Success)
             {
-                throw new InvalidRecipeDataException("ServingSize must be greater than zero.");
+                recipe.CreditUrl = m.Value;
+                recipe.Credit = m.Groups["domain"].Value.ToLower(); //TODO: Clean up domain name
             }
-
-            if (recipe.Ingredients == null || recipe.Ingredients.Length == 0)
+            else //Bad URL, clear Credit info
             {
-                throw new InvalidRecipeDataException("Recipes must contain at least one ingredient.");
-            }
-
-            if (recipe.Tags == null || recipe.Tags.Length == 0)
-            {
-                throw new InvalidRecipeDataException("Recipes must contain at least one tag.");
-            }
-
-            if (recipe.Description != null && recipe.Description.Length > 250)
-            {
-                recipe.Description = recipe.Description.Substring(0, 250) + "...";
-            }
-
-            if (recipe.CreditUrl != null)
-            {
-                const string pattern = @"^https?\://(?<domain>[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3})(/\S*)?$";
-                var m = Regex.Match(recipe.CreditUrl, pattern);
-                if (m.Success && m.Groups["domain"].Success)
-                {
-                    recipe.CreditUrl = m.Value;
-                    recipe.Credit = m.Groups["domain"].Value.ToLower(); //TODO: Clean up domain name
-                }
-                else //Bad URL, clear Credit info
-                {
-                    recipe.Credit = null;
-                    recipe.CreditUrl = null;
-                }
+                recipe.Credit = null;
+                recipe.CreditUrl = null;
             }
         }
     }

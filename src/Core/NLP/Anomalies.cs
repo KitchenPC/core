@@ -1,23 +1,22 @@
 ﻿using System.Collections.Generic;
 
-namespace KitchenPC.NLP
+namespace KitchenPC.Core.NLP;
+
+public class Anomalies : SynonymTree<AnomalousNode>
 {
-   public class Anomalies : SynonymTree<AnomalousNode>
+   private static readonly object MapInitLock = new object();
+
+   public static void InitIndex(ISynonymLoader<AnomalousNode> loader)
    {
-      static readonly object MapInitLock = new object();
-
-      public static void InitIndex(ISynonymLoader<AnomalousNode> loader)
+      lock (MapInitLock)
       {
-         lock (MapInitLock)
-         {
-            index = new AlphaTree<AnomalousNode>();
-            synonymMap = new Dictionary<string, AnomalousNode>();
-            var anomalies = loader.LoadSynonyms();
+         index = new AlphaTree<AnomalousNode>();
+         synonymMap = new Dictionary<string, AnomalousNode>();
+         var anomalies = loader.LoadSynonyms();
 
-            foreach (var anom in anomalies)
-            {
-               IndexString(anom.Name, anom);
-            }
+         foreach (var anom in anomalies)
+         {
+            IndexString(anom.Name, anom);
          }
       }
    }

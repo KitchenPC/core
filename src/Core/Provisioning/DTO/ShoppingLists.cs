@@ -1,21 +1,20 @@
 using System;
-using KitchenPC.ShoppingLists;
+using KitchenPC.Core.ShoppingLists;
 
-namespace KitchenPC.Data.DTO
+namespace KitchenPC.Core.Provisioning.DTO;
+
+public class ShoppingLists
 {
-   public class ShoppingLists
-   {
-      public Guid ShoppingListId { get; set; }
-      public Guid UserId { get; set; }
-      public String Title { get; set; }
+   public Guid ShoppingListId { get; set; }
+   public Guid UserId { get; set; }
+   public String Title { get; set; }
 
-      public static ShoppingList ToShoppingList(ShoppingLists dtoList)
+   public static ShoppingList ToShoppingList(ShoppingLists dtoList)
+   {
+      return new ShoppingList
       {
-         return new ShoppingList
-         {
-            Id = dtoList.ShoppingListId,
-            Title = dtoList.Title
-         };
-      }
+         Id = dtoList.ShoppingListId,
+         Title = dtoList.Title
+      };
    }
 }

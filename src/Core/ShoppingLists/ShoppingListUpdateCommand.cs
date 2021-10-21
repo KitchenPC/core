@@ -1,19 +1,18 @@
 ﻿using System;
-using KitchenPC.Ingredients;
-using KitchenPC.Recipes;
+using KitchenPC.Core.Ingredients;
+using KitchenPC.Core.Recipes;
 
-namespace KitchenPC.ShoppingLists
+namespace KitchenPC.Core.ShoppingLists;
+
+public class ShoppingListUpdateCommand
 {
-   public class ShoppingListUpdateCommand
-   {
-      public ShoppingListUpdateType Command { get; set; }
+   public ShoppingListUpdateType Command { get; set; }
 
-      public Recipe NewRecipe { get; set; }
-      public Ingredient NewIngredient { get; set; }
-      public IngredientUsage NewUsage { get; set; }
-      public String NewRaw { get; set; }
+   public Recipe NewRecipe { get; set; }
+   public Ingredient NewIngredient { get; set; }
+   public IngredientUsage NewUsage { get; set; }
+   public String NewRaw { get; set; }
 
-      public Guid? RemoveItem { get; set; }
-      public ShoppingListModification ModifyItem { get; set; }
-   }
+   public Guid? RemoveItem { get; set; }
+   public ShoppingListModification ModifyItem { get; set; }
 }

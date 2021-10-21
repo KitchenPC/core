@@ -1,56 +1,55 @@
-﻿namespace KitchenPC.Context
-{
-   public class AlphaTree
-   {
-      public Node Head;
+﻿namespace KitchenPC.Core.Context;
 
-      public AlphaTree()
+public class AlphaTree
+{
+   public Node Head;
+
+   public AlphaTree()
+   {
+      Head = new Node();
+   }
+
+   public class Node
+   {
+      private readonly Node[] nodes;
+      public ConnectorVertex connections;
+
+      public Node()
       {
-         Head = new Node();
+         nodes = new Node[26];
       }
 
-      public class Node
+      public Node AddLink(char c)
       {
-         readonly Node[] nodes;
-         public ConnectorVertex connections;
+         var index = c - 97;
+         return (nodes[index] = new Node());
+      }
 
-         public Node()
+      public bool HasLink(char c)
+      {
+         var index = c - 97;
+         return (nodes[index] != null);
+      }
+
+      public Node GetLink(char c)
+      {
+         var index = c - 97;
+         return nodes[index];
+      }
+
+      public void AddConnection(IngredientNode node)
+      {
+         if (connections == null)
          {
-            nodes = new Node[26];
+            connections = new ConnectorVertex();
+         }
+         else
+         {
+            if (connections.HasConnection(node))
+               return;
          }
 
-         public Node AddLink(char c)
-         {
-            var index = c - 97;
-            return (nodes[index] = new Node());
-         }
-
-         public bool HasLink(char c)
-         {
-            var index = c - 97;
-            return (nodes[index] != null);
-         }
-
-         public Node GetLink(char c)
-         {
-            var index = c - 97;
-            return nodes[index];
-         }
-
-         public void AddConnection(IngredientNode node)
-         {
-            if (connections == null)
-            {
-               connections = new ConnectorVertex();
-            }
-            else
-            {
-               if (connections.HasConnection(node))
-                  return;
-            }
-
-            connections.AddConnection(node);
-         }
+         connections.AddConnection(node);
       }
    }
 }

@@ -1,11 +1,10 @@
-﻿namespace KitchenPC.Categorization
+﻿namespace KitchenPC.Core.Categorization;
+
+public enum Category
 {
-   public enum Category
-   {
-      None,
-      Breakfast,
-      Lunch,
-      Dinner,
-      Dessert
-   };
-}
+   None,
+   Breakfast,
+   Lunch,
+   Dinner,
+   Dessert
+};

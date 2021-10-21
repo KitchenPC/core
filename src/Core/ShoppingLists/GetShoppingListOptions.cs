@@ -1,26 +1,25 @@
-﻿namespace KitchenPC.ShoppingLists
+﻿namespace KitchenPC.Core.ShoppingLists;
+
+public class GetShoppingListOptions
 {
-   public class GetShoppingListOptions
+   public bool LoadItems;
+
+   private static readonly GetShoppingListOptions none = new GetShoppingListOptions();
+   private static readonly GetShoppingListOptions loaded = new GetShoppingListOptions {LoadItems = true};
+
+   public static GetShoppingListOptions None
    {
-      public bool LoadItems;
-
-      static readonly GetShoppingListOptions none = new GetShoppingListOptions();
-      static readonly GetShoppingListOptions loaded = new GetShoppingListOptions {LoadItems = true};
-
-      public static GetShoppingListOptions None
+      get
       {
-         get
-         {
-            return none;
-         }
+         return none;
       }
+   }
 
-      public static GetShoppingListOptions WithItems
+   public static GetShoppingListOptions WithItems
+   {
+      get
       {
-         get
-         {
-            return loaded;
-         }
+         return loaded;
       }
    }
 }

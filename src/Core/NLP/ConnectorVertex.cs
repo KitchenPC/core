@@ -1,34 +1,33 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace KitchenPC.NLP
+namespace KitchenPC.Core.NLP;
+
+public class ConnectorVertex<T>
 {
-   public class ConnectorVertex<T>
+   private readonly List<T> connections;
+
+   public ConnectorVertex()
    {
-      readonly List<T> connections;
+      connections = new List<T>();
+   }
 
-      public ConnectorVertex()
-      {
-         connections = new List<T>();
-      }
+   public void AddConnection(T node)
+   {
+      connections.Add(node);
+   }
 
-      public void AddConnection(T node)
-      {
-         connections.Add(node);
-      }
+   public bool HasConnection(T node)
+   {
+      return connections.Contains<T>(node);
+   }
 
-      public bool HasConnection(T node)
+   public IEnumerable<T> GetConnections()
+   {
+      var e = connections.GetEnumerator();
+      while (e.MoveNext())
       {
-         return connections.Contains<T>(node);
-      }
-
-      public IEnumerable<T> GetConnections()
-      {
-         var e = connections.GetEnumerator();
-         while (e.MoveNext())
-         {
-            yield return e.Current;
-         }
+         yield return e.Current;
       }
    }
 }

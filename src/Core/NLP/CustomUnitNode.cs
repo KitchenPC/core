@@ -1,9 +1,8 @@
-namespace KitchenPC.NLP
+namespace KitchenPC.Core.NLP;
+
+public class CustomUnitNode : UnitNode
 {
-   public class CustomUnitNode : UnitNode
+   public CustomUnitNode(string name) : base(name, Units.Unit)
    {
-      public CustomUnitNode(string name) : base(name, Units.Unit)
-      {
-      }
    }
 }

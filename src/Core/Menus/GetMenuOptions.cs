@@ -1,26 +1,9 @@
-﻿namespace KitchenPC.Menus
+﻿namespace KitchenPC.Core.Menus;
+
+public class GetMenuOptions
 {
-   public class GetMenuOptions
-   {
-      public bool LoadRecipes;
-
-      static readonly GetMenuOptions none = new GetMenuOptions();
-      static readonly GetMenuOptions loaded = new GetMenuOptions {LoadRecipes = true};
-
-      public static GetMenuOptions None
-      {
-         get
-         {
-            return none;
-         }
-      }
-
-      public static GetMenuOptions WithRecipes
-      {
-         get
-         {
-            return loaded;
-         }
-      }
-   }
+   public static GetMenuOptions None { get; } = new GetMenuOptions();
+   public static GetMenuOptions WithRecipes { get; } = new GetMenuOptions {LoadRecipes = true};
+      
+   public bool LoadRecipes { get; set; }
 }

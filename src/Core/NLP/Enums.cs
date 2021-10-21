@@ -1,35 +1,34 @@
-﻿namespace KitchenPC.NLP
+﻿namespace KitchenPC.Core.NLP;
+
+public enum MatchPrecision
 {
-   public enum MatchPrecision
-   {
-      None,
-      Partial,
-      Exact
-   };
+   None,
+   Partial,
+   Exact
+};
 
-   public enum MatchResult
-   {
-      NoMatch,
-      UnknownUnit,
-      NoForm,
-      UnknownForm,
-      IncompatibleForm,
-      PartialMatch,
-      Match
-   }
+public enum MatchResult
+{
+   NoMatch,
+   UnknownUnit,
+   NoForm,
+   UnknownForm,
+   IncompatibleForm,
+   PartialMatch,
+   Match
+}
 
-   public enum AnomalousResult
-   {
-      Fallthrough,
-      AutoConvert
-   }
+public enum AnomalousResult
+{
+   Fallthrough,
+   AutoConvert
+}
 
-   public enum TraceLevel
-   {
-      Debug,
-      Error,
-      Info,
-      Fatal,
-      Warn
-   }
+public enum TraceLevel
+{
+   Debug,
+   Error,
+   Info,
+   Fatal,
+   Warn
 }

@@ -1,12 +1,11 @@
 using System;
 
-namespace KitchenPC.Data.DTO
+namespace KitchenPC.Core.Provisioning.DTO;
+
+public class NlpFormSynonyms
 {
-   public class NlpFormSynonyms
-   {
-      public Guid FormSynonymId { get; set; }
-      public Guid IngredientId { get; set; }
-      public Guid FormId { get; set; }
-      public string Name { get; set; }
-   }
+   public Guid FormSynonymId { get; set; }
+   public Guid IngredientId { get; set; }
+   public Guid FormId { get; set; }
+   public string Name { get; set; }
 }

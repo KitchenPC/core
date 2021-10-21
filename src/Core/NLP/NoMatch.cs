@@ -1,27 +1,26 @@
 ﻿using System;
 
-namespace KitchenPC.NLP
+namespace KitchenPC.Core.NLP;
+
+public class NoMatch : Result
 {
-   public class NoMatch : Result
+   private readonly MatchResult status;
+
+   public override MatchResult Status
    {
-      readonly MatchResult status;
-
-      public override MatchResult Status
+      get
       {
-         get
-         {
-            return status;
-         }
+         return status;
       }
+   }
 
-      public NoMatch(string input, MatchResult status) : base(input)
-      {
-         this.status = status;
-      }
+   public NoMatch(string input, MatchResult status) : base(input)
+   {
+      this.status = status;
+   }
 
-      public override string ToString()
-      {
-         return String.Format("[NoMatch] Error: {0}", status);
-      }
+   public override string ToString()
+   {
+      return String.Format("[NoMatch] Error: {0}", status);
    }
 }

@@ -1,90 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
-using KitchenPC.Data;
-using KitchenPC.Ingredients;
-using KitchenPC.NLP;
+using KitchenPC.Core.Ingredients;
+using KitchenPC.Core.NLP;
+using KitchenPC.Core.Provisioning;
 
-namespace KitchenPC.Context
+namespace KitchenPC.Core.Context;
+
+public class StaticAnomalyLoader : ISynonymLoader<AnomalousNode>
 {
-   public class StaticAnomalyLoader : ISynonymLoader<AnomalousNode>
+   private readonly DataStore store;
+
+   public StaticAnomalyLoader(DataStore store)
    {
-      readonly DataStore store;
+      this.store = store;
+   }
 
-      public StaticAnomalyLoader(DataStore store)
+   public IEnumerable<AnomalousNode> LoadSynonyms()
+   {
+      var forms = store.GetIndexedIngredientForms();
+      var ingredients = store.GetIndexedIngredients();
+      var anomalies = store.NlpAnomalousIngredients;
+
+      var ret = new List<AnomalousNode>();
+
+      foreach (var anon in anomalies)
       {
-         this.store = store;
-      }
+         var ingredient = ingredients[anon.IngredientId];
 
-      public IEnumerable<AnomalousNode> LoadSynonyms()
-      {
-         var forms = store.GetIndexedIngredientForms();
-         var ingredients = store.GetIndexedIngredients();
-         var anomalies = store.NlpAnomalousIngredients;
+         var name = anon.Name;
+         var ing = anon.IngredientId;
+         var ingName = ingredient.DisplayName;
 
-         var ret = new List<AnomalousNode>();
-
-         foreach (var anon in anomalies)
+         IngredientForm weightForm = null, volumeForm = null, unitForm = null;
+         if (anon.WeightFormId.HasValue)
          {
-            var ingredient = ingredients[anon.IngredientId];
+            var wf = forms[anon.WeightFormId.Value];
 
-            var name = anon.Name;
-            var ing = anon.IngredientId;
-            var ingName = ingredient.DisplayName;
-
-            IngredientForm weightForm = null, volumeForm = null, unitForm = null;
-            if (anon.WeightFormId.HasValue)
-            {
-               var wf = forms[anon.WeightFormId.Value];
-
-               weightForm = new IngredientForm(
-                  wf.IngredientFormId,
-                  ing,
-                  wf.UnitType,
-                  wf.FormDisplayName,
-                  wf.UnitName,
-                  wf.ConvMultiplier,
-                  new Amount(wf.FormAmount, wf.FormUnit));
-            }
-
-            if (anon.VolumeFormId.HasValue)
-            {
-               var vf = forms[anon.VolumeFormId.Value];
-
-               volumeForm = new IngredientForm(
-                  vf.IngredientFormId,
-                  ing,
-                  vf.UnitType,
-                  vf.FormDisplayName,
-                  vf.UnitName,
-                  vf.ConvMultiplier,
-                  new Amount(vf.FormAmount, vf.FormUnit));
-            }
-
-            if (anon.UnitFormId.HasValue)
-            {
-               var uf = forms[anon.UnitFormId.Value];
-
-               unitForm = new IngredientForm(
-                  uf.IngredientFormId,
-                  ing,
-                  uf.UnitType,
-                  uf.FormDisplayName,
-                  uf.UnitName,
-                  uf.ConvMultiplier,
-                  new Amount(uf.FormAmount, uf.FormUnit));
-            }
-
-            var pairings = new DefaultPairings() {Weight = weightForm, Volume = volumeForm, Unit = unitForm};
-            var ingNode = new AnomalousIngredientNode(ing, ingName, UnitType.Unit, 0, pairings); //TODO: Must load conv type and unit weight
-            ret.Add(new AnomalousNode(name, ingNode));
+            weightForm = new IngredientForm(
+               wf.IngredientFormId,
+               ing,
+               wf.UnitType,
+               wf.FormDisplayName,
+               wf.UnitName,
+               wf.ConvMultiplier,
+               new Amount(wf.FormAmount, wf.FormUnit));
          }
 
-         return ret;
+         if (anon.VolumeFormId.HasValue)
+         {
+            var vf = forms[anon.VolumeFormId.Value];
+
+            volumeForm = new IngredientForm(
+               vf.IngredientFormId,
+               ing,
+               vf.UnitType,
+               vf.FormDisplayName,
+               vf.UnitName,
+               vf.ConvMultiplier,
+               new Amount(vf.FormAmount, vf.FormUnit));
+         }
+
+         if (anon.UnitFormId.HasValue)
+         {
+            var uf = forms[anon.UnitFormId.Value];
+
+            unitForm = new IngredientForm(
+               uf.IngredientFormId,
+               ing,
+               uf.UnitType,
+               uf.FormDisplayName,
+               uf.UnitName,
+               uf.ConvMultiplier,
+               new Amount(uf.FormAmount, uf.FormUnit));
+         }
+
+         var pairings = new DefaultPairings() {Weight = weightForm, Volume = volumeForm, Unit = unitForm};
+         var ingNode = new AnomalousIngredientNode(ing, ingName, UnitType.Unit, 0, pairings); //TODO: Must load conv type and unit weight
+         ret.Add(new AnomalousNode(name, ingNode));
       }
 
-      public Pairings LoadFormPairings()
-      {
-         throw new NotImplementedException();
-      }
+      return ret;
+   }
+
+   public Pairings LoadFormPairings()
+   {
+      throw new NotImplementedException();
    }
 }
