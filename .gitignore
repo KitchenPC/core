@@ -4,4 +4,4 @@ src/packages/
 *.suo
 *.user
 */.vs
-*/.idea
+**/.idea/
