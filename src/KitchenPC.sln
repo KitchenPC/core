@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{2945
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "Samples\WebApp\WebApp.csproj", "{E6BB3F54-EE3F-48FF-9D5A-E4F1E2365994}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Samples\Console\Console.csproj", "{0B580F31-8F46-4DF6-9C20-08FD0779A964}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,12 @@ Global
 		{E6BB3F54-EE3F-48FF-9D5A-E4F1E2365994}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E6BB3F54-EE3F-48FF-9D5A-E4F1E2365994}.Staging|Any CPU.ActiveCfg = Debug|Any CPU
 		{E6BB3F54-EE3F-48FF-9D5A-E4F1E2365994}.Staging|Any CPU.Build.0 = Debug|Any CPU
+		{0B580F31-8F46-4DF6-9C20-08FD0779A964}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B580F31-8F46-4DF6-9C20-08FD0779A964}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B580F31-8F46-4DF6-9C20-08FD0779A964}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B580F31-8F46-4DF6-9C20-08FD0779A964}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B580F31-8F46-4DF6-9C20-08FD0779A964}.Staging|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B580F31-8F46-4DF6-9C20-08FD0779A964}.Staging|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,5 +61,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E6BB3F54-EE3F-48FF-9D5A-E4F1E2365994} = {2945C281-1869-414F-92D4-6EBEF29BC500}
+		{0B580F31-8F46-4DF6-9C20-08FD0779A964} = {2945C281-1869-414F-92D4-6EBEF29BC500}
 	EndGlobalSection
 EndGlobal

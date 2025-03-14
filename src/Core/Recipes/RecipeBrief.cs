@@ -20,7 +20,7 @@ public class RecipeBrief
     {
         get
         {
-            return (recipeimg == null ? "/Images/img_placeholder.png" : recipeimg.ToString());
+            return (recipeimg == null ? "/images/img_placeholder.png" : recipeimg.ToString());
         }
 
         set

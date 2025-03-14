@@ -5,7 +5,7 @@ using KitchenPC.Core;
 using KitchenPC.Core.Ingredients;
 using KitchenPC.Core.NLP;
 using KitchenPC.DB.Models;
-using NHibernate.Criterion;
+using NHibernate;
 
 namespace KitchenPC.DB.NLP;
 
@@ -25,9 +25,9 @@ public class IngredientLoader : ISynonymLoader<IngredientNode>
 
         var ingsForNlp = session.QueryOver<Ingredients>().List();
         var pairingMap = session.QueryOver<NlpDefaultPairings>()
-            .Fetch(prop => prop.WeightForm).Eager()
-            .Fetch(prop => prop.VolumeForm).Eager()
-            .Fetch(prop => prop.UnitForm).Eager()
+            .Fetch(SelectMode.Fetch, prop => prop.WeightForm)
+            .Fetch(SelectMode.Fetch, prop => prop.VolumeForm)
+            .Fetch(SelectMode.Fetch, prop => prop.UnitForm)
             .List()
             .ToDictionary(p => p.Ingredient.IngredientId);
 

@@ -4,19 +4,12 @@ using KitchenPC.Core;
 using KitchenPC.Core.Ingredients;
 using KitchenPC.Core.NLP;
 using KitchenPC.DB.Models;
-using NHibernate.Criterion;
+using NHibernate;
 
 namespace KitchenPC.DB.NLP;
 
-public class UnitLoader : ISynonymLoader<UnitNode>
+public class UnitLoader(DatabaseAdapter adapter) : ISynonymLoader<UnitNode>
 {
-    private readonly DatabaseAdapter adapter;
-
-    public UnitLoader(DatabaseAdapter adapter)
-    {
-        this.adapter = adapter;
-    }
-
     public IEnumerable<UnitNode> LoadSynonyms()
     {
         using var session = adapter.GetStatelessSession();
@@ -36,7 +29,7 @@ public class UnitLoader : ISynonymLoader<UnitNode>
 
         //Load all form pairings from db
         var unitSyn = session.QueryOver<NlpUnitSynonyms>()
-            .Fetch(prop => prop.Form).Eager()
+            .Fetch(SelectMode.Fetch, prop => prop.Form)
             .List();
 
         var pairings = new Pairings();

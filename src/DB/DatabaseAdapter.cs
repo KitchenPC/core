@@ -224,10 +224,10 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
     {
         using var session = GetSession();
         var dbRecipes = session.QueryOver<Recipes>()
-            .Fetch(prop => prop.RecipeMetadata).Eager
-            .Fetch(prop => prop.Ingredients).Eager
-            .Fetch(prop => prop.Ingredients[0].Ingredient).Eager
-            .Fetch(prop => prop.Ingredients[0].IngredientForm).Eager
+            .Fetch(SelectMode.Fetch, prop => prop.RecipeMetadata)
+            .Fetch(SelectMode.Fetch, prop => prop.Ingredients)
+            .Fetch(SelectMode.Fetch, prop => prop.Ingredients[0].Ingredient)
+            .Fetch(SelectMode.Fetch, prop => prop.Ingredients[0].IngredientForm)
             .AndRestrictionOn(p => p.RecipeId).IsInG(recipeIds)
             .TransformUsing(Transformers.DistinctRootEntity)
             .List();
@@ -396,7 +396,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
     {
         using var session = GetSession();
         var dbIng = session.QueryOver<Ingredients>()
-            .Fetch(prop => prop.Forms).Eager
+            .Fetch(SelectMode.Fetch, prop => prop.Forms)
             .Where(p => p.IngredientId == ingredientId)
             .SingleOrDefault();
 
@@ -410,7 +410,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
     {
         using var session = GetSession();
         var dbIng = session.QueryOver<Ingredients>()
-            .Fetch(prop => prop.Metadata).Eager
+            .Fetch(SelectMode.Fetch, prop => prop.Metadata)
             .Where(p => p.DisplayName == ingredient.Trim())
             .SingleOrDefault();
 
@@ -424,7 +424,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
     {
         using var session = GetSession();
         var dbIng = session.QueryOver<Ingredients>()
-            .Fetch(prop => prop.Metadata).Eager
+            .Fetch(SelectMode.Fetch, prop => prop.Metadata)
             .Where(p => p.IngredientId == ingid)
             .SingleOrDefault();
 
@@ -485,7 +485,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
     {
         using var session = GetSession();
         var dbRecipes = session.QueryOver<QueuedRecipes>()
-            .Fetch(prop => prop.Recipe).Eager
+            .Fetch(SelectMode.Fetch, prop => prop.Recipe)
             .Where(p => p.UserId == identity.UserId)
             .List();
 
@@ -527,7 +527,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
             : Restrictions.InG("Menu", dbMenus)); // Menu must be in loaded menu list
 
         var dbFavorites = session.QueryOver<Favorites>()
-            .Fetch(prop => prop.Recipe).Eager
+            .Fetch(SelectMode.Fetch, prop => prop.Recipe)
             .Where(p => p.UserId == identity.UserId)
             .Where(filter)
             .List();
@@ -595,7 +595,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
         var dbMenu = session.QueryOver<Menus>()
             .AndRestrictionOn(p => p.MenuId).IsInG(menuIds)
             .Where(p => p.UserId == identity.UserId)
-            .Fetch(prop => prop.Recipes).Eager()
+            .Fetch(SelectMode.Fetch, prop => prop.Recipes)
             .List();
 
         dbMenu.ForEach(session.Delete);
@@ -614,7 +614,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
         if (menuId.HasValue)
         {
             dbMenu = session.QueryOver<Menus>()
-                .Fetch(prop => prop.Recipes).Eager
+                .Fetch(SelectMode.Fetch, prop => prop.Recipes)
                 .Where(p => p.MenuId == menuId)
                 .SingleOrDefault();
 
@@ -753,8 +753,8 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
             : Restrictions.InG("ShoppingList", dbLists)); // Menu must be in loaded menu list
 
         var dbItems = session.QueryOver<ShoppingListItems>()
-            .Fetch(prop => prop.Ingredient).Eager
-            .Fetch(prop => prop.Recipe).Eager
+            .Fetch(SelectMode.Fetch, prop => prop.Ingredient)
+            .Fetch(SelectMode.Fetch, prop => prop.Recipe)
             .Where(p => p.UserId == identity.UserId)
             .Where(filter)
             .List();
@@ -841,7 +841,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
         if (listId.HasValue)
         {
             dbList = session.QueryOver<ShoppingLists>()
-                .Fetch(prop => prop.Items).Eager
+                .Fetch(SelectMode.Fetch, prop => prop.Items)
                 .Where(p => p.UserId == identity.UserId)
                 .Where(p => p.ShoppingListId == listId.Value)
                 .SingleOrDefault();

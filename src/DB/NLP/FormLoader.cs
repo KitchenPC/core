@@ -4,7 +4,7 @@ using KitchenPC.Core;
 using KitchenPC.Core.Ingredients;
 using KitchenPC.Core.NLP;
 using KitchenPC.DB.Models;
-using NHibernate.Criterion;
+using NHibernate;
 
 namespace KitchenPC.DB.NLP;
 
@@ -35,7 +35,7 @@ public class FormLoader : ISynonymLoader<FormNode>
     {
         using var session = adapter.GetStatelessSession();
         var formSyn = session.QueryOver<NlpFormSynonyms>()
-            .Fetch(prop => prop.Form).Eager()
+            .Fetch(SelectMode.Fetch, prop => prop.Form)
             .List();
 
         //Load all form pairings from db

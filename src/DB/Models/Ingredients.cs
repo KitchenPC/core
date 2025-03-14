@@ -43,6 +43,8 @@ public class IngredientsMap : ClassMap<Ingredients>
 {
    public IngredientsMap()
    {
+      Table("ShoppingIngredients");
+
       Id(x => x.IngredientId)
          .GeneratedBy.GuidComb()
          .UnsavedValue(Guid.Empty);
