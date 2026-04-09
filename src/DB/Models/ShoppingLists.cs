@@ -7,40 +7,26 @@ namespace KitchenPC.DB.Models;
 
 public class ShoppingLists
 {
-    public virtual Guid ShoppingListId { get; set; }
-    public virtual Guid UserId { get; set; }
-    public virtual String Title { get; set; }
+   public virtual Guid ShoppingListId { get; set; }
+   public virtual Guid UserId { get; set; }
+   public virtual String Title { get; set; }
 
-    public virtual IList<ShoppingListItems> Items { get; set; }
+   public virtual IList<ShoppingListItems> Items { get; set; }
 
-    public static ShoppingLists FromId(Guid id) =>
-        new()
-        {
-            ShoppingListId = id
-        };
+   public static ShoppingLists FromId(Guid id) => new() { ShoppingListId = id };
 
-    public virtual ShoppingList AsShoppingList() =>
-        new()
-        {
-            Id = ShoppingListId,
-            Title = Title
-        };
+   public virtual ShoppingList AsShoppingList() => new() { Id = ShoppingListId, Title = Title };
 }
 
 public class ShoppingListsMap : ClassMap<ShoppingLists>
 {
-    public ShoppingListsMap()
-    {
-        Id(x => x.ShoppingListId)
-            .GeneratedBy.GuidComb()
-            .UnsavedValue(Guid.Empty);
+   public ShoppingListsMap()
+   {
+      Id(x => x.ShoppingListId).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
-        Map(x => x.UserId).Not.Nullable().Index("IDX_ShoppingLists_UserId").UniqueKey("UniqueTitle");
-        Map(x => x.Title).Not.Nullable().UniqueKey("UniqueTitle");
+      Map(x => x.UserId).Not.Nullable().Index("IDX_ShoppingLists_UserId").UniqueKey("UniqueTitle");
+      Map(x => x.Title).Not.Nullable().UniqueKey("UniqueTitle");
 
-        HasMany(x => x.Items)
-            .KeyColumn("ShoppingListId")
-            .Inverse()
-            .Cascade.All();
-    }
+      HasMany(x => x.Items).KeyColumn("ShoppingListId").Inverse().Cascade.All();
+   }
 }

@@ -11,18 +11,18 @@ internal class MockImpossibleFilterUserProfile : IUserProfile
    {
       Ratings = new RecipeRating[]
       {
-         new() {RecipeId = new Guid("b11a64a9-95b3-402f-8b82-312bad539d4e"), Rating = 5},
-         new() {RecipeId = new Guid("eb16bb12-6fab-4674-a6c0-11a57878087e"), Rating = 5},
-         new() {RecipeId = new Guid("0fc6c435-d9d1-4d21-a60b-42e3389b60a1"), Rating = 5}
+         new() { RecipeId = new Guid("b11a64a9-95b3-402f-8b82-312bad539d4e"), Rating = 5 },
+         new() { RecipeId = new Guid("eb16bb12-6fab-4674-a6c0-11a57878087e"), Rating = 5 },
+         new() { RecipeId = new Guid("0fc6c435-d9d1-4d21-a60b-42e3389b60a1"), Rating = 5 },
       };
 
       Pantry = new PantryItem[]
       {
-         new() {IngredientId = ModelerTests.ING_EGGS, Amt = 6}, //6 eggs
-         new() {IngredientId = ModelerTests.ING_MILK, Amt = 16}, //16 cups of milk (1 gallon)
-         new() {IngredientId = ModelerTests.ING_FLOUR, Amt = 8}, //8oz flour
-         new() {IngredientId = ModelerTests.ING_CHEESE, Amt = 16}, //16oz cheese
-         new() {IngredientId = ModelerTests.ING_CHICKEN, Amt = 16} //16oz chicken
+         new() { IngredientId = ModelerTests.ING_EGGS, Amt = 6 }, //6 eggs
+         new() { IngredientId = ModelerTests.ING_MILK, Amt = 16 }, //16 cups of milk (1 gallon)
+         new() { IngredientId = ModelerTests.ING_FLOUR, Amt = 8 }, //8oz flour
+         new() { IngredientId = ModelerTests.ING_CHEESE, Amt = 16 }, //16oz cheese
+         new() { IngredientId = ModelerTests.ING_CHICKEN, Amt = 16 }, //16oz chicken
       };
    }
 
@@ -34,10 +34,7 @@ internal class MockImpossibleFilterUserProfile : IUserProfile
 
    public Guid[] FavoriteIngredients
    {
-      get
-      {
-         return new Guid[] {};
-      }
+      get { return new Guid[] { }; }
    } //Engine will tend to favor recipes with these ingredients
 
    public RecipeTags FavoriteTags => 0; //Engine will tend to favor recipes with these tags
@@ -46,10 +43,7 @@ internal class MockImpossibleFilterUserProfile : IUserProfile
 
    public Guid[] BlacklistedIngredients
    {
-      get
-      {
-         return new[] {ModelerTests.ING_MILK};
-      }
+      get { return new[] { ModelerTests.ING_MILK }; }
    } //Engine will never suggest any recipe with these ingredients, no matter what.
 
    public RecipeTags AllowedTags => RecipeTags.From(RecipeTag.NoPork); //Engine will never suggest any recipe that does not contain at least one of these tags.

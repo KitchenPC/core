@@ -30,7 +30,8 @@ public class DatabaseAdapterBuilder : IConfigurationBuilder<DatabaseAdapter>
       return this;
    }
 
-   public DatabaseAdapterBuilder SearchProvider<T>(Func<DatabaseAdapter, T> createProvider) where T : ISearchProvider
+   public DatabaseAdapterBuilder SearchProvider<T>(Func<DatabaseAdapter, T> createProvider)
+      where T : ISearchProvider
    {
       adapter.SearchProvider = createProvider(adapter);
       return this;

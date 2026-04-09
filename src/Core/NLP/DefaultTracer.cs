@@ -9,7 +9,7 @@ public class DefaultTracer : ITracer
 
    public DefaultTracer()
    {
-      log = LogManager.GetLogger(typeof (Parser));
+      log = LogManager.GetLogger(typeof(Parser));
       log.Info("Initialized logger for new NLP parser.");
    }
 

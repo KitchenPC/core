@@ -83,7 +83,7 @@ internal partial class RatingGraph
    {
       if (_recipeIndex.ContainsKey(recipeid) == false)
       {
-         return new Guid[] {};
+         return new Guid[] { };
       }
 
       var rnode = _recipeIndex[recipeid];
@@ -109,9 +109,7 @@ internal partial class RatingGraph
 
       //For every pair in graph, calculate the Jaccard similarity coefficient (Number of overlapping ingredients divided by total distinct ingredients in both)
 
-      var r = (from k in results.Keys
-         orderby results[k] descending
-         select k);
+      var r = (from k in results.Keys orderby results[k] descending select k);
 
       return r.ToArray();
    }

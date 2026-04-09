@@ -23,7 +23,10 @@ public static class Tokenizer
       tokens.AddRange(ParseText(recipe.Description ?? ""));
       //tokens.AddRange(ParseText(recipe.Method ?? ""));
       //tokens.Add(new TimeToken(recipe.CookTime.GetValueOrDefault() + recipe.PrepTime.GetValueOrDefault()));
-      tokens.AddRange(from i in recipe.Ingredients.NeverNull() select new IngredientToken(i.Ingredient) as IToken);
+      tokens.AddRange(
+         from i in recipe.Ingredients.NeverNull()
+         select new IngredientToken(i.Ingredient) as IToken
+      );
 
       return tokens;
    }

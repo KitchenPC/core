@@ -1,27 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>netstandard2.0</TargetFramework>
+      <LangVersion>default</LangVersion>
+      <GenerateDocumentationFile>true</GenerateDocumentationFile>
+      <NoWarn>$(NoWarn);1591</NoWarn>
+      <AssemblyName>KitchenPC.Core</AssemblyName>
+      <AssemblyTitle>KitchenPC.Core</AssemblyTitle>
+      <Product>KitchenPC.Core</Product>
+      <Description>KitchenPC Core Engine</Description>
+      <Company>KitchenPC</Company>
+      <OutputPath>bin\$(Configuration)\</OutputPath>
+      <Authors>Mike Christensen</Authors>
+      <PackageId>KitchenPC.Core</PackageId>
+      <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+      <RootNamespace>KitchenPC.Core</RootNamespace>
+   </PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>default</LangVersion>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>$(NoWarn);1591</NoWarn>
-    <AssemblyName>KitchenPC.Core</AssemblyName>
-    <AssemblyTitle>KitchenPC.Core</AssemblyTitle>
-    <Product>KitchenPC.Core</Product>
-    <Description>KitchenPC Core Engine</Description>
-    <Company>KitchenPC</Company>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
-    <Authors>Mike Christensen</Authors>
-    <PackageId>KitchenPC.Core</PackageId>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <RootNamespace>KitchenPC.Core</RootNamespace>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="log4net" Version="3.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-  </ItemGroup>
-
+   <ItemGroup>
+      <PackageReference Include="log4net" Version="3.0.2" />
+      <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+      <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+      <PackageReference
+         Include="Microsoft.Extensions.DependencyInjection.Abstractions"
+         Version="5.0.0"
+      />
+   </ItemGroup>
 </Project>

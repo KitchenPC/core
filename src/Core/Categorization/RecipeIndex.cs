@@ -10,10 +10,7 @@ public class RecipeIndex
 
    public int EntryCount
    {
-      get
-      {
-         return index.Values.Sum();
-      }
+      get { return index.Values.Sum(); }
    }
 
    public int GetTokenCount(IToken token)

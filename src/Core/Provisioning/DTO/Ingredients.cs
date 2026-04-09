@@ -15,7 +15,10 @@ public class Ingredients
    public string DisplayName { get; set; }
    public string UsdaDesc { get; set; }
 
-   public static Ingredient ToIngredient(Ingredients dtoIngredient, IngredientMetadata metadata = null)
+   public static Ingredient ToIngredient(
+      Ingredients dtoIngredient,
+      IngredientMetadata metadata = null
+   )
    {
       return new Ingredient
       {
@@ -24,7 +27,7 @@ public class Ingredients
          Name = dtoIngredient.DisplayName,
          UnitName = dtoIngredient.UnitName,
          UnitWeight = dtoIngredient.UnitWeight,
-         Metadata = (metadata != null ? IngredientMetadata.ToIngredientMetadata(metadata) : null)
+         Metadata = (metadata != null ? IngredientMetadata.ToIngredientMetadata(metadata) : null),
       };
    }
 }

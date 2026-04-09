@@ -17,9 +17,7 @@ public class NlpAnomalousIngredientsMap : ClassMap<NlpAnomalousIngredients>
 {
    public NlpAnomalousIngredientsMap()
    {
-      Id(x => x.AnomalousIngredientId, "id")
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.AnomalousIngredientId, "id").GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.Name).Not.Nullable().Length(100).Unique();
 

@@ -10,8 +10,17 @@ public struct IngredientBinding
    public Single? Qty { get; set; }
    public Units Unit { get; set; }
 
-   public static IngredientBinding Create(Guid ingId, Guid recipeId, Single? qty, Units usageUnit, UnitType convType, Int32 unitWeight,
-      Units formUnit, Single equivAmount, Units equivUnit)
+   public static IngredientBinding Create(
+      Guid ingId,
+      Guid recipeId,
+      Single? qty,
+      Units usageUnit,
+      UnitType convType,
+      Int32 unitWeight,
+      Units formUnit,
+      Single equivAmount,
+      Units equivUnit
+   )
    {
       var rawUnit = Core.Unit.GetDefaultUnitType(convType);
 
@@ -27,21 +36,21 @@ public struct IngredientBinding
             {
                Id = ingId,
                ConversionType = convType,
-               UnitWeight = unitWeight
+               UnitWeight = unitWeight,
             };
 
             var form = new IngredientForm
             {
                FormUnitType = formUnit,
                FormAmount = new Amount(equivAmount, equivUnit),
-               IngredientId = ingId
+               IngredientId = ingId,
             };
 
             var usage = new Ingredients.IngredientUsage
             {
                Form = form,
                Ingredient = ing,
-               Amount = new Amount(qty.Value, usageUnit)
+               Amount = new Amount(qty.Value, usageUnit),
             };
 
             try
@@ -60,8 +69,8 @@ public struct IngredientBinding
       {
          RecipeId = recipeId,
          IngredientId = ingId,
-         Qty = qty.HasValue ? (float?) Math.Round(qty.Value, 3) : null,
-         Unit = rawUnit
+         Qty = qty.HasValue ? (float?)Math.Round(qty.Value, 3) : null,
+         Unit = rawUnit,
       };
    }
 }

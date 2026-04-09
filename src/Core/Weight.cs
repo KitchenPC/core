@@ -23,7 +23,7 @@ public class Weight : IComparable, IFormattable, IComparable<int>, IEquatable<in
 
    public static implicit operator int(Weight weight)
    {
-      if ((object) weight == null)
+      if ((object)weight == null)
       {
          return 0;
       }
@@ -40,7 +40,7 @@ public class Weight : IComparable, IFormattable, IComparable<int>, IEquatable<in
          return true;
       }
 
-      if ((object) x == null || ((object) y == null))
+      if ((object)x == null || ((object)y == null))
       {
          return false;
       }
@@ -57,7 +57,7 @@ public class Weight : IComparable, IFormattable, IComparable<int>, IEquatable<in
    {
       if (obj is Weight)
       {
-         return this.Value.CompareTo(((Weight) obj).Value);
+         return this.Value.CompareTo(((Weight)obj).Value);
       }
       else
       {
@@ -78,10 +78,11 @@ public class Weight : IComparable, IFormattable, IComparable<int>, IEquatable<in
    public override bool Equals(object o)
    {
       if (o is Int32)
-         return (this.Value == (Int32) o);
+         return (this.Value == (Int32)o);
       else if (o is Weight)
-         return (this.Value == ((Weight) o).Value);
-      else return false;
+         return (this.Value == ((Weight)o).Value);
+      else
+         return false;
    }
 
    public override string ToString()
@@ -101,9 +102,11 @@ public class Weight : IComparable, IFormattable, IComparable<int>, IEquatable<in
 
    public new bool Equals(object x, object y)
    {
-      if (ReferenceEquals(x, y)) return true;
+      if (ReferenceEquals(x, y))
+         return true;
 
-      if (x == null || y == null) return false;
+      if (x == null || y == null)
+         return false;
 
       return x.Equals(y);
    }

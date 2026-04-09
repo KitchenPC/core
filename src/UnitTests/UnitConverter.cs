@@ -44,8 +44,14 @@ public class UnitConverterTest
       var amt2 = new Amount(8f, 12f, Units.Ounce); //0.5 - 0.75 lb
       var amt3 = new Amount(0.5f, 2f, Units.Pint); //.25 - 1qt
 
-      Assert.AreEqual(new Amount(8f, 16f, Units.FluidOunce), UnitConverter.Convert(amt1, Units.FluidOunce));
-      Assert.AreEqual(new Amount(0.5f, 0.75f, Units.Pound), UnitConverter.Convert(amt2, Units.Pound));
+      Assert.AreEqual(
+         new Amount(8f, 16f, Units.FluidOunce),
+         UnitConverter.Convert(amt1, Units.FluidOunce)
+      );
+      Assert.AreEqual(
+         new Amount(0.5f, 0.75f, Units.Pound),
+         UnitConverter.Convert(amt2, Units.Pound)
+      );
       Assert.AreEqual(new Amount(.25f, 1f, Units.Quart), UnitConverter.Convert(amt3, Units.Quart));
    }
 
@@ -53,14 +59,43 @@ public class UnitConverterTest
    public void TestFormConverter()
    {
       //Form conversions (Unit ingredients)
-      var unitIng = new Ingredient() {ConversionType = UnitType.Unit, UnitWeight = 200}; //Ingredient sold by units (unit weighs 200g)
-      var unitIng_UnitForm = new IngredientForm() {FormAmount = new Amount(50, Units.Gram), ConversionMultiplier = 1, FormUnitType = Units.Unit}; //Form expressed in units (unit in this form weighs 50g)
-      var unitIng_WeightForm = new IngredientForm() {ConversionMultiplier = 1, FormUnitType = Units.Ounce}; //Form expressed by weight
-      var unitIng_VolForm = new IngredientForm() {FormUnitType = Units.Cup, ConversionMultiplier = 1, FormAmount = new Amount(20, Units.Gram)}; //Each cup weighs 20g)
+      var unitIng = new Ingredient() { ConversionType = UnitType.Unit, UnitWeight = 200 }; //Ingredient sold by units (unit weighs 200g)
+      var unitIng_UnitForm = new IngredientForm()
+      {
+         FormAmount = new Amount(50, Units.Gram),
+         ConversionMultiplier = 1,
+         FormUnitType = Units.Unit,
+      }; //Form expressed in units (unit in this form weighs 50g)
+      var unitIng_WeightForm = new IngredientForm()
+      {
+         ConversionMultiplier = 1,
+         FormUnitType = Units.Ounce,
+      }; //Form expressed by weight
+      var unitIng_VolForm = new IngredientForm()
+      {
+         FormUnitType = Units.Cup,
+         ConversionMultiplier = 1,
+         FormAmount = new Amount(20, Units.Gram),
+      }; //Each cup weighs 20g)
 
-      var unitIng_UnitUsage = new IngredientUsage() {Amount = new Amount(4, Units.Unit), Form = unitIng_UnitForm, Ingredient = unitIng};
-      var unitIng_WeightUsage = new IngredientUsage() {Amount = new Amount(300, Units.Gram), Form = unitIng_WeightForm, Ingredient = unitIng};
-      var unitIng_VolUsage = new IngredientUsage() {Amount = new Amount(160, Units.Tablespoon), Form = unitIng_VolForm, Ingredient = unitIng}; //10 cups
+      var unitIng_UnitUsage = new IngredientUsage()
+      {
+         Amount = new Amount(4, Units.Unit),
+         Form = unitIng_UnitForm,
+         Ingredient = unitIng,
+      };
+      var unitIng_WeightUsage = new IngredientUsage()
+      {
+         Amount = new Amount(300, Units.Gram),
+         Form = unitIng_WeightForm,
+         Ingredient = unitIng,
+      };
+      var unitIng_VolUsage = new IngredientUsage()
+      {
+         Amount = new Amount(160, Units.Tablespoon),
+         Form = unitIng_VolForm,
+         Ingredient = unitIng,
+      }; //10 cups
 
       var unitIng_UnitAmt = FormConversion.GetNativeAmountForUsage(unitIng, unitIng_UnitUsage);
       var unitIng_WeightAmt = FormConversion.GetNativeAmountForUsage(unitIng, unitIng_WeightUsage);
@@ -77,12 +112,32 @@ public class UnitConverterTest
       //Assert.AreEqual(Units.Unit, unitIng_VolAmt.Unit);
 
       //Form conversions (Volume ingredients)
-      var volIng = new Ingredient() {ConversionType = UnitType.Volume}; //Ingredient sold by volume
-      var volIng_UnitForm = new IngredientForm() {FormUnitType = Units.Unit, ConversionMultiplier = 1, FormAmount = new Amount(5, Units.Teaspoon)};
-      var volIng_WeightForm = new IngredientForm() {FormUnitType = Units.Ounce, ConversionMultiplier = 1, FormAmount = new Amount(2, Units.Teaspoon)};
+      var volIng = new Ingredient() { ConversionType = UnitType.Volume }; //Ingredient sold by volume
+      var volIng_UnitForm = new IngredientForm()
+      {
+         FormUnitType = Units.Unit,
+         ConversionMultiplier = 1,
+         FormAmount = new Amount(5, Units.Teaspoon),
+      };
+      var volIng_WeightForm = new IngredientForm()
+      {
+         FormUnitType = Units.Ounce,
+         ConversionMultiplier = 1,
+         FormAmount = new Amount(2, Units.Teaspoon),
+      };
 
-      var volIng_UnitUsage = new IngredientUsage() {Amount = new Amount(2, Units.Unit), Form = volIng_UnitForm, Ingredient = volIng};
-      var volIng_WeightUsage = new IngredientUsage() {Amount = new Amount(0.25f, Units.Pound), Form = volIng_WeightForm, Ingredient = volIng}; //4oz
+      var volIng_UnitUsage = new IngredientUsage()
+      {
+         Amount = new Amount(2, Units.Unit),
+         Form = volIng_UnitForm,
+         Ingredient = volIng,
+      };
+      var volIng_WeightUsage = new IngredientUsage()
+      {
+         Amount = new Amount(0.25f, Units.Pound),
+         Form = volIng_WeightForm,
+         Ingredient = volIng,
+      }; //4oz
 
       var volIng_UnitAmt = FormConversion.GetNativeAmountForUsage(volIng, volIng_UnitUsage);
       var volIng_WeightAmt = FormConversion.GetNativeAmountForUsage(volIng, volIng_WeightUsage);
@@ -94,14 +149,37 @@ public class UnitConverterTest
       Assert.AreEqual(Units.Teaspoon, volIng_WeightAmt.Unit);
 
       //Form conversions (Weight ingredients)
-      var weightIng = new Ingredient() {ConversionType = UnitType.Weight}; //Ingredient sold by weight
-      var weightIng_UnitForm = new IngredientForm() {ConversionMultiplier = 1, FormUnitType = Units.Unit, FormAmount = new Amount(100, Units.Gram)};
-      var weightIng_VolForm = new IngredientForm() {ConversionMultiplier = 1, FormUnitType = Units.Cup, FormAmount = new Amount(50, Units.Gram)};
+      var weightIng = new Ingredient() { ConversionType = UnitType.Weight }; //Ingredient sold by weight
+      var weightIng_UnitForm = new IngredientForm()
+      {
+         ConversionMultiplier = 1,
+         FormUnitType = Units.Unit,
+         FormAmount = new Amount(100, Units.Gram),
+      };
+      var weightIng_VolForm = new IngredientForm()
+      {
+         ConversionMultiplier = 1,
+         FormUnitType = Units.Cup,
+         FormAmount = new Amount(50, Units.Gram),
+      };
 
-      var weightIng_UnitUsage = new IngredientUsage() {Amount = new Amount(5, Units.Unit), Form = weightIng_UnitForm, Ingredient = weightIng};
-      var weightIng_VolUsage = new IngredientUsage() {Amount = new Amount(144, Units.Teaspoon), Form = weightIng_VolForm, Ingredient = weightIng}; //3 cups
+      var weightIng_UnitUsage = new IngredientUsage()
+      {
+         Amount = new Amount(5, Units.Unit),
+         Form = weightIng_UnitForm,
+         Ingredient = weightIng,
+      };
+      var weightIng_VolUsage = new IngredientUsage()
+      {
+         Amount = new Amount(144, Units.Teaspoon),
+         Form = weightIng_VolForm,
+         Ingredient = weightIng,
+      }; //3 cups
 
-      var weightIng_UnitAmt = FormConversion.GetNativeAmountForUsage(weightIng, weightIng_UnitUsage);
+      var weightIng_UnitAmt = FormConversion.GetNativeAmountForUsage(
+         weightIng,
+         weightIng_UnitUsage
+      );
       var weightIng_VolAmt = FormConversion.GetNativeAmountForUsage(weightIng, weightIng_VolUsage);
 
       Assert.AreEqual(500.0f, weightIng_UnitAmt.SizeHigh);

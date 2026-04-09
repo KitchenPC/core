@@ -21,11 +21,7 @@ public class PrepLoader : ISynonymLoader<PrepNode>
       var forms = session.QueryOver<NlpFormSynonyms>().Select(p => p.Name).List<String>();
       var preps = session.QueryOver<NlpPrepNotes>().Select(p => p.Name).List<String>();
 
-      var ret = forms
-         .Concat(preps)
-         .Distinct()
-         .Select(p => new PrepNode(p))
-         .ToList();
+      var ret = forms.Concat(preps).Distinct().Select(p => new PrepNode(p)).ToList();
 
       return ret;
    }

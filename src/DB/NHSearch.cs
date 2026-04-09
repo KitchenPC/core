@@ -28,16 +28,19 @@ public class NHSearch : ISearchProvider
       using var session = adapter.GetSession();
       Recipes recipe = null;
 
-      var q = session.QueryOver<Recipes>(() => recipe)
-         .Where(p => !p.Hidden);
+      var q = session.QueryOver<Recipes>(() => recipe).Where(p => !p.Hidden);
 
       if (!String.IsNullOrWhiteSpace(query.Keywords)) // Add keyword search
       {
          q = q.Where(
             Restrictions.Or(
                Restrictions.InsensitiveLike("Title", String.Format("%{0}%", query.Keywords.Trim())),
-               Restrictions.InsensitiveLike("Description", String.Format("%{0}%", query.Keywords.Trim()))
-            ));
+               Restrictions.InsensitiveLike(
+                  "Description",
+                  String.Format("%{0}%", query.Keywords.Trim())
+               )
+            )
+         );
       }
 
       if (query.Time.MaxPrep.HasValue)
@@ -52,35 +55,55 @@ public class NHSearch : ISearchProvider
 
       if (query.Rating > 0)
       {
-         q = q.Where(p => p.Rating >= (int) query.Rating.Value);
+         q = q.Where(p => p.Rating >= (int)query.Rating.Value);
       }
 
       if (query.Include != null && query.Include.Length > 0) // Add ingredients to include
       {
          // Create a sub-query for ingredients to include
-         q = q.WithSubquery
-            .WhereExists(QueryOver.Of<RecipeIngredients>()
+         q = q.WithSubquery.WhereExists(
+            QueryOver
+               .Of<RecipeIngredients>()
                .Where(item => item.Recipe.RecipeId == recipe.RecipeId)
-               .Where(Restrictions.InG("Ingredient", query.Include.Select(Ingredients.FromId).ToArray()))
-               .Select(i => i.RecipeIngredientId).Take(1));
+               .Where(
+                  Restrictions.InG("Ingredient", query.Include.Select(Ingredients.FromId).ToArray())
+               )
+               .Select(i => i.RecipeIngredientId)
+               .Take(1)
+         );
       }
 
       if (query.Exclude != null && query.Exclude.Length > 0) // Add ingredients to exclude
       {
          // Create a sub-query for ingredients to exclude
-         q = q.WithSubquery
-            .WhereNotExists(QueryOver.Of<RecipeIngredients>()
+         q = q.WithSubquery.WhereNotExists(
+            QueryOver
+               .Of<RecipeIngredients>()
                .Where(item => item.Recipe.RecipeId == recipe.RecipeId)
-               .Where(Restrictions.InG("Ingredient", query.Exclude.Select(Ingredients.FromId).ToArray()))
-               .Select(i => i.RecipeIngredientId).Take(1));
+               .Where(
+                  Restrictions.InG("Ingredient", query.Exclude.Select(Ingredients.FromId).ToArray())
+               )
+               .Select(i => i.RecipeIngredientId)
+               .Take(1)
+         );
       }
 
-      if (query.Photos == RecipeQuery.PhotoFilter.Photo || query.Photos == RecipeQuery.PhotoFilter.HighRes)
+      if (
+         query.Photos == RecipeQuery.PhotoFilter.Photo
+         || query.Photos == RecipeQuery.PhotoFilter.HighRes
+      )
       {
          q = q.Where(Restrictions.IsNotNull("ImageUrl"));
       }
 
-      if (query.Diet || query.Nutrition || query.Skill || query.Taste || (query.Meal != MealFilter.All) || (query.Photos == RecipeQuery.PhotoFilter.HighRes)) //Need to search in metadata
+      if (
+         query.Diet
+         || query.Nutrition
+         || query.Skill
+         || query.Taste
+         || (query.Meal != MealFilter.All)
+         || (query.Photos == RecipeQuery.PhotoFilter.HighRes)
+      ) //Need to search in metadata
       {
          RecipeMetadata metadata = null;
          q = q.JoinAlias(r => r.RecipeMetadata, () => metadata);
@@ -88,47 +111,75 @@ public class NHSearch : ISearchProvider
          //Meal
          if (query.Meal != MealFilter.All)
          {
-            if (query.Meal == MealFilter.Breakfast) q = q.Where(() => metadata.MealBreakfast);
-            if (query.Meal == MealFilter.Dessert) q = q.Where(() => metadata.MealDessert);
-            if (query.Meal == MealFilter.Dinner) q = q.Where(() => metadata.MealDinner);
-            if (query.Meal == MealFilter.Lunch) q = q.Where(() => metadata.MealLunch);
+            if (query.Meal == MealFilter.Breakfast)
+               q = q.Where(() => metadata.MealBreakfast);
+            if (query.Meal == MealFilter.Dessert)
+               q = q.Where(() => metadata.MealDessert);
+            if (query.Meal == MealFilter.Dinner)
+               q = q.Where(() => metadata.MealDinner);
+            if (query.Meal == MealFilter.Lunch)
+               q = q.Where(() => metadata.MealLunch);
          }
 
          //High-res photos
-         if (query.Photos == RecipeQuery.PhotoFilter.HighRes) q = q.Where(() => metadata.PhotoRes >= 1024*768);
+         if (query.Photos == RecipeQuery.PhotoFilter.HighRes)
+            q = q.Where(() => metadata.PhotoRes >= 1024 * 768);
 
          //Diet
-         if (query.Diet.GlutenFree) q = q.Where(() => metadata.DietGlutenFree);
-         if (query.Diet.NoAnimals) q = q.Where(() => metadata.DietNoAnimals);
-         if (query.Diet.NoMeat) q = q.Where(() => metadata.DietNomeat);
-         if (query.Diet.NoPork) q = q.Where(() => metadata.DietNoPork);
-         if (query.Diet.NoRedMeat) q = q.Where(() => metadata.DietNoRedMeat);
+         if (query.Diet.GlutenFree)
+            q = q.Where(() => metadata.DietGlutenFree);
+         if (query.Diet.NoAnimals)
+            q = q.Where(() => metadata.DietNoAnimals);
+         if (query.Diet.NoMeat)
+            q = q.Where(() => metadata.DietNomeat);
+         if (query.Diet.NoPork)
+            q = q.Where(() => metadata.DietNoPork);
+         if (query.Diet.NoRedMeat)
+            q = q.Where(() => metadata.DietNoRedMeat);
 
          //Nutrition
-         if (query.Nutrition.LowCalorie) q = q.Where(() => metadata.NutritionLowCalorie);
-         if (query.Nutrition.LowCarb) q = q.Where(() => metadata.NutritionLowCarb);
-         if (query.Nutrition.LowFat) q = q.Where(() => metadata.NutritionLowFat);
-         if (query.Nutrition.LowSodium) q = q.Where(() => metadata.NutritionLowSodium);
-         if (query.Nutrition.LowSugar) q = q.Where(() => metadata.NutritionLowSugar);
+         if (query.Nutrition.LowCalorie)
+            q = q.Where(() => metadata.NutritionLowCalorie);
+         if (query.Nutrition.LowCarb)
+            q = q.Where(() => metadata.NutritionLowCarb);
+         if (query.Nutrition.LowFat)
+            q = q.Where(() => metadata.NutritionLowFat);
+         if (query.Nutrition.LowSodium)
+            q = q.Where(() => metadata.NutritionLowSodium);
+         if (query.Nutrition.LowSugar)
+            q = q.Where(() => metadata.NutritionLowSugar);
 
          //Skill
-         if (query.Skill.Common) q = q.Where(() => metadata.SkillCommon).OrderBy(() => metadata.Commonality).Desc();
-         if (query.Skill.Easy) q = q.Where(() => metadata.SkillEasy);
-         if (query.Skill.Quick) q = q.Where(() => metadata.SkillQuick);
+         if (query.Skill.Common)
+            q = q.Where(() => metadata.SkillCommon).OrderBy(() => metadata.Commonality).Desc();
+         if (query.Skill.Easy)
+            q = q.Where(() => metadata.SkillEasy);
+         if (query.Skill.Quick)
+            q = q.Where(() => metadata.SkillQuick);
 
          //Taste
          if (query.Taste.MildToSpicy != RecipeQuery.SpicinessLevel.Medium)
          {
-            q = query.Taste.MildToSpicy < RecipeQuery.SpicinessLevel.Medium
-               ? q.Where(() => metadata.TasteMildToSpicy <= query.Taste.Spiciness).OrderBy(() => metadata.TasteMildToSpicy).Asc()
-               : q.Where(() => metadata.TasteMildToSpicy >= query.Taste.Spiciness).OrderBy(() => metadata.TasteMildToSpicy).Desc();
+            q =
+               query.Taste.MildToSpicy < RecipeQuery.SpicinessLevel.Medium
+                  ? q.Where(() => metadata.TasteMildToSpicy <= query.Taste.Spiciness)
+                     .OrderBy(() => metadata.TasteMildToSpicy)
+                     .Asc()
+                  : q.Where(() => metadata.TasteMildToSpicy >= query.Taste.Spiciness)
+                     .OrderBy(() => metadata.TasteMildToSpicy)
+                     .Desc();
          }
 
          if (query.Taste.SavoryToSweet != RecipeQuery.SweetnessLevel.Medium)
          {
-            q = query.Taste.SavoryToSweet < RecipeQuery.SweetnessLevel.Medium
-               ? q.Where(() => metadata.TasteSavoryToSweet <= query.Taste.Sweetness).OrderBy(() => metadata.TasteSavoryToSweet).Asc()
-               : q.Where(() => metadata.TasteSavoryToSweet >= query.Taste.Sweetness).OrderBy(() => metadata.TasteSavoryToSweet).Desc();
+            q =
+               query.Taste.SavoryToSweet < RecipeQuery.SweetnessLevel.Medium
+                  ? q.Where(() => metadata.TasteSavoryToSweet <= query.Taste.Sweetness)
+                     .OrderBy(() => metadata.TasteSavoryToSweet)
+                     .Asc()
+                  : q.Where(() => metadata.TasteSavoryToSweet >= query.Taste.Sweetness)
+                     .OrderBy(() => metadata.TasteSavoryToSweet)
+                     .Desc();
          }
       }
 
@@ -152,7 +203,9 @@ public class NHSearch : ISearchProvider
             break;
       }
 
-      var results = (query.Direction == RecipeQuery.SortDirection.Descending ? orderBy.Desc() : orderBy.Asc())
+      var results = (
+         query.Direction == RecipeQuery.SortDirection.Descending ? orderBy.Desc() : orderBy.Asc()
+      )
          .Skip(query.Offset)
          .Take(100)
          .List();
@@ -160,7 +213,7 @@ public class NHSearch : ISearchProvider
       return new SearchResults
       {
          Briefs = results.Select(r => r.AsRecipeBrief()).ToArray(),
-         TotalCount = results.Count // TODO: This needs to be the total matches, not the returned matches
+         TotalCount = results.Count, // TODO: This needs to be the total matches, not the returned matches
       };
    }
 }

@@ -11,6 +11,10 @@ internal class TestPrepLoader : ISynonymLoader<PrepNode>
    public IEnumerable<PrepNode> LoadSynonyms() =>
       new PrepNode[]
       {
-         "sliced", "shredded", "crumbled", "diced", "chopped" //Test prep nodes (approved prep notes for any ingredient)
+         "sliced",
+         "shredded",
+         "crumbled",
+         "diced",
+         "chopped", //Test prep nodes (approved prep notes for any ingredient)
       };
 }

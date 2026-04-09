@@ -15,9 +15,7 @@ public class NlpFormSynonymsMap : ClassMap<NlpFormSynonyms>
 {
    public NlpFormSynonymsMap()
    {
-      Id(x => x.FormSynonymId, "id")
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.FormSynonymId, "id").GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.Name).Length(50).UniqueKey("FormName");
 

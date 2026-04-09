@@ -8,11 +8,7 @@ public class IngredientFormsCollection
 
    public IngredientForm[] Forms
    {
-      get
-      {
-         return _forms.ToArray();
-      }
-
+      get { return _forms.ToArray(); }
       set
       {
          _forms.Clear();

@@ -15,9 +15,7 @@ public class NlpUnitSynonymsMap : ClassMap<NlpUnitSynonyms>
 {
    public NlpUnitSynonymsMap()
    {
-      Id(x => x.UnitSynonymId, "id")
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.UnitSynonymId, "id").GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.Name).Length(50).UniqueKey("UniquePair");
 

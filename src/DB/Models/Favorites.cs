@@ -15,9 +15,7 @@ public class FavoritesMap : ClassMap<Favorites>
 {
    public FavoritesMap()
    {
-      Id(x => x.FavoriteId)
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.FavoriteId).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.UserId).Not.Nullable().Index("IDX_Favorites_UserId");
 

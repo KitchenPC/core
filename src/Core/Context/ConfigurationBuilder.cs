@@ -3,7 +3,8 @@
 namespace KitchenPC.Core.Context;
 
 /// <summary>Fluent interface to create configuration objects</summary>
-public class ConfigurationBuilder<T> : IConfigurationBuilder<IConfiguration<T>> where T : IKPCContext
+public class ConfigurationBuilder<T> : IConfigurationBuilder<IConfiguration<T>>
+   where T : IKPCContext
 {
    private readonly IConfiguration<T> configuration;
 

@@ -4,7 +4,7 @@ public enum MatchPrecision
 {
    None,
    Partial,
-   Exact
+   Exact,
 };
 
 public enum MatchResult
@@ -15,13 +15,13 @@ public enum MatchResult
    UnknownForm,
    IncompatibleForm,
    PartialMatch,
-   Match
+   Match,
 }
 
 public enum AnomalousResult
 {
    Fallthrough,
-   AutoConvert
+   AutoConvert,
 }
 
 public enum TraceLevel
@@ -30,5 +30,5 @@ public enum TraceLevel
    Error,
    Info,
    Fatal,
-   Warn
+   Warn,
 }

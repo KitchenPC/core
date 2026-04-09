@@ -17,8 +17,8 @@ public class StaticUnitLoader : ISynonymLoader<UnitNode>
 
    public IEnumerable<UnitNode> LoadSynonyms()
    {
-      var unitSyn = store.NlpUnitSynonyms
-         .OrderBy(p => p.Name)
+      var unitSyn = store
+         .NlpUnitSynonyms.OrderBy(p => p.Name)
          .Select(p => p.Name)
          .Distinct()
          .ToList();
@@ -36,9 +36,8 @@ public class StaticUnitLoader : ISynonymLoader<UnitNode>
       {
          var form = forms[syn.FormId];
 
-         pairings.Add(new NameIngredientPair(
-               syn.Name.Trim(),
-               syn.IngredientId),
+         pairings.Add(
+            new NameIngredientPair(syn.Name.Trim(), syn.IngredientId),
             new IngredientForm(
                form.IngredientFormId,
                form.IngredientId,
@@ -46,7 +45,9 @@ public class StaticUnitLoader : ISynonymLoader<UnitNode>
                form.FormDisplayName,
                form.UnitName,
                form.ConvMultiplier,
-               new Amount(form.FormAmount, form.FormUnit)));
+               new Amount(form.FormAmount, form.FormUnit)
+            )
+         );
       }
 
       return pairings;

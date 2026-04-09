@@ -11,7 +11,8 @@ public class DBContextBuilder : IConfigurationBuilder<DBContext>
       this.context = context;
    }
 
-   public DBContextBuilder Adapter<T>(IConfigurationBuilder<T> adapter) where T : IDBAdapter
+   public DBContextBuilder Adapter<T>(IConfigurationBuilder<T> adapter)
+      where T : IDBAdapter
    {
       context.Adapter = adapter.Create();
       return this;

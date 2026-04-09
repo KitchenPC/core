@@ -9,15 +9,15 @@ internal class MockNoRatingsUserProfile : IUserProfile
 {
    public MockNoRatingsUserProfile()
    {
-      Ratings = new RecipeRating[] {};
+      Ratings = new RecipeRating[] { };
 
       Pantry = new PantryItem[]
       {
-         new() {IngredientId = ModelerTests.ING_EGGS, Amt = 6}, //6 eggs
-         new() {IngredientId = ModelerTests.ING_MILK, Amt = 16}, //16 cups of milk (1 gallon)
-         new() {IngredientId = ModelerTests.ING_FLOUR, Amt = 8}, //8oz flour
-         new() {IngredientId = ModelerTests.ING_CHEESE, Amt = 16}, //16oz cheese
-         new() {IngredientId = ModelerTests.ING_CHICKEN, Amt = 16} //16oz chicken
+         new() { IngredientId = ModelerTests.ING_EGGS, Amt = 6 }, //6 eggs
+         new() { IngredientId = ModelerTests.ING_MILK, Amt = 16 }, //16 cups of milk (1 gallon)
+         new() { IngredientId = ModelerTests.ING_FLOUR, Amt = 8 }, //8oz flour
+         new() { IngredientId = ModelerTests.ING_CHEESE, Amt = 16 }, //16oz cheese
+         new() { IngredientId = ModelerTests.ING_CHICKEN, Amt = 16 }, //16oz chicken
       };
    }
 
@@ -27,13 +27,13 @@ internal class MockNoRatingsUserProfile : IUserProfile
 
    public PantryItem[] Pantry { get; }
 
-   public Guid[] FavoriteIngredients => new Guid[] {}; //Engine will tend to favor recipes with these ingredients
+   public Guid[] FavoriteIngredients => new Guid[] { }; //Engine will tend to favor recipes with these ingredients
 
    public RecipeTags FavoriteTags => 0; //Engine will tend to favor recipes with these tags
 
    public Guid? AvoidRecipe => null;
 
-   public Guid[] BlacklistedIngredients => new[] {ModelerTests.ING_MILK}; //Engine will never suggest any recipe with these ingredients, no matter what.
+   public Guid[] BlacklistedIngredients => new[] { ModelerTests.ING_MILK }; //Engine will never suggest any recipe with these ingredients, no matter what.
 
    public RecipeTags AllowedTags => null; //Engine will never suggest any recipe that does not contain at least one of these tags.
 }

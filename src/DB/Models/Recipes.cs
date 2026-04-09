@@ -33,23 +33,17 @@ public class Recipes
          CookTime = CookTime,
          PrepTime = PrepTime,
          Description = Description,
-         Title = Title
+         Title = Title,
       };
 
-   public static Recipes FromId(Guid id) =>
-      new()
-      {
-         RecipeId = id
-      };
+   public static Recipes FromId(Guid id) => new() { RecipeId = id };
 }
 
 public class RecipesMap : ClassMap<Recipes>
 {
    public RecipesMap()
    {
-      Id(x => x.RecipeId)
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.RecipeId).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.CookTime).Index("IDX_Recipes_Cooktime");
       Map(x => x.Steps).Length(10000);

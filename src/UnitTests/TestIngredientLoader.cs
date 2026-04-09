@@ -32,31 +32,65 @@ internal class TestIngredientLoader : ISynonymLoader<IngredientNode>
    {
       var eggPairings = new DefaultPairings()
       {
-         Unit = new IngredientForm(FORM_EGG_UNIT, ING_EGGS, Units.Unit, null, "egg/eggs", 0, null)
+         Unit = new IngredientForm(FORM_EGG_UNIT, ING_EGGS, Units.Unit, null, "egg/eggs", 0, null),
       };
 
       var bananaPairings = new DefaultPairings()
       {
-         Unit = new IngredientForm(FORM_BANANA_UNIT, ING_BANANAS, Units.Unit, null, "banana/bananas", 0, null)
+         Unit = new IngredientForm(
+            FORM_BANANA_UNIT,
+            ING_BANANAS,
+            Units.Unit,
+            null,
+            "banana/bananas",
+            0,
+            null
+         ),
       };
 
       var milkPairings = new DefaultPairings()
       {
-         Volume = new IngredientForm(FORM_MILK_VOLUME, ING_MILK, Units.Cup, null, null, 0, null)
+         Volume = new IngredientForm(FORM_MILK_VOLUME, ING_MILK, Units.Cup, null, null, 0, null),
       };
 
       var flourPairings = new DefaultPairings()
       {
          Volume = new IngredientForm(FORM_FLOUR_VOLUME, ING_FLOUR, Units.Cup, null, null, 0, null),
-         Weight = new IngredientForm(FORM_FLOUR_WEIGHT, ING_FLOUR, Units.Ounce, null, null, 0, null)
+         Weight = new IngredientForm(
+            FORM_FLOUR_WEIGHT,
+            ING_FLOUR,
+            Units.Ounce,
+            null,
+            null,
+            0,
+            null
+         ),
       };
 
-      var cheese = new IngredientNode(ING_CHEESE, "cheddar cheese", UnitType.Weight, 0, DefaultPairings.Empty);
+      var cheese = new IngredientNode(
+         ING_CHEESE,
+         "cheddar cheese",
+         UnitType.Weight,
+         0,
+         DefaultPairings.Empty
+      );
       var eggs = new IngredientNode(ING_EGGS, "eggs", UnitType.Unit, 0, eggPairings);
       var bananas = new IngredientNode(ING_BANANAS, "bananas", UnitType.Weight, 0, bananaPairings);
       var milk = new IngredientNode(ING_MILK, "milk", UnitType.Volume, 0, milkPairings);
-      var flour = new IngredientNode(ING_FLOUR, "all-purpose flour", UnitType.Weight, 0, flourPairings);
-      var lettuce = new IngredientNode(ING_LETTUCE, "lettuce", UnitType.Weight, 0, DefaultPairings.Empty);
+      var flour = new IngredientNode(
+         ING_FLOUR,
+         "all-purpose flour",
+         UnitType.Weight,
+         0,
+         flourPairings
+      );
+      var lettuce = new IngredientNode(
+         ING_LETTUCE,
+         "lettuce",
+         UnitType.Weight,
+         0,
+         DefaultPairings.Empty
+      );
 
       //Add in some test ingredients, but this will eventually come from a massive Synonyms database
       //DB will first load ShoppingIngredients and create root nodes for all of those, with default form data, then will load IngredientSynonyms for all aliases
@@ -70,14 +104,13 @@ internal class TestIngredientLoader : ISynonymLoader<IngredientNode>
          milk,
          flour,
          lettuce,
-
          //Load any aliases for any ingredients
          new(eggs, "egg", null),
          new(bananas, "banana", null),
          new(bananas, "ripe banana", "ripe"),
          new(bananas, "ripe bananas", "ripe"),
          new(milk, "2% milk", null),
-         new(flour, "flour", null)
+         new(flour, "flour", null),
       };
 
       return ings;

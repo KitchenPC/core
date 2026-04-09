@@ -27,14 +27,16 @@ public class StaticModelerLoader : IModelerLoader
 
       // Initialize Recipe Graph
       var metadata = store.GetIndexedRecipeMetadata();
-      var graph = (from r in store.Recipes
+      var graph = (
+         from r in store.Recipes
          join m in metadata on r.RecipeId equals m.Key
          select new RecipeBinding
          {
             Id = r.RecipeId,
             Rating = Convert.ToByte(r.Rating),
-            Tags = RecipeMetadata.ToRecipeTags(m.Value)
-         });
+            Tags = RecipeMetadata.ToRecipeTags(m.Value),
+         }
+      );
 
       return (recipedata = graph);
    }
@@ -46,7 +48,8 @@ public class StaticModelerLoader : IModelerLoader
 
       var forms = store.GetIndexedIngredientForms();
       var ingredients = store.GetIndexedIngredients();
-      var graph = (from ri in store.RecipeIngredients
+      var graph = (
+         from ri in store.RecipeIngredients
          join f in forms on ri.IngredientFormId equals f.Key
          join i in ingredients on ri.IngredientId equals i.Key
          where i.Key != ShoppingList.GUID_WATER
@@ -60,7 +63,8 @@ public class StaticModelerLoader : IModelerLoader
             f.Value.UnitType,
             f.Value.FormAmount,
             f.Value.FormUnit
-         ));
+         )
+      );
 
       return (ingredientdata = graph);
    }
@@ -70,13 +74,15 @@ public class StaticModelerLoader : IModelerLoader
       if (ratingdata != null)
          return ratingdata;
 
-      var graph = (from r in store.RecipeRatings
+      var graph = (
+         from r in store.RecipeRatings
          select new RatingBinding
          {
             RecipeId = r.RecipeId,
             UserId = r.UserId,
-            Rating = r.Rating
-         });
+            Rating = r.Rating,
+         }
+      );
 
       return (ratingdata = graph);
    }

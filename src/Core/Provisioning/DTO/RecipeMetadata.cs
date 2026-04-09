@@ -43,23 +43,22 @@ public class RecipeMetadata
 
    public static RecipeTags ToRecipeTags(RecipeMetadata metadata)
    {
-      return
-         (metadata.DietGlutenFree ? 1 << 0 : 0) +
-         (metadata.DietNoAnimals ? 1 << 1 : 0) +
-         (metadata.DietNomeat ? 1 << 2 : 0) +
-         (metadata.DietNoPork ? 1 << 3 : 0) +
-         (metadata.DietNoRedMeat ? 1 << 4 : 0) +
-         (metadata.MealBreakfast ? 1 << 5 : 0) +
-         (metadata.MealDessert ? 1 << 6 : 0) +
-         (metadata.MealDinner ? 1 << 7 : 0) +
-         (metadata.MealLunch ? 1 << 8 : 0) +
-         (metadata.NutritionLowCalorie ? 1 << 9 : 0) +
-         (metadata.NutritionLowCarb ? 1 << 10 : 0) +
-         (metadata.NutritionLowFat ? 1 << 11 : 0) +
-         (metadata.NutritionLowSodium ? 1 << 12 : 0) +
-         (metadata.NutritionLowSugar ? 1 << 13 : 0) +
-         (metadata.SkillCommon ? 1 << 14 : 0) +
-         (metadata.SkillEasy ? 1 << 15 : 0) +
-         (metadata.SkillQuick ? 1 << 16 : 0);
+      return (metadata.DietGlutenFree ? 1 << 0 : 0)
+         + (metadata.DietNoAnimals ? 1 << 1 : 0)
+         + (metadata.DietNomeat ? 1 << 2 : 0)
+         + (metadata.DietNoPork ? 1 << 3 : 0)
+         + (metadata.DietNoRedMeat ? 1 << 4 : 0)
+         + (metadata.MealBreakfast ? 1 << 5 : 0)
+         + (metadata.MealDessert ? 1 << 6 : 0)
+         + (metadata.MealDinner ? 1 << 7 : 0)
+         + (metadata.MealLunch ? 1 << 8 : 0)
+         + (metadata.NutritionLowCalorie ? 1 << 9 : 0)
+         + (metadata.NutritionLowCarb ? 1 << 10 : 0)
+         + (metadata.NutritionLowFat ? 1 << 11 : 0)
+         + (metadata.NutritionLowSodium ? 1 << 12 : 0)
+         + (metadata.NutritionLowSugar ? 1 << 13 : 0)
+         + (metadata.SkillCommon ? 1 << 14 : 0)
+         + (metadata.SkillEasy ? 1 << 15 : 0)
+         + (metadata.SkillQuick ? 1 << 16 : 0);
    }
 }

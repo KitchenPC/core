@@ -29,14 +29,10 @@ public class Ingredients
          Name = DisplayName,
          UnitName = UnitName,
          UnitWeight = UnitWeight,
-         Metadata = Metadata?.AsIngredientMetadata()
+         Metadata = Metadata?.AsIngredientMetadata(),
       };
 
-   public static Ingredients FromId(Guid id) =>
-      new()
-      {
-         IngredientId = id
-      };
+   public static Ingredients FromId(Guid id) => new() { IngredientId = id };
 }
 
 public class IngredientsMap : ClassMap<Ingredients>
@@ -45,9 +41,7 @@ public class IngredientsMap : ClassMap<Ingredients>
    {
       Table("ShoppingIngredients");
 
-      Id(x => x.IngredientId)
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.IngredientId).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.FoodGroup).Length(4);
       Map(x => x.UsdaId).Length(5);
@@ -55,7 +49,11 @@ public class IngredientsMap : ClassMap<Ingredients>
       Map(x => x.ManufacturerName).Length(65);
       Map(x => x.ConversionType).Not.Nullable();
       Map(x => x.UnitWeight).Not.Nullable().Default("0");
-      Map(x => x.DisplayName).Not.Nullable().Length(200).Unique().Index("IDX_Ingredients_DisplayName");
+      Map(x => x.DisplayName)
+         .Not.Nullable()
+         .Length(200)
+         .Unique()
+         .Index("IDX_Ingredients_DisplayName");
       Map(x => x.UsdaDesc).Length(200);
 
       HasMany(x => x.Forms).KeyColumn("IngredientId");

@@ -20,9 +20,7 @@ public class StaticToken : IGrammar
    /// <returns></returns>
    public bool Read(Stream stream, MatchData matchdata)
    {
-      while (stream.ReadByte() == ' ')
-      {
-      } //Burn off any leading spaces, they should not affect the grammar
+      while (stream.ReadByte() == ' ') { } //Burn off any leading spaces, they should not affect the grammar
       stream.Seek(-1, SeekOrigin.Current); //Set stream to first character after any whitespace (kinda a hack, maybe a better way to write this)
 
       //Read the stream to make sure it matches the complete token, return false if not

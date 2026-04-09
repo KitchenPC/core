@@ -14,7 +14,29 @@ public class NumericVocab : SynonymTree<NumericNode>
          synonymMap = new Dictionary<string, NumericNode>();
 
          //Basic numbers, we can add more if needed
-         string[] numbers = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"};
+         string[] numbers =
+         {
+            "one",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine",
+            "ten",
+            "eleven",
+            "twelve",
+            "thirteen",
+            "fourteen",
+            "fifteen",
+            "sixteen",
+            "seventeen",
+            "eighteen",
+            "nineteen",
+            "twenty",
+         };
          for (var i = 0; i < numbers.Length; i++)
          {
             IndexString(numbers[i], new NumericNode(numbers[i], i + 1));
@@ -32,7 +54,7 @@ public class NumericVocab : SynonymTree<NumericNode>
             new NumericNode("a dozen", 12),
             new NumericNode("one dozen", 12),
             new NumericNode("a couple", 2),
-            new NumericNode("a couple of", 2)
+            new NumericNode("a couple of", 2),
          };
 
          foreach (var t in tokens)

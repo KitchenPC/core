@@ -27,10 +27,13 @@ public static class FormConversion
          return amt;
       }
 
-      if (Unit.GetConvType(usage.Form.FormAmount.Unit) == UnitType.Weight && usage.Form.FormAmount.SizeHigh > 0) //This form has a gram weight
+      if (
+         Unit.GetConvType(usage.Form.FormAmount.Unit) == UnitType.Weight
+         && usage.Form.FormAmount.SizeHigh > 0
+      ) //This form has a gram weight
       {
          var amt = UnitConverter.Convert(usage.Amount, usage.Form.FormUnitType);
-         return new Amount(amt.SizeHigh*usage.Form.FormAmount.SizeHigh, Units.Gram);
+         return new Amount(amt.SizeHigh * usage.Form.FormAmount.SizeHigh, Units.Gram);
       }
 
       return null;
@@ -49,21 +52,28 @@ public static class FormConversion
             if (usageConvType == UnitType.Unit) //Unit to unit version
             {
                var equivGrams = UnitConverter.Convert(usage.Form.FormAmount, Units.Gram); //Grams this form is equivelent to
-               amount.SizeHigh = (float) Math.Ceiling((equivGrams.SizeHigh*usage.Amount.SizeHigh)/ingredient.UnitWeight);
+               amount.SizeHigh = (float)
+                  Math.Ceiling(
+                     (equivGrams.SizeHigh * usage.Amount.SizeHigh) / ingredient.UnitWeight
+                  );
                return amount;
             }
 
             if (usageConvType == UnitType.Weight) //Weight to unit conversion
             {
                var grams = UnitConverter.Convert(usage.Amount, Units.Gram);
-               amount.SizeHigh = (float) Math.Ceiling(grams.SizeHigh/ingredient.UnitWeight);
+               amount.SizeHigh = (float)Math.Ceiling(grams.SizeHigh / ingredient.UnitWeight);
                return amount;
             }
 
             if (usageConvType == UnitType.Volume) //Volume to unit conversion
             {
                var likeAmount = UnitConverter.Convert(usage.Amount, usage.Form.FormUnitType);
-               amount.SizeHigh = (float) Math.Ceiling((likeAmount.SizeHigh*usage.Form.FormAmount.SizeHigh)/usage.Ingredient.UnitWeight); //Round up when dealing with whole units
+               amount.SizeHigh = (float)
+                  Math.Ceiling(
+                     (likeAmount.SizeHigh * usage.Form.FormAmount.SizeHigh)
+                        / usage.Ingredient.UnitWeight
+                  ); //Round up when dealing with whole units
                return amount;
             }
             break;
@@ -72,14 +82,14 @@ public static class FormConversion
 
             if (usageConvType == UnitType.Unit) //Unit to weight conversion
             {
-               amount.SizeHigh = usage.Amount.SizeHigh*usage.Form.FormAmount.SizeHigh; //NOTE: FormAmount will always be in Grams when Ingredient ConvType is weight
+               amount.SizeHigh = usage.Amount.SizeHigh * usage.Form.FormAmount.SizeHigh; //NOTE: FormAmount will always be in Grams when Ingredient ConvType is weight
                return amount;
             }
 
             if (usageConvType == UnitType.Volume) //Volume to weight conversion
             {
                var likeAmount = UnitConverter.Convert(usage.Amount, usage.Form.FormUnitType);
-               amount.SizeHigh = likeAmount.SizeHigh*usage.Form.FormAmount.SizeHigh; //NOTE: FormAmount will always be in Grams when Ingredient ConvType is weight
+               amount.SizeHigh = likeAmount.SizeHigh * usage.Form.FormAmount.SizeHigh; //NOTE: FormAmount will always be in Grams when Ingredient ConvType is weight
                return amount;
             }
 
@@ -89,14 +99,14 @@ public static class FormConversion
 
             if (usageConvType == UnitType.Unit) //Unit to volume conversion
             {
-               amount.SizeHigh = usage.Amount.SizeHigh*usage.Form.FormAmount.SizeHigh; //NOTE: FormAmount will always be in tsp when Ingredient ConvType is volume
+               amount.SizeHigh = usage.Amount.SizeHigh * usage.Form.FormAmount.SizeHigh; //NOTE: FormAmount will always be in tsp when Ingredient ConvType is volume
                return amount;
             }
 
             if (usageConvType == UnitType.Weight) //Weight to volume conversion
             {
                var likeAmount = UnitConverter.Convert(usage.Amount, usage.Form.FormUnitType);
-               amount.SizeHigh = likeAmount.SizeHigh*usage.Form.FormAmount.SizeHigh; //NOTE: FormAmount will always be in teaspoons when Ingredient ConvType is Volume
+               amount.SizeHigh = likeAmount.SizeHigh * usage.Form.FormAmount.SizeHigh; //NOTE: FormAmount will always be in teaspoons when Ingredient ConvType is Volume
                return amount;
             }
 

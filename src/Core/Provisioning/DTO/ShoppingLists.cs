@@ -11,10 +11,6 @@ public class ShoppingLists
 
    public static ShoppingList ToShoppingList(ShoppingLists dtoList)
    {
-      return new ShoppingList
-      {
-         Id = dtoList.ShoppingListId,
-         Title = dtoList.Title
-      };
+      return new ShoppingList { Id = dtoList.ShoppingListId, Title = dtoList.Title };
    }
 }

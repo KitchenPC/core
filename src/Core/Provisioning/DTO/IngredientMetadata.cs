@@ -20,7 +20,9 @@ public class IngredientMetadata
    public bool? HasGluten { get; set; }
    public bool? HasAnimal { get; set; }
 
-   public static Core.Ingredients.IngredientMetadata ToIngredientMetadata(IngredientMetadata metadata)
+   public static Core.Ingredients.IngredientMetadata ToIngredientMetadata(
+      IngredientMetadata metadata
+   )
    {
       return new Core.Ingredients.IngredientMetadata
       {
@@ -35,7 +37,7 @@ public class IngredientMetadata
          Spicy = metadata.Spicy,
          Sweet = metadata.Sweet,
          HasGluten = metadata.HasGluten,
-         HasAnimal = metadata.HasAnimal
+         HasAnimal = metadata.HasAnimal,
       };
    }
 }

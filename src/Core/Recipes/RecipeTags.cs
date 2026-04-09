@@ -12,10 +12,7 @@ public class RecipeTags : IEnumerable<RecipeTag>
 
    public static RecipeTags None
    {
-      get
-      {
-         return 0;
-      }
+      get { return 0; }
    }
 
    public RecipeTags()
@@ -29,7 +26,7 @@ public class RecipeTags : IEnumerable<RecipeTag>
       var tags = from t in list.Split(',') select t.Trim();
 
       var ret = new RecipeTags();
-      ret = tags.Aggregate(ret, (current, tag) => current | (RecipeTag) tag);
+      ret = tags.Aggregate(ret, (current, tag) => current | (RecipeTag)tag);
 
       return ret;
    }
@@ -44,18 +41,12 @@ public class RecipeTags : IEnumerable<RecipeTag>
 
    public int Length
    {
-      get
-      {
-         return tags.Count;
-      }
+      get { return tags.Count; }
    }
 
    public RecipeTag this[int index]
    {
-      get
-      {
-         return tags[index];
-      }
+      get { return tags[index]; }
    }
 
    public bool HasTag(RecipeTag tag)
@@ -85,7 +76,7 @@ public class RecipeTags : IEnumerable<RecipeTag>
          return true;
       }
 
-      if ((object) x == null || ((object) y == null))
+      if ((object)x == null || ((object)y == null))
       {
          return false;
       }
@@ -108,23 +99,40 @@ public class RecipeTags : IEnumerable<RecipeTag>
       this.mask = mask;
       tags = new List<RecipeTag>(13);
 
-      if ((this & RecipeTag.GlutenFree) > 0) tags.Add(RecipeTag.GlutenFree);
-      if ((this & RecipeTag.NoAnimals) > 0) tags.Add(RecipeTag.NoAnimals);
-      if ((this & RecipeTag.NoMeat) > 0) tags.Add(RecipeTag.NoMeat);
-      if ((this & RecipeTag.NoPork) > 0) tags.Add(RecipeTag.NoPork);
-      if ((this & RecipeTag.NoRedMeat) > 0) tags.Add(RecipeTag.NoRedMeat);
-      if ((this & RecipeTag.Breakfast) > 0) tags.Add(RecipeTag.Breakfast);
-      if ((this & RecipeTag.Dessert) > 0) tags.Add(RecipeTag.Dessert);
-      if ((this & RecipeTag.Dinner) > 0) tags.Add(RecipeTag.Dinner);
-      if ((this & RecipeTag.Lunch) > 0) tags.Add(RecipeTag.Lunch);
-      if ((this & RecipeTag.LowCalorie) > 0) tags.Add(RecipeTag.LowCalorie);
-      if ((this & RecipeTag.LowCarb) > 0) tags.Add(RecipeTag.LowCarb);
-      if ((this & RecipeTag.LowFat) > 0) tags.Add(RecipeTag.LowFat);
-      if ((this & RecipeTag.LowSodium) > 0) tags.Add(RecipeTag.LowSodium);
-      if ((this & RecipeTag.LowSugar) > 0) tags.Add(RecipeTag.LowSugar);
-      if ((this & RecipeTag.Common) > 0) tags.Add(RecipeTag.Common);
-      if ((this & RecipeTag.Easy) > 0) tags.Add(RecipeTag.Easy);
-      if ((this & RecipeTag.Quick) > 0) tags.Add(RecipeTag.Quick);
+      if ((this & RecipeTag.GlutenFree) > 0)
+         tags.Add(RecipeTag.GlutenFree);
+      if ((this & RecipeTag.NoAnimals) > 0)
+         tags.Add(RecipeTag.NoAnimals);
+      if ((this & RecipeTag.NoMeat) > 0)
+         tags.Add(RecipeTag.NoMeat);
+      if ((this & RecipeTag.NoPork) > 0)
+         tags.Add(RecipeTag.NoPork);
+      if ((this & RecipeTag.NoRedMeat) > 0)
+         tags.Add(RecipeTag.NoRedMeat);
+      if ((this & RecipeTag.Breakfast) > 0)
+         tags.Add(RecipeTag.Breakfast);
+      if ((this & RecipeTag.Dessert) > 0)
+         tags.Add(RecipeTag.Dessert);
+      if ((this & RecipeTag.Dinner) > 0)
+         tags.Add(RecipeTag.Dinner);
+      if ((this & RecipeTag.Lunch) > 0)
+         tags.Add(RecipeTag.Lunch);
+      if ((this & RecipeTag.LowCalorie) > 0)
+         tags.Add(RecipeTag.LowCalorie);
+      if ((this & RecipeTag.LowCarb) > 0)
+         tags.Add(RecipeTag.LowCarb);
+      if ((this & RecipeTag.LowFat) > 0)
+         tags.Add(RecipeTag.LowFat);
+      if ((this & RecipeTag.LowSodium) > 0)
+         tags.Add(RecipeTag.LowSodium);
+      if ((this & RecipeTag.LowSugar) > 0)
+         tags.Add(RecipeTag.LowSugar);
+      if ((this & RecipeTag.Common) > 0)
+         tags.Add(RecipeTag.Common);
+      if ((this & RecipeTag.Easy) > 0)
+         tags.Add(RecipeTag.Easy);
+      if ((this & RecipeTag.Quick) > 0)
+         tags.Add(RecipeTag.Quick);
    }
 
    public override bool Equals(object obj)

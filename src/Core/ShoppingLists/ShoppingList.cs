@@ -15,10 +15,7 @@ public class ShoppingList : IEnumerable<ShoppingListItem>
 
    public static ShoppingList Default
    {
-      get
-      {
-         return defaultList;
-      }
+      get { return defaultList; }
    }
 
    public static ShoppingList FromId(Guid menuId)
@@ -31,13 +28,15 @@ public class ShoppingList : IEnumerable<ShoppingListItem>
       list = new List<ShoppingListItem>();
    }
 
-   public ShoppingList(Guid? id, String title) : this()
+   public ShoppingList(Guid? id, String title)
+      : this()
    {
       this.Id = id;
       this.Title = title;
    }
 
-   public ShoppingList(Guid? id, String title, IEnumerable<IShoppingListSource> items) : this(id, title)
+   public ShoppingList(Guid? id, String title, IEnumerable<IShoppingListSource> items)
+      : this(id, title)
    {
       AddItems(items);
    }

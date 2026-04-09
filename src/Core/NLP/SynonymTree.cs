@@ -14,7 +14,9 @@ public abstract class SynonymTree<T>
 
       if (synonymMap.ContainsKey(parsedIng)) //Uh oh
       {
-         Parser.Log.Error(String.Format("The ingredient synonym '{0}' also exists as a root ingredient.", value));
+         Parser.Log.Error(
+            String.Format("The ingredient synonym '{0}' also exists as a root ingredient.", value)
+         );
       }
       else
       {

@@ -17,8 +17,8 @@ public class StaticFormLoader : ISynonymLoader<FormNode>
 
    public IEnumerable<FormNode> LoadSynonyms()
    {
-      var formSyn = store.NlpFormSynonyms
-         .OrderBy(p => p.Name)
+      var formSyn = store
+         .NlpFormSynonyms.OrderBy(p => p.Name)
          .Select(s => s.Name)
          .Distinct()
          .ToList();
@@ -49,7 +49,8 @@ public class StaticFormLoader : ISynonymLoader<FormNode>
 
          pairings.Add(
             new NameIngredientPair(name, ing),
-            new IngredientForm(form, ing, convType, displayName, unitName, convMultiplier, amount));
+            new IngredientForm(form, ing, convType, displayName, unitName, convMultiplier, amount)
+         );
       }
 
       return pairings;

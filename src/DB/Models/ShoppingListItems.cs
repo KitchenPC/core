@@ -20,7 +20,6 @@ public class ShoppingListItems
    public virtual Amount Amount
    {
       get => Qty.HasValue && Unit.HasValue ? new Amount(Qty.Value, Unit.Value) : null;
-
       set
       {
          if (value == null || value.SizeHigh == 0)
@@ -36,9 +35,7 @@ public class ShoppingListItems
       }
    }
 
-   public ShoppingListItems()
-   {
-   }
+   public ShoppingListItems() { }
 
    public ShoppingListItems(Guid id, Guid userid, String raw)
    {
@@ -65,15 +62,11 @@ public class ShoppingListItems
             Id = ItemId,
             Amount = (Qty.HasValue && Unit.HasValue) ? new Amount(Qty.Value, Unit.Value) : null,
             Recipe = Recipe?.AsRecipeBrief(),
-            CrossedOut = CrossedOut
+            CrossedOut = CrossedOut,
          };
       }
 
-      return new ShoppingListItem(Raw)
-      {
-         Id = ItemId,
-         CrossedOut = CrossedOut
-      };
+      return new ShoppingListItem(Raw) { Id = ItemId, CrossedOut = CrossedOut };
    }
 
    public static ShoppingListItems FromShoppingListItem(ShoppingListItem item) =>
@@ -81,11 +74,12 @@ public class ShoppingListItems
       {
          ItemId = item.Id ?? Guid.NewGuid(),
          Raw = item.Raw,
-         Qty = item.Amount == null ? null : (float?) item.Amount.SizeHigh,
-         Unit = item.Amount == null ? null : (Units?) item.Amount.Unit,
-         Ingredient = item.Ingredient == null ? null : new Ingredients {IngredientId = item.Ingredient.Id},
-         Recipe = item.Recipe == null ? null : new Recipes {RecipeId = item.Recipe.Id},
-         CrossedOut = item.CrossedOut
+         Qty = item.Amount == null ? null : (float?)item.Amount.SizeHigh,
+         Unit = item.Amount == null ? null : (Units?)item.Amount.Unit,
+         Ingredient =
+            item.Ingredient == null ? null : new Ingredients { IngredientId = item.Ingredient.Id },
+         Recipe = item.Recipe == null ? null : new Recipes { RecipeId = item.Recipe.Id },
+         CrossedOut = item.CrossedOut,
       };
 }
 
@@ -93,9 +87,7 @@ public class ShoppingListItemsMap : ClassMap<ShoppingListItems>
 {
    public ShoppingListItemsMap()
    {
-      Id(x => x.ItemId)
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.ItemId).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.Raw).Length(50);
       Map(x => x.Qty);
@@ -105,6 +97,8 @@ public class ShoppingListItemsMap : ClassMap<ShoppingListItems>
 
       References(x => x.Recipe).Column("RecipeId");
       References(x => x.Ingredient).Column("IngredientId");
-      References(x => x.ShoppingList).Column("ShoppingListId").Index("IDX_ShoppingListItems_ListId");
+      References(x => x.ShoppingList)
+         .Column("ShoppingListId")
+         .Index("IDX_ShoppingListItems_ListId");
    }
 }

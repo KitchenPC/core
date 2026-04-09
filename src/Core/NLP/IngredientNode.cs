@@ -12,26 +12,17 @@ public class IngredientNode
 
    public Guid Id
    {
-      get
-      {
-         return (parent == null) ? id : parent.id;
-      }
+      get { return (parent == null) ? id : parent.id; }
    }
 
    public DefaultPairings Pairings
    {
-      get
-      {
-         return (parent == null) ? pairings : parent.pairings;
-      }
+      get { return (parent == null) ? pairings : parent.pairings; }
    }
 
    public IngredientNode Parent
    {
-      get
-      {
-         return parent;
-      }
+      get { return parent; }
    }
 
    public string IngredientName; //Name of the ingredient or synonym
@@ -39,21 +30,21 @@ public class IngredientNode
 
    public UnitType ConversionType
    {
-      get
-      {
-         return (parent == null) ? convtype : parent.convtype;
-      }
+      get { return (parent == null) ? convtype : parent.convtype; }
    } //Default conversion type for this ingredient (from ShoppingIngredients)
 
    public Weight UnitWeight
    {
-      get
-      {
-         return (parent == null) ? unitweight : parent.unitweight;
-      }
+      get { return (parent == null) ? unitweight : parent.unitweight; }
    } //How much a single unit weighs (from ShoppingIngredients)
 
-   public IngredientNode(Guid id, string name, UnitType convtype, Weight unitweight, DefaultPairings pairings)
+   public IngredientNode(
+      Guid id,
+      string name,
+      UnitType convtype,
+      Weight unitweight,
+      DefaultPairings pairings
+   )
    {
       this.id = id;
       this.pairings = pairings;

@@ -14,7 +14,5 @@ public class SearchResults
       this.TotalCount = total;
    }
 
-   public SearchResults()
-   {
-   }
+   public SearchResults() { }
 }

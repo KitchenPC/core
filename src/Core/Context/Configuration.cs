@@ -2,7 +2,8 @@
 
 namespace KitchenPC.Core.Context;
 
-public class Configuration<T> : IConfiguration<T> where T : IKPCContext
+public class Configuration<T> : IConfiguration<T>
+   where T : IKPCContext
 {
    private readonly ConfigurationBuilder<T> builder;
 

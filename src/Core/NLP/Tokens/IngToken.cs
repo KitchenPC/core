@@ -28,7 +28,7 @@ public class IngToken : IGrammar
 
       while ((curByte = stream.ReadByte()) >= 0)
       {
-         buffer += (char) curByte;
+         buffer += (char)curByte;
          var match = data.Parse(buffer, out node);
          if (match == MatchPrecision.None)
          {

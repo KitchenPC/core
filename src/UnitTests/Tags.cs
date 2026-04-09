@@ -80,7 +80,10 @@ public class TagsTest
 
       //Test From
       Assert.AreEqual("No Pork", RecipeTags.From(RecipeTag.NoPork).ToString());
-      Assert.AreEqual("No Pork, Lunch", RecipeTags.From(RecipeTag.NoPork, RecipeTag.Lunch).ToString());
+      Assert.AreEqual(
+         "No Pork, Lunch",
+         RecipeTags.From(RecipeTag.NoPork, RecipeTag.Lunch).ToString()
+      );
    }
 
    [TestMethod]

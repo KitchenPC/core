@@ -28,7 +28,7 @@ public class AmtToken : IGrammar
          float parsedAmtHigh;
          float? parsedAmtLow;
 
-         curBuffer += (char) curByte;
+         curBuffer += (char)curByte;
          if (Validate(curBuffer, out parsedAmtLow, out parsedAmtHigh)) //Try to parse buffer as a valid number or fraction
          {
             matchPos = stream.Position;
@@ -67,7 +67,7 @@ public class AmtToken : IGrammar
       {
          if (Fractions.TryParseFraction(buffer, out resultHigh))
          {
-            amountHigh = (float) resultHigh;
+            amountHigh = (float)resultHigh;
             return true;
          }
       }
@@ -76,11 +76,13 @@ public class AmtToken : IGrammar
       {
          decimal resultLow;
 
-         if (Fractions.TryParseFraction(parts[0], out resultLow) &&
-             Fractions.TryParseFraction(parts[1], out resultHigh))
+         if (
+            Fractions.TryParseFraction(parts[0], out resultLow)
+            && Fractions.TryParseFraction(parts[1], out resultHigh)
+         )
          {
-            amountLow = (float?) resultLow;
-            amountHigh = (float) resultHigh;
+            amountLow = (float?)resultLow;
+            amountHigh = (float)resultHigh;
             return true;
          }
       }

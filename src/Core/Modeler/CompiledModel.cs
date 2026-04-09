@@ -17,13 +17,8 @@ public class CompiledModel
 
    public int Count
    {
-      get
-      {
-         return (Recipes == null ? 0 : Recipes.Length);
-      }
-      set
-      {
-      }
+      get { return (Recipes == null ? 0 : Recipes.Length); }
+      set { }
    }
 
    public static CompiledModel Empty
@@ -37,7 +32,7 @@ public class CompiledModel
                Briefs = new RecipeBrief[0],
                Pantry = new PantryItem[0],
                RecipeIds = new Guid[0],
-               Recipes = new SuggestedRecipe[0]
+               Recipes = new SuggestedRecipe[0],
             };
          }
 

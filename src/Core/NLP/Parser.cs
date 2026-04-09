@@ -13,7 +13,7 @@ public class Parser
    private List<Template> templates;
    private static readonly Regex reWhitespace = new Regex(@"[ ]{2,}", RegexOptions.Compiled);
 
-   public static ILog Log = LogManager.GetLogger(typeof (Parser));
+   public static ILog Log = LogManager.GetLogger(typeof(Parser));
    public NoMatchEvent OnNoMatch;
    public TemplateStatistics Stats { get; private set; }
 

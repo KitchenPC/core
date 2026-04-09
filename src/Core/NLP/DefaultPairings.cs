@@ -8,10 +8,7 @@ public struct DefaultPairings
 
    public static DefaultPairings Empty
    {
-      get
-      {
-         return empty;
-      }
+      get { return empty; }
    }
 
    public IngredientForm Unit;
@@ -20,33 +17,21 @@ public struct DefaultPairings
 
    public bool IsEmpty
    {
-      get
-      {
-         return (Unit == null && Volume == null && Weight == null);
-      }
+      get { return (Unit == null && Volume == null && Weight == null); }
    }
 
    public bool HasUnit
    {
-      get
-      {
-         return Unit != null;
-      }
+      get { return Unit != null; }
    }
 
    public bool HasVolume
    {
-      get
-      {
-         return Volume != null;
-      }
+      get { return Volume != null; }
    }
 
    public bool HasWeight
    {
-      get
-      {
-         return Weight != null;
-      }
+      get { return Weight != null; }
    }
 }

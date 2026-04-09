@@ -95,7 +95,7 @@ public class RecipeLoader
    public RecipeLoader(IKPCContext context, Recipe recipe)
    {
       this.context = context;
-      this.recipesToLoad = new List<Recipe>() {recipe};
+      this.recipesToLoad = new List<Recipe>() { recipe };
    }
 
    public RecipeLoader Load(Recipe recipe)
@@ -112,7 +112,7 @@ public class RecipeLoader
          ReturnCookbookStatus = withCookbookStatus,
          ReturnMethod = withMethod,
          ReturnPermalink = withPermalink,
-         ReturnUserRating = withUserRating
+         ReturnUserRating = withUserRating,
       };
 
       return context.ReadRecipes(recipesToLoad.Select(r => r.Id).ToArray(), options);
@@ -215,7 +215,10 @@ public class RecipeQueryBuilder
       return this;
    }
 
-   public RecipeQueryBuilder SortBy(RecipeQuery.SortOrder sortOrder, RecipeQuery.SortDirection direction = RecipeQuery.SortDirection.Ascending)
+   public RecipeQueryBuilder SortBy(
+      RecipeQuery.SortOrder sortOrder,
+      RecipeQuery.SortDirection direction = RecipeQuery.SortDirection.Ascending
+   )
    {
       query.Sort = sortOrder;
       query.Direction = direction;
@@ -430,7 +433,7 @@ public class RecipeCreator
 
    public RecipeCreator WithRating(Rating rating)
    {
-      recipe.AvgRating = (short) rating;
+      recipe.AvgRating = (short)rating;
       return this;
    }
 
@@ -458,7 +461,10 @@ public class RecipeCreator
       return this;
    }
 
-   public RecipeCreator WithIngredients(string section, Func<IngredientAdder, IngredientAdder> ingredientAdder)
+   public RecipeCreator WithIngredients(
+      string section,
+      Func<IngredientAdder, IngredientAdder> ingredientAdder
+   )
    {
       var adder = ingredientAdder(new IngredientAdder(context, recipe, section));
       return this;
@@ -479,7 +485,8 @@ public class IngredientAdder
       this.recipe = recipe;
    }
 
-   public IngredientAdder(IKPCContext context, Recipe recipe, string section) : this(context, recipe)
+   public IngredientAdder(IKPCContext context, Recipe recipe, string section)
+      : this(context, recipe)
    {
       this.section = section;
    }
@@ -493,7 +500,9 @@ public class IngredientAdder
       return this;
    }
 
-   public IngredientAdder AddIngredientUsage(Func<IngredientUsageCreator, IngredientUsageCreator> createAction)
+   public IngredientAdder AddIngredientUsage(
+      Func<IngredientUsageCreator, IngredientUsageCreator> createAction
+   )
    {
       var creator = createAction(IngredientUsage.Create);
       var usage = creator.Usage;
@@ -514,13 +523,18 @@ public class IngredientAdder
       return AddIngredientUsage(usage);
    }
 
-   public IngredientAdder AddIngredient(Ingredient ingredient, Amount amount, string prepNote = null)
+   public IngredientAdder AddIngredient(
+      Ingredient ingredient,
+      Amount amount,
+      string prepNote = null
+   )
    {
       var usage = new IngredientUsage(ingredient, null, amount, prepNote);
       return AddIngredientUsage(usage);
    }
 
-   public IngredientAdder AddIngredient(Ingredient ingredient, string prepNote = null) => AddIngredient(ingredient, null, prepNote);
+   public IngredientAdder AddIngredient(Ingredient ingredient, string prepNote = null) =>
+      AddIngredient(ingredient, null, prepNote);
 
    public IngredientAdder AddRaw(string raw)
    {

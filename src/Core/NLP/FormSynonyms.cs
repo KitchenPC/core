@@ -38,13 +38,19 @@ public class FormSynonyms : SynonymTree<FormNode>
       return pairings.TryGetValue(pair, out form);
    }
 
-   public static bool TryGetFormForPrep(Preps preps, IngredientNode ing, bool remove, out IngredientForm form)
+   public static bool TryGetFormForPrep(
+      Preps preps,
+      IngredientNode ing,
+      bool remove,
+      out IngredientForm form
+   )
    {
       //TODO: Do we need to check all preps, or just the one that was on the input
       foreach (var prep in preps)
       {
          var fMatch = TryGetFormForIngredient(prep.Prep, ing.Id, out form);
-         if (!fMatch) continue;
+         if (!fMatch)
+            continue;
 
          if (remove)
             preps.Remove(prep);

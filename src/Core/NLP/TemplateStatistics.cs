@@ -21,14 +21,8 @@ public class TemplateStatistics : IEnumerable<TemplateStatistics.TemplateUsage>
 
    public int this[Template t]
    {
-      get
-      {
-         return stats[t];
-      }
-      set
-      {
-         stats[t] = value;
-      }
+      get { return stats[t]; }
+      set { stats[t] = value; }
    }
 
    public TemplateStatistics()
@@ -46,7 +40,11 @@ public class TemplateStatistics : IEnumerable<TemplateStatistics.TemplateUsage>
       var e = stats.GetEnumerator();
       while (e.MoveNext())
       {
-         yield return new TemplateUsage() {Template = e.Current.Key.ToString(), Matches = e.Current.Value};
+         yield return new TemplateUsage()
+         {
+            Template = e.Current.Key.ToString(),
+            Matches = e.Current.Value,
+         };
       }
    }
 
@@ -55,7 +53,11 @@ public class TemplateStatistics : IEnumerable<TemplateStatistics.TemplateUsage>
       var e = stats.GetEnumerator();
       while (e.MoveNext())
       {
-         yield return new TemplateUsage() {Template = e.Current.Key.ToString(), Matches = e.Current.Value};
+         yield return new TemplateUsage()
+         {
+            Template = e.Current.Key.ToString(),
+            Matches = e.Current.Value,
+         };
       }
    }
 }

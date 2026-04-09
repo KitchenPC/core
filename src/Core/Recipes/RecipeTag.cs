@@ -12,23 +12,15 @@ public class RecipeTag
 
    public int Value
    {
-      get
-      {
-         return value;
-      }
+      get { return value; }
    }
 
    public int BitFlag
    {
-      get
-      {
-         return bitflag;
-      }
+      get { return bitflag; }
    }
 
-   public RecipeTag()
-   {
-   }
+   public RecipeTag() { }
 
    private RecipeTag(int value, string label)
    {
@@ -49,7 +41,7 @@ public class RecipeTag
          return true;
       }
 
-      if ((object) x == null || ((object) y == null))
+      if ((object)x == null || ((object)y == null))
       {
          return false;
       }
@@ -59,7 +51,7 @@ public class RecipeTag
 
    public static RecipeTags operator |(RecipeTag x, RecipeTag y)
    {
-      return (RecipeTags) x.bitflag | y.bitflag;
+      return (RecipeTags)x.bitflag | y.bitflag;
    }
 
    public static implicit operator string(RecipeTag tags)
@@ -69,23 +61,40 @@ public class RecipeTag
 
    public static implicit operator RecipeTag(string tag)
    {
-      if (tag == GlutenFree.label) return GlutenFree;
-      if (tag == NoAnimals.label) return NoAnimals;
-      if (tag == NoMeat.label) return NoMeat;
-      if (tag == NoPork.label) return NoPork;
-      if (tag == NoRedMeat.label) return NoRedMeat;
-      if (tag == Breakfast.label) return Breakfast;
-      if (tag == Dessert.label) return Dessert;
-      if (tag == Dinner.label) return Dinner;
-      if (tag == Lunch.label) return Lunch;
-      if (tag == LowCalorie.label) return LowCalorie;
-      if (tag == LowCarb.label) return LowCarb;
-      if (tag == LowFat.label) return LowFat;
-      if (tag == LowSodium.label) return LowSodium;
-      if (tag == LowSugar.label) return LowSugar;
-      if (tag == Common.label) return Common;
-      if (tag == Easy.label) return Easy;
-      if (tag == Quick.label) return Quick;
+      if (tag == GlutenFree.label)
+         return GlutenFree;
+      if (tag == NoAnimals.label)
+         return NoAnimals;
+      if (tag == NoMeat.label)
+         return NoMeat;
+      if (tag == NoPork.label)
+         return NoPork;
+      if (tag == NoRedMeat.label)
+         return NoRedMeat;
+      if (tag == Breakfast.label)
+         return Breakfast;
+      if (tag == Dessert.label)
+         return Dessert;
+      if (tag == Dinner.label)
+         return Dinner;
+      if (tag == Lunch.label)
+         return Lunch;
+      if (tag == LowCalorie.label)
+         return LowCalorie;
+      if (tag == LowCarb.label)
+         return LowCarb;
+      if (tag == LowFat.label)
+         return LowFat;
+      if (tag == LowSodium.label)
+         return LowSodium;
+      if (tag == LowSugar.label)
+         return LowSugar;
+      if (tag == Common.label)
+         return Common;
+      if (tag == Easy.label)
+         return Easy;
+      if (tag == Quick.label)
+         return Quick;
 
       throw new ArgumentException("Cannot parse recipe tag: " + tag);
    }

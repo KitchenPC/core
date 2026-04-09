@@ -22,7 +22,7 @@ public class UserProfile : IUserProfile
                Ratings = new RecipeRating[0],
                FavoriteIngredients = new Guid[0],
                FavoriteTags = RecipeTags.None,
-               BlacklistedIngredients = new Guid[0]
+               BlacklistedIngredients = new Guid[0],
             };
          }
 

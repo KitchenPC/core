@@ -6,54 +6,37 @@ namespace KitchenPC.Core;
 
 public class KPCException : Exception
 {
-   public KPCException()
-   {
-   }
+   public KPCException() { }
 
-   public KPCException(string message) : base(message)
-   {
-   }
+   public KPCException(string message)
+      : base(message) { }
 }
 
 public class InvalidConfigurationException : KPCException
 {
-   public InvalidConfigurationException()
-   {
-   }
+   public InvalidConfigurationException() { }
 
-   public InvalidConfigurationException(string message) : base(message)
-   {
-   }
+   public InvalidConfigurationException(string message)
+      : base(message) { }
 }
 
 public class DataStoreException : KPCException
 {
-   public DataStoreException(string message) : base(message)
-   {
-   }
+   public DataStoreException(string message)
+      : base(message) { }
 }
 
-public class IngredientMapNotInitializedException : KPCException
-{
-}
+public class IngredientMapNotInitializedException : KPCException { }
 
-public class IngredientMapInvalidIngredientException : KPCException
-{
-}
+public class IngredientMapInvalidIngredientException : KPCException { }
 
-public class RecipeNotFoundException : KPCException
-{
-}
+public class RecipeNotFoundException : KPCException { }
 
-public class IngredientNotFoundException : KPCException
-{
-}
+public class IngredientNotFoundException : KPCException { }
 
 public class MenuNotFoundException : KPCException
 {
-   public MenuNotFoundException()
-   {
-   }
+   public MenuNotFoundException() { }
 
    public MenuNotFoundException(Guid menuId)
    {
@@ -63,38 +46,26 @@ public class MenuNotFoundException : KPCException
    public Guid? menuId { get; private set; }
 }
 
-public class MenuIdRequiredException : KPCException
-{
-}
+public class MenuIdRequiredException : KPCException { }
 
-public class ShoppingListNotFoundException : KPCException
-{
-}
+public class ShoppingListNotFoundException : KPCException { }
 
 public class InvalidRecipeDataException : KPCException
 {
-   public InvalidRecipeDataException(string err) : base(err)
-   {
-   }
+   public InvalidRecipeDataException(string err)
+      : base(err) { }
 }
 
-public class MenuAlreadyExistsException : KPCException
-{
-}
+public class MenuAlreadyExistsException : KPCException { }
 
-public class UserDoesNotOwnMenuException : KPCException
-{
-}
+public class UserDoesNotOwnMenuException : KPCException { }
 
-public class IncompatibleAmountException : KPCException
-{
-}
+public class IncompatibleAmountException : KPCException { }
 
 public class FluentExpressionException : KPCException
 {
-   public FluentExpressionException(string msg) : base(msg)
-   {
-   }
+   public FluentExpressionException(string msg)
+      : base(msg) { }
 }
 
 public class CouldNotParseUsageException : KPCException
@@ -121,31 +92,21 @@ public class InvalidFormException : KPCException
    public IngredientForm Form { get; private set; }
 }
 
-public class NoConfiguredSearchProvidersException : KPCException
-{
-}
+public class NoConfiguredSearchProvidersException : KPCException { }
 
-public class EmptyPantryException : Exception
-{
-}
+public class EmptyPantryException : Exception { }
 
-public class ImpossibleQueryException : Exception
-{
-}
+public class ImpossibleQueryException : Exception { }
 
-public class DuplicatePantryItemException : Exception
-{
-}
+public class DuplicatePantryItemException : Exception { }
 
 public class DataLoadException : Exception
 {
-   public DataLoadException(string message) : base(message)
-   {
-   }
+   public DataLoadException(string message)
+      : base(message) { }
 
-   public DataLoadException(Exception inner) : base(inner.Message, inner)
-   {
-   }
+   public DataLoadException(Exception inner)
+      : base(inner.Message, inner) { }
 }
 
 public class UnknownTokenException : Exception

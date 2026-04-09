@@ -7,7 +7,8 @@ public class AnomalousMatch : Match
 {
    private readonly AnomalousResult anomaly;
 
-   public AnomalousMatch(string input, AnomalousResult anomaly, IngredientUsage usage) : base(input, usage)
+   public AnomalousMatch(string input, AnomalousResult anomaly, IngredientUsage usage)
+      : base(input, usage)
    {
       this.anomaly = anomaly;
    }

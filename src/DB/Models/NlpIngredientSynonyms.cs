@@ -15,9 +15,7 @@ public class NlpIngredientSynonymsMap : ClassMap<NlpIngredientSynonyms>
 {
    public NlpIngredientSynonymsMap()
    {
-      Id(x => x.IngredientSynonymId, "id")
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.IngredientSynonymId, "id").GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.Alias).Length(200).Unique();
       Map(x => x.Prepnote).Length(50);

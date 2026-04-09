@@ -29,7 +29,7 @@ public class Recipes
          CookTime = dtoRecipe.CookTime,
          PrepTime = dtoRecipe.PrepTime,
          Description = dtoRecipe.Description,
-         Title = dtoRecipe.Title
+         Title = dtoRecipe.Title,
       };
    }
 }

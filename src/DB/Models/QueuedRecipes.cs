@@ -15,9 +15,7 @@ public class QueuedRecipesMap : ClassMap<QueuedRecipes>
 {
    public QueuedRecipesMap()
    {
-      Id(x => x.QueueId)
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.QueueId).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.UserId).Not.Nullable().Index("IDX_QueuedRecipes_UserId").UniqueKey("UniqueRecipe");
       Map(x => x.QueuedDate).Not.Nullable();

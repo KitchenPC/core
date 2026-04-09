@@ -95,7 +95,9 @@ public class DataStore
    public Dictionary<Guid, RecipeIngredients[]> GetIndexedRecipeIngredients()
    {
       if (indexedRecipeIngredients == null)
-         indexedRecipeIngredients = RecipeIngredients.GroupBy(r => r.RecipeId).ToDictionary(g => g.Key, i => i.ToArray());
+         indexedRecipeIngredients = RecipeIngredients
+            .GroupBy(r => r.RecipeId)
+            .ToDictionary(g => g.Key, i => i.ToArray());
 
       return indexedRecipeIngredients;
    }
@@ -110,7 +112,9 @@ public class DataStore
          {
             Recipe = v,
             Metadata = indexMetadata.ContainsKey(v.RecipeId) ? indexMetadata[v.RecipeId] : null,
-            Ingredients = indexIngredients.ContainsKey(v.RecipeId) ? indexIngredients[v.RecipeId] : null
+            Ingredients = indexIngredients.ContainsKey(v.RecipeId)
+               ? indexIngredients[v.RecipeId]
+               : null,
          });
 
       return searchIndex;

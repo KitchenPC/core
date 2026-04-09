@@ -14,18 +14,9 @@ public class Menus
 
    public virtual IList<Favorites> Recipes { get; set; }
 
-   public static Menus FromId(Guid id) =>
-      new()
-      {
-         MenuId = id
-      };
+   public static Menus FromId(Guid id) => new() { MenuId = id };
 
-   public virtual Menu AsMenu() =>
-      new()
-      {
-         Id = MenuId,
-         Title = Title,
-      };
+   public virtual Menu AsMenu() => new() { Id = MenuId, Title = Title };
 
    public static bool operator !=(Menu menu, Menus dbMenu) => !(menu == dbMenu);
 
@@ -44,7 +35,7 @@ public class Menus
       if (false == (obj is Menus))
          return false;
 
-      var menu = (Menus) obj;
+      var menu = (Menus)obj;
       return MenuId.Equals(menu.MenuId);
    }
 
@@ -55,16 +46,12 @@ public class MenusMap : ClassMap<Menus>
 {
    public MenusMap()
    {
-      Id(x => x.MenuId)
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.MenuId).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.UserId).Not.Nullable().Index("IDX_Menus_UserId").UniqueKey("UserTitle");
       Map(x => x.Title).Not.Nullable().UniqueKey("UserTitle");
       Map(x => x.CreatedDate).Not.Nullable();
 
-      HasMany(x => x.Recipes)
-         .KeyColumn("MenuId")
-         .Cascade.Delete(); // If Menu is deleted, delete all the Favorites that reference this menu
+      HasMany(x => x.Recipes).KeyColumn("MenuId").Cascade.Delete(); // If Menu is deleted, delete all the Favorites that reference this menu
    }
 }

@@ -10,7 +10,7 @@ namespace KitchenPC.DB;
 public class DatabaseImporter : IDisposable
 {
    private readonly ISession session;
-   private static readonly ILog logger = LogManager.GetLogger(typeof (DatabaseImporter));
+   private static readonly ILog logger = LogManager.GetLogger(typeof(DatabaseImporter));
 
    public DatabaseImporter(ISession session)
    {
@@ -33,7 +33,7 @@ public class DatabaseImporter : IDisposable
             ConversionType = row.ConversionType,
             UnitWeight = row.UnitWeight,
             DisplayName = row.DisplayName,
-            UsdaDesc = row.UsdaDesc
+            UsdaDesc = row.UsdaDesc,
          };
 
          session.Save(dbRow, row.IngredientId);
@@ -59,7 +59,7 @@ public class DatabaseImporter : IDisposable
             UnitType = row.UnitType,
             UnitName = row.UnitName,
             FormUnit = row.FormUnit,
-            FormDisplayName = row.FormDisplayName
+            FormDisplayName = row.FormDisplayName,
          };
 
          session.Save(dbRow, row.IngredientFormId);
@@ -91,7 +91,7 @@ public class DatabaseImporter : IDisposable
             Spicy = row.Spicy,
             Sweet = row.Sweet,
             HasGluten = row.HasGluten,
-            HasAnimal = row.HasAnimal
+            HasAnimal = row.HasAnimal,
          };
 
          session.Save(dbRow, row.IngredientMetadataId);
@@ -113,9 +113,15 @@ public class DatabaseImporter : IDisposable
             AnomalousIngredientId = row.AnomalousIngredientId,
             Name = row.Name,
             Ingredient = Models.Ingredients.FromId(row.IngredientId),
-            WeightForm = row.WeightFormId.HasValue ? Models.IngredientForms.FromId(row.WeightFormId.Value) : null,
-            VolumeForm = row.VolumeFormId.HasValue ? Models.IngredientForms.FromId(row.VolumeFormId.Value) : null,
-            UnitForm = row.UnitFormId.HasValue ? Models.IngredientForms.FromId(row.UnitFormId.Value) : null
+            WeightForm = row.WeightFormId.HasValue
+               ? Models.IngredientForms.FromId(row.WeightFormId.Value)
+               : null,
+            VolumeForm = row.VolumeFormId.HasValue
+               ? Models.IngredientForms.FromId(row.VolumeFormId.Value)
+               : null,
+            UnitForm = row.UnitFormId.HasValue
+               ? Models.IngredientForms.FromId(row.UnitFormId.Value)
+               : null,
          };
 
          session.Save(dbRow, row.AnomalousIngredientId);
@@ -136,9 +142,15 @@ public class DatabaseImporter : IDisposable
          {
             DefaultPairingId = row.DefaultPairingId,
             Ingredient = Models.Ingredients.FromId(row.IngredientId),
-            WeightForm = row.WeightFormId.HasValue ? Models.IngredientForms.FromId(row.WeightFormId.Value) : null,
-            VolumeForm = row.VolumeFormId.HasValue ? Models.IngredientForms.FromId(row.VolumeFormId.Value) : null,
-            UnitForm = row.UnitFormId.HasValue ? Models.IngredientForms.FromId(row.UnitFormId.Value) : null
+            WeightForm = row.WeightFormId.HasValue
+               ? Models.IngredientForms.FromId(row.WeightFormId.Value)
+               : null,
+            VolumeForm = row.VolumeFormId.HasValue
+               ? Models.IngredientForms.FromId(row.VolumeFormId.Value)
+               : null,
+            UnitForm = row.UnitFormId.HasValue
+               ? Models.IngredientForms.FromId(row.UnitFormId.Value)
+               : null,
          };
 
          session.Save(dbRow, row.DefaultPairingId);
@@ -160,7 +172,7 @@ public class DatabaseImporter : IDisposable
             FormSynonymId = row.FormSynonymId,
             Ingredient = Models.Ingredients.FromId(row.IngredientId),
             Form = Models.IngredientForms.FromId(row.FormId),
-            Name = row.Name
+            Name = row.Name,
          };
 
          session.Save(dbRow, row.FormSynonymId);
@@ -182,7 +194,7 @@ public class DatabaseImporter : IDisposable
             IngredientSynonymId = row.IngredientSynonymId,
             Ingredient = Models.Ingredients.FromId(row.IngredientId),
             Alias = row.Alias,
-            Prepnote = row.Prepnote
+            Prepnote = row.Prepnote,
          };
 
          session.Save(dbRow, row.IngredientSynonymId);
@@ -199,10 +211,7 @@ public class DatabaseImporter : IDisposable
       var d = data.ToArray();
       foreach (var row in d)
       {
-         var dbRow = new Models.NlpPrepNotes
-         {
-            Name = row.Name
-         };
+         var dbRow = new Models.NlpPrepNotes { Name = row.Name };
 
          session.Save(dbRow);
       }
@@ -223,7 +232,7 @@ public class DatabaseImporter : IDisposable
             UnitSynonymId = row.UnitSynonymId,
             Ingredient = Models.Ingredients.FromId(row.IngredientId),
             Form = Models.IngredientForms.FromId(row.FormId),
-            Name = row.Name
+            Name = row.Name,
          };
 
          session.Save(dbRow, row.UnitSynonymId);
@@ -255,7 +264,7 @@ public class DatabaseImporter : IDisposable
             DateEntered = row.DateEntered,
             ServingSize = row.ServingSize,
             ImageUrl = row.ImageUrl,
-            Ingredients = new List<Models.RecipeIngredients>()
+            Ingredients = new List<Models.RecipeIngredients>(),
          };
 
          session.Save(dbRow, row.RecipeId);
@@ -277,13 +286,15 @@ public class DatabaseImporter : IDisposable
             RecipeIngredientId = row.RecipeIngredientId,
             Recipe = Models.Recipes.FromId(row.RecipeId),
             Ingredient = Models.Ingredients.FromId(row.IngredientId),
-            IngredientForm = row.IngredientFormId.HasValue ? Models.IngredientForms.FromId(row.IngredientFormId.Value) : null,
+            IngredientForm = row.IngredientFormId.HasValue
+               ? Models.IngredientForms.FromId(row.IngredientFormId.Value)
+               : null,
             Unit = row.Unit,
             QtyLow = row.QtyLow,
             DisplayOrder = row.DisplayOrder,
             PrepNote = row.PrepNote,
             Qty = row.Qty,
-            Section = row.Section
+            Section = row.Section,
          };
 
          session.Save(dbRow, row.RecipeIngredientId);
@@ -330,7 +341,7 @@ public class DatabaseImporter : IDisposable
             SkillEasy = row.SkillEasy,
             SkillCommon = row.SkillCommon,
             TasteMildToSpicy = row.TasteMildToSpicy,
-            TasteSavoryToSweet = row.TasteSavoryToSweet
+            TasteSavoryToSweet = row.TasteSavoryToSweet,
          };
 
          session.Save(dbRow, row.RecipeMetadataId);
@@ -352,7 +363,7 @@ public class DatabaseImporter : IDisposable
             MenuId = row.MenuId,
             UserId = row.UserId,
             Title = row.Title,
-            CreatedDate = row.CreatedDate
+            CreatedDate = row.CreatedDate,
          };
 
          session.Save(dbRow, row.MenuId);
@@ -374,7 +385,7 @@ public class DatabaseImporter : IDisposable
             FavoriteId = row.FavoriteId,
             UserId = row.UserId,
             Recipe = Models.Recipes.FromId(row.RecipeId),
-            Menu = row.MenuId.HasValue ? Models.Menus.FromId(row.MenuId.Value) : null
+            Menu = row.MenuId.HasValue ? Models.Menus.FromId(row.MenuId.Value) : null,
          };
 
          session.Save(dbRow, row.FavoriteId);
@@ -396,7 +407,7 @@ public class DatabaseImporter : IDisposable
             QueueId = row.QueueId,
             UserId = row.UserId,
             Recipe = Models.Recipes.FromId(row.RecipeId),
-            QueuedDate = row.QueuedDate
+            QueuedDate = row.QueuedDate,
          };
 
          session.Save(dbRow, row.QueueId);
@@ -418,7 +429,7 @@ public class DatabaseImporter : IDisposable
             RatingId = row.RatingId,
             UserId = row.UserId,
             Recipe = Models.Recipes.FromId(row.RecipeId),
-            Rating = row.Rating
+            Rating = row.Rating,
          };
 
          session.Save(dbRow, row.RatingId);
@@ -439,7 +450,7 @@ public class DatabaseImporter : IDisposable
          {
             ShoppingListId = row.ShoppingListId,
             UserId = row.UserId,
-            Title = row.Title
+            Title = row.Title,
          };
 
          session.Save(dbRow, row.ShoppingListId);
@@ -463,10 +474,14 @@ public class DatabaseImporter : IDisposable
             Qty = row.Qty,
             Unit = row.Unit,
             UserId = row.UserId,
-            Ingredient = row.IngredientId.HasValue ? Models.Ingredients.FromId(row.IngredientId.Value) : null,
+            Ingredient = row.IngredientId.HasValue
+               ? Models.Ingredients.FromId(row.IngredientId.Value)
+               : null,
             Recipe = row.RecipeId.HasValue ? Models.Recipes.FromId(row.RecipeId.Value) : null,
-            ShoppingList = row.ShoppingListId.HasValue ? Models.ShoppingLists.FromId(row.ShoppingListId.Value) : null,
-            CrossedOut = row.CrossedOut
+            ShoppingList = row.ShoppingListId.HasValue
+               ? Models.ShoppingLists.FromId(row.ShoppingListId.Value)
+               : null,
+            CrossedOut = row.CrossedOut,
          };
 
          session.Save(dbItem, row.ItemId);

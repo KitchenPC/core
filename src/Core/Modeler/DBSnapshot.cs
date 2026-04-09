@@ -52,22 +52,30 @@ public sealed partial class DBSnapshot
             ratingGraph.AddRating(r, uid, rid);
          }
 
-         ModelingSession.Log.InfoFormat("Building Rating Graph took {0}ms.", timer.ElapsedMilliseconds);
+         ModelingSession.Log.InfoFormat(
+            "Building Rating Graph took {0}ms.",
+            timer.ElapsedMilliseconds
+         );
          timer.Reset();
          timer.Start();
 
          //Create empty recipe nodes without links
-         snapshot.recipeMap = (from o in loader.LoadRecipeGraph()
+         snapshot.recipeMap = (
+            from o in loader.LoadRecipeGraph()
             select new RecipeNode()
             {
                RecipeId = o.Id,
                Rating = o.Rating,
                Tags = o.Tags,
                Hidden = o.Hidden,
-               Ingredients = new List<IngredientUsage>()
-            }).ToDictionary(k => k.RecipeId);
+               Ingredients = new List<IngredientUsage>(),
+            }
+         ).ToDictionary(k => k.RecipeId);
 
-         ModelingSession.Log.InfoFormat("Building empty RecipeNodes took {0}ms.", timer.ElapsedMilliseconds);
+         ModelingSession.Log.InfoFormat(
+            "Building empty RecipeNodes took {0}ms.",
+            timer.ElapsedMilliseconds
+         );
          timer.Reset();
          timer.Start();
 
@@ -100,7 +108,10 @@ public sealed partial class DBSnapshot
             }
          }
 
-         ModelingSession.Log.InfoFormat("Indexing recipes by tag took {0}ms.", timer.ElapsedMilliseconds);
+         ModelingSession.Log.InfoFormat(
+            "Indexing recipes by tag took {0}ms.",
+            timer.ElapsedMilliseconds
+         );
          timer.Reset();
          timer.Start();
 
@@ -121,12 +132,15 @@ public sealed partial class DBSnapshot
             if (!snapshot.ingredientMap.TryGetValue(ingid, out ingNode)) //New ingredient, create node for it
             {
                nodes = new List<RecipeNode>[RecipeTag.NUM_TAGS];
-               snapshot.ingredientMap.Add(ingid, ingNode = new IngredientNode()
-               {
-                  IngredientId = ingid,
-                  RecipesByTag = nodes,
-                  ConvType = convType
-               });
+               snapshot.ingredientMap.Add(
+                  ingid,
+                  ingNode = new IngredientNode()
+                  {
+                     IngredientId = ingid,
+                     RecipesByTag = nodes,
+                     ConvType = convType,
+                  }
+               );
             }
             else
             {
@@ -148,25 +162,36 @@ public sealed partial class DBSnapshot
             }
 
             var usages = node.Ingredients as List<IngredientUsage>; //Add ingredient usage to recipe
-            usages.Add(new IngredientUsage()
-            {
-               Amt = qty,
-               Ingredient = ingNode,
-               Unit = unit
-            });
+            usages.Add(
+               new IngredientUsage()
+               {
+                  Amt = qty,
+                  Ingredient = ingNode,
+                  Unit = unit,
+               }
+            );
          }
 
-         ModelingSession.Log.InfoFormat("Creating IngredientUsage vertices took {0}ms.", timer.ElapsedMilliseconds);
+         ModelingSession.Log.InfoFormat(
+            "Creating IngredientUsage vertices took {0}ms.",
+            timer.ElapsedMilliseconds
+         );
          timer.Reset();
          timer.Start();
 
          //Create suggestion links for each recipe
          foreach (var r in snapshot.recipeMap.Values)
          {
-            r.Suggestions = (from s in ratingGraph.GetSimilarRecipes(r.RecipeId) select snapshot.recipeMap[s]).ToArray();
+            r.Suggestions = (
+               from s in ratingGraph.GetSimilarRecipes(r.RecipeId)
+               select snapshot.recipeMap[s]
+            ).ToArray();
          }
 
-         ModelingSession.Log.InfoFormat("Building suggestions for each recipe took {0}ms.", timer.ElapsedMilliseconds);
+         ModelingSession.Log.InfoFormat(
+            "Building suggestions for each recipe took {0}ms.",
+            timer.ElapsedMilliseconds
+         );
          timer.Reset();
       }
 
@@ -207,7 +232,10 @@ public sealed partial class DBSnapshot
          GC.Collect(); //Force garbage collection now, since there might be several hundred megs of unreachable allocations
 
          timer.Stop();
-         ModelingSession.Log.InfoFormat("Cleaning up Indexer took {0}ms.", timer.ElapsedMilliseconds);
+         ModelingSession.Log.InfoFormat(
+            "Cleaning up Indexer took {0}ms.",
+            timer.ElapsedMilliseconds
+         );
       }
    }
 }
@@ -220,10 +248,7 @@ public sealed partial class DBSnapshot
 
    public int RecipeCount
    {
-      get
-      {
-         return recipeMap.Keys.Count;
-      }
+      get { return recipeMap.Keys.Count; }
    }
 
    public DBSnapshot(IKPCContext context)
@@ -237,7 +262,10 @@ public sealed partial class DBSnapshot
       }
 
       timer.Stop();
-      ModelingSession.Log.InfoFormat("Total time building snapshot was {0}ms.", timer.ElapsedMilliseconds);
+      ModelingSession.Log.InfoFormat(
+         "Total time building snapshot was {0}ms.",
+         timer.ElapsedMilliseconds
+      );
    }
 
    public RecipeNode FindRecipe(Guid id)

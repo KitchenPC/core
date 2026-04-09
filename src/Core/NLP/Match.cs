@@ -9,21 +9,16 @@ public class Match : Result
 
    public override IngredientUsage Usage
    {
-      get
-      {
-         return usage;
-      }
+      get { return usage; }
    }
 
    public override MatchResult Status
    {
-      get
-      {
-         return MatchResult.Match;
-      }
+      get { return MatchResult.Match; }
    }
 
-   public Match(string input, IngredientUsage usage) : base(input)
+   public Match(string input, IngredientUsage usage)
+      : base(input)
    {
       this.usage = usage;
    }

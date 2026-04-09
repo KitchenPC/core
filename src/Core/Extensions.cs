@@ -57,7 +57,9 @@ public static class Extensions
 
    public static string Truncate(this string value, int maxLength)
    {
-      return String.IsNullOrEmpty(value) ? value : value.Substring(0, Math.Min(value.Length, maxLength));
+      return String.IsNullOrEmpty(value)
+         ? value
+         : value.Substring(0, Math.Min(value.Length, maxLength));
    }
 
    /// <summary>Returns an enumeration, or an empty list if the value is null.</summary>
@@ -79,7 +81,9 @@ public static class Extensions
       return new ReadLockHelper(readerWriterLock);
    }
 
-   public static UpgradeableReadLockHelper UpgradableReadLock(this ReaderWriterLockSlim readerWriterLock)
+   public static UpgradeableReadLockHelper UpgradableReadLock(
+      this ReaderWriterLockSlim readerWriterLock
+   )
    {
       return new UpgradeableReadLockHelper(readerWriterLock);
    }

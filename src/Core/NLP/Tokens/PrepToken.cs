@@ -23,7 +23,7 @@ public class PrepToken : IGrammar
 
       while ((curByte = stream.ReadByte()) >= 0)
       {
-         buffer += (char) curByte;
+         buffer += (char)curByte;
 
          //Prep tokens can have leading commas or parens - so trim these off
          buffer = Regex.Replace(buffer, @"^\s*(,|-|\()\s*", "");

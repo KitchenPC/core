@@ -25,10 +25,7 @@ public class ShoppingListAction
 
    public ShoppingListLoader LoadAll
    {
-      get
-      {
-         return new ShoppingListLoader(context);
-      }
+      get { return new ShoppingListLoader(context); }
    }
 
    public ShoppingListDeleter Delete(ShoppingList list)
@@ -41,10 +38,7 @@ public class ShoppingListAction
 
    public ShoppingListCreator Create
    {
-      get
-      {
-         return new ShoppingListCreator(context);
-      }
+      get { return new ShoppingListCreator(context); }
    }
 
    public ShoppingListUpdater Update(ShoppingList list)
@@ -78,13 +72,15 @@ public class ShoppingListLoader
    public ShoppingListLoader(IKPCContext context, ShoppingList list)
    {
       this.context = context;
-      listsToLoad = new List<ShoppingList>() {list};
+      listsToLoad = new List<ShoppingList>() { list };
    }
 
    public ShoppingListLoader Load(ShoppingList list)
    {
       if (loadAll)
-         throw new FluentExpressionException("To specify individual shopping lists to load, remove the LoadAll clause from your expression.");
+         throw new FluentExpressionException(
+            "To specify individual shopping lists to load, remove the LoadAll clause from your expression."
+         );
 
       listsToLoad.Add(list);
       return this;
@@ -92,10 +88,7 @@ public class ShoppingListLoader
 
    public IList<ShoppingList> List()
    {
-      var options = new GetShoppingListOptions
-      {
-         LoadItems = loadItems
-      };
+      var options = new GetShoppingListOptions { LoadItems = loadItems };
 
       return context.GetShoppingLists(listsToLoad, options);
    }
@@ -109,7 +102,7 @@ public class ShoppingListDeleter
    public ShoppingListDeleter(IKPCContext context, ShoppingList list)
    {
       this.context = context;
-      deleteQueue = new List<ShoppingList>() {list};
+      deleteQueue = new List<ShoppingList>() { list };
    }
 
    public ShoppingListDeleter Delete(ShoppingList list)
@@ -215,7 +208,10 @@ public class ShoppingListUpdater
       return this;
    }
 
-   public ShoppingListUpdater UpdateItem(ShoppingListItem item, Func<ShoppingListItemUpdateAction, ShoppingListItemUpdateAction> updateAction)
+   public ShoppingListUpdater UpdateItem(
+      ShoppingListItem item,
+      Func<ShoppingListItemUpdateAction, ShoppingListItemUpdateAction> updateAction
+   )
    {
       var action = ShoppingListItemUpdater.Create(item);
       var result = updateAction(action);
@@ -244,35 +240,43 @@ public class ShoppingListUpdater
       if (addQueue.Any())
       {
          // Grab new raw entries
-         var newRaws = addQueue.SelectMany(i => i.ToParse).Where(i => !String.IsNullOrWhiteSpace(i))
+         var newRaws = addQueue
+            .SelectMany(i => i.ToParse)
+            .Where(i => !String.IsNullOrWhiteSpace(i))
             .Select(i => new ShoppingListUpdateCommand
             {
                Command = ShoppingListUpdateType.AddItem,
-               NewRaw = i
+               NewRaw = i,
             });
 
          // Grab new Recipes
-         var newRecipes = addQueue.SelectMany(i => i.Recipes).Where(i => i != null)
+         var newRecipes = addQueue
+            .SelectMany(i => i.Recipes)
+            .Where(i => i != null)
             .Select(i => new ShoppingListUpdateCommand
             {
                Command = ShoppingListUpdateType.AddItem,
-               NewRecipe = i
+               NewRecipe = i,
             });
 
          // Grab new IngredientUsages
-         var newUsages = addQueue.SelectMany(i => i.Usages).Where(i => i != null)
+         var newUsages = addQueue
+            .SelectMany(i => i.Usages)
+            .Where(i => i != null)
             .Select(i => new ShoppingListUpdateCommand
             {
                Command = ShoppingListUpdateType.AddItem,
-               NewUsage = i
+               NewUsage = i,
             });
 
          // Grab new Ingredients
-         var newIngredients = addQueue.SelectMany(i => i.Ingredients).Where(i => i != null)
+         var newIngredients = addQueue
+            .SelectMany(i => i.Ingredients)
+            .Where(i => i != null)
             .Select(i => new ShoppingListUpdateCommand
             {
                Command = ShoppingListUpdateType.AddItem,
-               NewIngredient = i
+               NewIngredient = i,
             });
 
          updates.AddRange(newRaws);
@@ -283,20 +287,32 @@ public class ShoppingListUpdater
 
       if (removeQueue.Any())
       {
-         updates.AddRange(removeQueue.Where(i => i.Id.HasValue).Select(i => new ShoppingListUpdateCommand
-         {
-            Command = ShoppingListUpdateType.RemoveItem,
-            RemoveItem = i.Id
-         }));
+         updates.AddRange(
+            removeQueue
+               .Where(i => i.Id.HasValue)
+               .Select(i => new ShoppingListUpdateCommand
+               {
+                  Command = ShoppingListUpdateType.RemoveItem,
+                  RemoveItem = i.Id,
+               })
+         );
       }
 
       if (updateQueue.Any())
       {
-         updates.AddRange(updateQueue.Where(i => i.Item.Id.HasValue).Select(i => new ShoppingListUpdateCommand
-         {
-            Command = ShoppingListUpdateType.ModifyItem,
-            ModifyItem = new ShoppingListModification(i.Item.Id.Value, i.NewAmount, i.CrossedOut)
-         }));
+         updates.AddRange(
+            updateQueue
+               .Where(i => i.Item.Id.HasValue)
+               .Select(i => new ShoppingListUpdateCommand
+               {
+                  Command = ShoppingListUpdateType.ModifyItem,
+                  ModifyItem = new ShoppingListModification(
+                     i.Item.Id.Value,
+                     i.NewAmount,
+                     i.CrossedOut
+                  ),
+               })
+         );
       }
 
       return context.UpdateShoppingList(list, updates.ToArray(), newName);
@@ -362,10 +378,7 @@ public class ShoppingListAddAction
 
    public ShoppingListAdder Adder
    {
-      get
-      {
-         return adder;
-      }
+      get { return adder; }
    }
 }
 
@@ -424,9 +437,6 @@ public class ShoppingListItemUpdateAction
 
    public ShoppingListItemUpdater Updater
    {
-      get
-      {
-         return updater;
-      }
+      get { return updater; }
    }
 }

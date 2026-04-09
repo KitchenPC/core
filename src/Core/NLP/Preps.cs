@@ -16,10 +16,7 @@ public class Preps : IEnumerable<PrepNode>
 
    public bool HasValue
    {
-      get
-      {
-         return notes.Count != 0;
-      }
+      get { return notes.Count != 0; }
    }
 
    public void Add(PrepNode prep)
@@ -39,7 +36,15 @@ public class Preps : IEnumerable<PrepNode>
          return String.Empty;
       }
 
-      return String.Join("//", notes.Select(p => { return p.Prep; }).ToArray());
+      return String.Join(
+         "//",
+         notes
+            .Select(p =>
+            {
+               return p.Prep;
+            })
+            .ToArray()
+      );
    }
 
    public IEnumerator<PrepNode> GetEnumerator()

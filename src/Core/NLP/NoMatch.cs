@@ -8,13 +8,11 @@ public class NoMatch : Result
 
    public override MatchResult Status
    {
-      get
-      {
-         return status;
-      }
+      get { return status; }
    }
 
-   public NoMatch(string input, MatchResult status) : base(input)
+   public NoMatch(string input, MatchResult status)
+      : base(input)
    {
       this.status = status;
    }

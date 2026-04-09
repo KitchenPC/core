@@ -16,7 +16,7 @@ public static class Unit
       "gal",
       "g",
       "oz",
-      "lb"
+      "lb",
    };
 
    private static readonly String[] Plural =
@@ -31,17 +31,17 @@ public static class Unit
       "gal",
       "g",
       "oz",
-      "lbs"
+      "lbs",
    };
 
    public static string GetSingular(Units unitType)
    {
-      return Singular[(int) unitType];
+      return Singular[(int)unitType];
    }
 
    public static string GetPlural(Units unitType)
    {
-      return Plural[(int) unitType];
+      return Plural[(int)unitType];
    }
 
    public static UnitType GetConvType(Units unitType)
@@ -79,23 +79,25 @@ public static class Unit
       throw new ArgumentException("Invalid convType passed in to GetDefaultUnitType.");
    }
 
-   public static T? ParseNullable<T>(object value) where T : struct
+   public static T? ParseNullable<T>(object value)
+      where T : struct
    {
-      if (!typeof (T).IsEnum)
+      if (!typeof(T).IsEnum)
          throw new ArgumentException("T must be an Enum type.");
 
       if (value == null || value == DBNull.Value)
          return null;
 
       if (value is String)
-         return Enum.Parse(typeof (T), value.ToString()) as T?;
+         return Enum.Parse(typeof(T), value.ToString()) as T?;
 
-      return Enum.ToObject(typeof (T), value) as T?;
+      return Enum.ToObject(typeof(T), value) as T?;
    }
 
-   public static T Parse<T>(object value) where T : struct
+   public static T Parse<T>(object value)
+      where T : struct
    {
-      if (!typeof (T).IsEnum)
+      if (!typeof(T).IsEnum)
          throw new ArgumentException("T must be an Enum type.");
 
       if (value == null || value == DBNull.Value)
@@ -105,9 +107,9 @@ public static class Unit
 
       if (value is String)
       {
-         return (T) Enum.Parse(typeof (T), value.ToString());
+         return (T)Enum.Parse(typeof(T), value.ToString());
       }
 
-      return (T) Enum.ToObject(typeof (T), value);
+      return (T)Enum.ToObject(typeof(T), value);
    }
 }

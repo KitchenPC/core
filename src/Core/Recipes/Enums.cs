@@ -6,7 +6,7 @@ public enum MealFilter
    Breakfast,
    Lunch,
    Dinner,
-   Dessert
+   Dessert,
 }
 
 public enum Rating
@@ -17,5 +17,5 @@ public enum Rating
    TwoStars = 2,
    ThreeStars = 3,
    FourStars = 4,
-   FiveStars = 5
+   FiveStars = 5,
 }

@@ -92,7 +92,7 @@ public static class Fractions
          { 0.562m, "9/16" },
          { 0.688m, "11/16" },
          { 0.812m, "13/16" },
-         { 0.938m, "15/16" }
+         { 0.938m, "15/16" },
       };
    }
 
@@ -117,9 +117,7 @@ public static class Fractions
          return whole.ToString(CultureInfo.InvariantCulture);
       }
 
-      return whole == 0
-         ? frac
-         : $"{whole} {frac}";
+      return whole == 0 ? frac : $"{whole} {frac}";
    }
 
    public static decimal ParseFraction(string fraction)
@@ -152,7 +150,7 @@ public static class Fractions
             return false;
          }
 
-         result = whole + ((decimal) numerator/denominator);
+         result = whole + ((decimal)numerator / denominator);
          return true;
       }
 

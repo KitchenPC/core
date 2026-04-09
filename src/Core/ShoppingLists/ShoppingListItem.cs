@@ -16,12 +16,14 @@ public class ShoppingListItem : IngredientAggregation
       return new ShoppingListItem(id);
    }
 
-   public ShoppingListItem(Guid id) : base(null)
+   public ShoppingListItem(Guid id)
+      : base(null)
    {
       Id = id;
    }
 
-   public ShoppingListItem(string raw) : base(null)
+   public ShoppingListItem(string raw)
+      : base(null)
    {
       if (String.IsNullOrWhiteSpace(raw))
          throw new ArgumentException("Shopping list item cannot be blank.");
@@ -29,14 +31,15 @@ public class ShoppingListItem : IngredientAggregation
       Raw = raw;
    }
 
-   public ShoppingListItem(Ingredient ingredient) : base(ingredient)
-   {
-   }
+   public ShoppingListItem(Ingredient ingredient)
+      : base(ingredient) { }
 
    public override IngredientAggregation AddUsage(IngredientUsage usage)
    {
       if (Ingredient == null)
-         throw new ArgumentException("Cannot add usage to a non-resolved shopping list item.  Create a new shopping list based on an IngredientUsage.");
+         throw new ArgumentException(
+            "Cannot add usage to a non-resolved shopping list item.  Create a new shopping list based on an IngredientUsage."
+         );
 
       return base.AddUsage(usage);
    }

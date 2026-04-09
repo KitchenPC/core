@@ -29,13 +29,7 @@ public class Pairings
 
    public IngredientForm this[NameIngredientPair key]
    {
-      get
-      {
-         return pairs[key];
-      }
-      set
-      {
-         pairs[key] = value;
-      }
+      get { return pairs[key]; }
+      set { pairs[key] = value; }
    }
 }

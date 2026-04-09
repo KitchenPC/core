@@ -15,39 +15,32 @@ public class Model
 
    public Guid[] RecipeIds
    {
-      get
-      {
-         return _recipeids;
-      }
+      get { return _recipeids; }
    }
 
    public PantryItem[] Pantry
    {
-      get
-      {
-         return _pantry;
-      }
+      get { return _pantry; }
    }
 
    public int Count
    {
-      get
-      {
-         return _recipeids.Length;
-      }
+      get { return _recipeids.Length; }
    }
 
    public double Score
    {
-      get
-      {
-         return _score;
-      }
+      get { return _score; }
    }
 
    public Model(RecipeNode[] recipes, PantryItem[] pantry, double score)
    {
-      this._recipeids = recipes.Select(r => { return r.RecipeId; }).ToArray();
+      this._recipeids = recipes
+         .Select(r =>
+         {
+            return r.RecipeId;
+         })
+         .ToArray();
       this._pantry = pantry;
       this._score = score;
    }

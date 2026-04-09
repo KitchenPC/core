@@ -9,33 +9,33 @@ namespace KitchenPC.Core.Modeler;
 /// </summary>
 public class ModelerQuery
 {
-    public string[] Ingredients { get; set; } //User-entered ingredients to be parsed by NLP
-    public Guid? AvoidRecipe { get; set; } //Avoid specific recipe, useful for swapping out one recipe for another
-    public byte NumRecipes { get; set; }
-    public byte Scale { get; set; }
+   public string[] Ingredients { get; set; } //User-entered ingredients to be parsed by NLP
+   public Guid? AvoidRecipe { get; set; } //Avoid specific recipe, useful for swapping out one recipe for another
+   public byte NumRecipes { get; set; }
+   public byte Scale { get; set; }
 
-    public string CacheKey
-    {
-        get
-        {
-            var bytes = new List<byte>();
-            bytes.Add(NumRecipes); //First byte is number of recipes
-            bytes.Add(Scale); //Second byte is the scale
+   public string CacheKey
+   {
+      get
+      {
+         var bytes = new List<byte>();
+         bytes.Add(NumRecipes); //First byte is number of recipes
+         bytes.Add(Scale); //Second byte is the scale
 
-            if (AvoidRecipe.HasValue)
-                bytes.AddRange(AvoidRecipe.Value.ToByteArray());
+         if (AvoidRecipe.HasValue)
+            bytes.AddRange(AvoidRecipe.Value.ToByteArray());
 
-            //Remaining bytes are defined ingredients, delimited by null
-            if (Ingredients != null && Ingredients.Length > 0)
+         //Remaining bytes are defined ingredients, delimited by null
+         if (Ingredients != null && Ingredients.Length > 0)
+         {
+            foreach (var ing in Ingredients)
             {
-                foreach (var ing in Ingredients)
-                {
-                    bytes.AddRange(Encoding.UTF8.GetBytes(ing.ToLower().Trim()));
-                    bytes.Add(0); //Null delimiter
-                }
+               bytes.AddRange(Encoding.UTF8.GetBytes(ing.ToLower().Trim()));
+               bytes.Add(0); //Null delimiter
             }
+         }
 
-            return Convert.ToBase64String(bytes.ToArray());
-        }
-    }
+         return Convert.ToBase64String(bytes.ToArray());
+      }
+   }
 }

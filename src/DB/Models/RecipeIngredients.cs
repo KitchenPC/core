@@ -23,9 +23,7 @@ public class RecipeIngredientsMap : ClassMap<RecipeIngredients>
 {
    public RecipeIngredientsMap()
    {
-      Id(x => x.RecipeIngredientId, "id")
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.RecipeIngredientId, "id").GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.Unit).Not.Nullable();
       Map(x => x.QtyLow);
@@ -34,8 +32,14 @@ public class RecipeIngredientsMap : ClassMap<RecipeIngredients>
       Map(x => x.Qty);
       Map(x => x.Section).Length(50);
 
-      References(x => x.Recipe).Column("RecipeId").Not.Nullable().Index("IDX_RecipeIngredients_RecipeId");
-      References(x => x.Ingredient).Column("IngredientId").Not.Nullable().Index("IDX_RecipeIngredients_IngredientId");
+      References(x => x.Recipe)
+         .Column("RecipeId")
+         .Not.Nullable()
+         .Index("IDX_RecipeIngredients_RecipeId");
+      References(x => x.Ingredient)
+         .Column("IngredientId")
+         .Not.Nullable()
+         .Index("IDX_RecipeIngredients_IngredientId");
       References(x => x.IngredientForm).Column("IngredientFormId");
    }
 }

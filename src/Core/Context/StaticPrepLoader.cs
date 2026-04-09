@@ -20,11 +20,7 @@ public class StaticPrepLoader : ISynonymLoader<PrepNode>
       var forms = store.NlpFormSynonyms.Select(p => p.Name);
       var preps = store.NlpPrepNotes.Select(p => p.Name);
 
-      var ret = forms
-         .Concat(preps)
-         .Distinct()
-         .Select(p => new PrepNode(p))
-         .ToList();
+      var ret = forms.Concat(preps).Distinct().Select(p => new PrepNode(p)).ToList();
 
       return ret;
    }

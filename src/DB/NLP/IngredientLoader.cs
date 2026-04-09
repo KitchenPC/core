@@ -11,85 +11,123 @@ namespace KitchenPC.DB.NLP;
 
 public class IngredientLoader : ISynonymLoader<IngredientNode>
 {
-    private readonly DatabaseAdapter adapter;
+   private readonly DatabaseAdapter adapter;
 
-    public IngredientLoader(DatabaseAdapter adapter)
-    {
-        this.adapter = adapter;
-    }
+   public IngredientLoader(DatabaseAdapter adapter)
+   {
+      this.adapter = adapter;
+   }
 
-    public IEnumerable<IngredientNode> LoadSynonyms()
-    {
-        using var session = adapter.GetStatelessSession();
-        var nodes = new Dictionary<Guid, IngredientNode>();
+   public IEnumerable<IngredientNode> LoadSynonyms()
+   {
+      using var session = adapter.GetStatelessSession();
+      var nodes = new Dictionary<Guid, IngredientNode>();
 
-        var ingsForNlp = session.QueryOver<Ingredients>().List();
-        var pairingMap = session.QueryOver<NlpDefaultPairings>()
-            .Fetch(SelectMode.Fetch, prop => prop.WeightForm)
-            .Fetch(SelectMode.Fetch, prop => prop.VolumeForm)
-            .Fetch(SelectMode.Fetch, prop => prop.UnitForm)
-            .List()
-            .ToDictionary(p => p.Ingredient.IngredientId);
+      var ingsForNlp = session.QueryOver<Ingredients>().List();
+      var pairingMap = session
+         .QueryOver<NlpDefaultPairings>()
+         .Fetch(SelectMode.Fetch, prop => prop.WeightForm)
+         .Fetch(SelectMode.Fetch, prop => prop.VolumeForm)
+         .Fetch(SelectMode.Fetch, prop => prop.UnitForm)
+         .List()
+         .ToDictionary(p => p.Ingredient.IngredientId);
 
-        foreach (var ing in ingsForNlp)
-        {
-            var ingId = ing.IngredientId;
-            var name = ing.DisplayName;
-            var convType = ing.ConversionType;
-            Weight unitWeight = ing.UnitWeight;
-            var pairings = new DefaultPairings();
+      foreach (var ing in ingsForNlp)
+      {
+         var ingId = ing.IngredientId;
+         var name = ing.DisplayName;
+         var convType = ing.ConversionType;
+         Weight unitWeight = ing.UnitWeight;
+         var pairings = new DefaultPairings();
 
-            if (pairingMap.TryGetValue(ingId, out var defaultPairing))
+         if (pairingMap.TryGetValue(ingId, out var defaultPairing))
+         {
+            if (defaultPairing.WeightForm != null)
             {
-                if (defaultPairing.WeightForm != null)
-                {
-                    var wfAmount = new Amount(defaultPairing.WeightForm.FormAmount, defaultPairing.WeightForm.FormUnit);
-                    pairings.Weight = new IngredientForm(defaultPairing.WeightForm.IngredientFormId, ingId, Units.Ounce, null, null, defaultPairing.WeightForm.ConvMultiplier, wfAmount);
-                }
-
-                if (defaultPairing.VolumeForm != null)
-                {
-                    var vfAmount = new Amount(defaultPairing.VolumeForm.FormAmount, defaultPairing.VolumeForm.FormUnit);
-                    pairings.Volume = new IngredientForm(defaultPairing.VolumeForm.IngredientFormId, ingId, Units.Cup, null, null, defaultPairing.VolumeForm.ConvMultiplier, vfAmount);
-                }
-
-                if (defaultPairing.UnitForm != null)
-                {
-                    var ufAmount = new Amount(defaultPairing.UnitForm.FormAmount, defaultPairing.UnitForm.FormUnit);
-                    pairings.Unit = new IngredientForm(defaultPairing.UnitForm.IngredientFormId, ingId, Units.Unit, null, null, defaultPairing.UnitForm.ConvMultiplier, ufAmount);
-                }
+               var wfAmount = new Amount(
+                  defaultPairing.WeightForm.FormAmount,
+                  defaultPairing.WeightForm.FormUnit
+               );
+               pairings.Weight = new IngredientForm(
+                  defaultPairing.WeightForm.IngredientFormId,
+                  ingId,
+                  Units.Ounce,
+                  null,
+                  null,
+                  defaultPairing.WeightForm.ConvMultiplier,
+                  wfAmount
+               );
             }
 
-            if (nodes.ContainsKey(ingId))
+            if (defaultPairing.VolumeForm != null)
             {
-                Parser.Log.ErrorFormat("[NLP Loader] Duplicate ingredient key due to bad DB data: {0} ({1})", name, ingId);
+               var vfAmount = new Amount(
+                  defaultPairing.VolumeForm.FormAmount,
+                  defaultPairing.VolumeForm.FormUnit
+               );
+               pairings.Volume = new IngredientForm(
+                  defaultPairing.VolumeForm.IngredientFormId,
+                  ingId,
+                  Units.Cup,
+                  null,
+                  null,
+                  defaultPairing.VolumeForm.ConvMultiplier,
+                  vfAmount
+               );
             }
-            else
+
+            if (defaultPairing.UnitForm != null)
             {
-                nodes.Add(ingId, new IngredientNode(ingId, name, convType, unitWeight, pairings));
+               var ufAmount = new Amount(
+                  defaultPairing.UnitForm.FormAmount,
+                  defaultPairing.UnitForm.FormUnit
+               );
+               pairings.Unit = new IngredientForm(
+                  defaultPairing.UnitForm.IngredientFormId,
+                  ingId,
+                  Units.Unit,
+                  null,
+                  null,
+                  defaultPairing.UnitForm.ConvMultiplier,
+                  ufAmount
+               );
             }
-        }
+         }
 
-        //Load synonyms
-        var ingSynonyms = session.QueryOver<NlpIngredientSynonyms>().List();
+         if (nodes.ContainsKey(ingId))
+         {
+            Parser.Log.ErrorFormat(
+               "[NLP Loader] Duplicate ingredient key due to bad DB data: {0} ({1})",
+               name,
+               ingId
+            );
+         }
+         else
+         {
+            nodes.Add(ingId, new IngredientNode(ingId, name, convType, unitWeight, pairings));
+         }
+      }
 
-        var ret = new List<IngredientNode>();
-        foreach (var syn in ingSynonyms)
-        {
-            var ingId = syn.Ingredient.IngredientId;
-            var alias = syn.Alias;
-            var prepnote = syn.Prepnote;
+      //Load synonyms
+      var ingSynonyms = session.QueryOver<NlpIngredientSynonyms>().List();
 
-            if (nodes.TryGetValue(ingId, out var node)) //TODO: If this fails, maybe throw an exception?
-            {
-                ret.Add(new IngredientNode(node, alias, prepnote));
-            }
-        }
+      var ret = new List<IngredientNode>();
+      foreach (var syn in ingSynonyms)
+      {
+         var ingId = syn.Ingredient.IngredientId;
+         var alias = syn.Alias;
+         var prepnote = syn.Prepnote;
 
-        ret.AddRange(nodes.Values);
+         if (nodes.TryGetValue(ingId, out var node)) //TODO: If this fails, maybe throw an exception?
+         {
+            ret.Add(new IngredientNode(node, alias, prepnote));
+         }
+      }
 
-        return ret;
-    }
+      ret.AddRange(nodes.Values);
 
-    public Pairings LoadFormPairings() => throw new NotImplementedException();
+      return ret;
+   }
+
+   public Pairings LoadFormPairings() => throw new NotImplementedException();
 }

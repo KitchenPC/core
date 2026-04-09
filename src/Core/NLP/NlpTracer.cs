@@ -19,7 +19,12 @@ public static class NlpTracer
       currentTracer.Trace(level, message, args);
    }
 
-   public static void ConditionalTrace(bool condition, TraceLevel level, string message, params object[] args)
+   public static void ConditionalTrace(
+      bool condition,
+      TraceLevel level,
+      string message,
+      params object[] args
+   )
    {
       if (condition)
       {

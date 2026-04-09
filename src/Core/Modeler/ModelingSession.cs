@@ -36,7 +36,7 @@ namespace KitchenPC.Core.Modeler
       private readonly DBSnapshot db;
       private readonly IKPCContext context;
       private readonly IUserProfile profile;
-      public static ILog Log = LogManager.GetLogger(typeof (ModelingSession));
+      public static ILog Log = LogManager.GetLogger(typeof(ModelingSession));
 
       /// <summary>
       /// Create a ModelingSession instance.
@@ -150,7 +150,9 @@ namespace KitchenPC.Core.Modeler
       {
          if (recipes > MAX_SUGGESTIONS)
          {
-            throw new ArgumentException("Modeler can only generate " + MAX_SUGGESTIONS.ToString() + " recipes at a time.");
+            throw new ArgumentException(
+               "Modeler can only generate " + MAX_SUGGESTIONS.ToString() + " recipes at a time."
+            );
          }
 
          var temperature = 10000.0;
@@ -174,7 +176,10 @@ namespace KitchenPC.Core.Modeler
 
             //if the new set has a smaller score (good thing)
             //or if the new set has a higher score but satisfies Boltzman condition then accept the set
-            if ((deltaScore < 0) || (score > 0 && Math.Exp(-deltaScore/temperature) > random.NextDouble()))
+            if (
+               (deltaScore < 0)
+               || (score > 0 && Math.Exp(-deltaScore / temperature) > random.NextDouble())
+            )
             {
                nextSet.CopyTo(currentSet, 0);
                score += deltaScore;
@@ -185,7 +190,11 @@ namespace KitchenPC.Core.Modeler
          }
 
          timer.Stop();
-         Log.InfoFormat("Generating set of {0} recipes took {1}ms.", recipes, timer.ElapsedMilliseconds);
+         Log.InfoFormat(
+            "Generating set of {0} recipes took {1}ms.",
+            recipes,
+            timer.ElapsedMilliseconds
+         );
 
          return new Model(currentSet, profile.Pantry, score);
       }
@@ -201,12 +210,19 @@ namespace KitchenPC.Core.Modeler
 
          results.RecipeIds = model.RecipeIds;
          results.Pantry = model.Pantry;
-         results.Briefs = recipes.Select(r => { return new RecipeBrief(r); }).ToArray();
-         results.Recipes = recipes.Select(r => new SuggestedRecipe
-         {
-            Id = r.Id,
-            Ingredients = context.AggregateRecipes(r.Id).ToArray()
-         }).ToArray();
+         results.Briefs = recipes
+            .Select(r =>
+            {
+               return new RecipeBrief(r);
+            })
+            .ToArray();
+         results.Recipes = recipes
+            .Select(r => new SuggestedRecipe
+            {
+               Id = r.Id,
+               Ingredients = context.AggregateRecipes(r.Id).ToArray(),
+            })
+            .ToArray();
 
          return results;
       }
@@ -226,7 +242,7 @@ namespace KitchenPC.Core.Modeler
          for (var i = 0; i < currentSet.Length; i++)
          {
             var recipe = currentSet[i];
-            var ingredients = (IngredientUsage[]) recipe.Ingredients;
+            var ingredients = (IngredientUsage[])recipe.Ingredients;
 
             //Add points for any favorite tags this recipe uses
 
@@ -244,7 +260,7 @@ namespace KitchenPC.Core.Modeler
             byte realRating; //Real rating is the user's rating, else the public rating, else 3.
             if (!ratings.TryGetValue(recipe, out realRating))
             {
-               realRating = (recipe.Rating == 0) ? (byte) 3 : recipe.Rating; //if recipe has no ratings, use average rating of 3.
+               realRating = (recipe.Rating == 0) ? (byte)3 : recipe.Rating; //if recipe has no ratings, use average rating of 3.
             }
             avgRating += (realRating - 1);
 
@@ -311,7 +327,7 @@ namespace KitchenPC.Core.Modeler
                   }
 
                   var need = e.Current.Value.Amt.Value;
-                  var ratio = 1 - ((have.Value - need)/have.Value); //Percentage of how much you're using of what you have
+                  var ratio = 1 - ((have.Value - need) / have.Value); //Percentage of how much you're using of what you have
                   if (ratio > 1) //If you need more than you have, add the excess ratio to the waste but don't go over the punishment for not having the ingredient at all
                   {
                      wasted += Math.Min(ratio, NEW_ING_PUNISH);
@@ -328,31 +344,36 @@ namespace KitchenPC.Core.Modeler
             }
          }
 
-         double worstScore, trendScore, efficiencyScore;
+         double worstScore,
+            trendScore,
+            efficiencyScore;
 
          if (profile.Pantry == null) //No pantry, efficiency is defined by the overlap of ingredients across recipes
          {
-            efficiencyScore = totals.Keys.Count/ingTotal;
+            efficiencyScore = totals.Keys.Count / ingTotal;
          }
          else //Efficiency is defined by how efficient the pantry ingredients are utilized
          {
-            worstScore = ((totals.Keys.Count*NEW_ING_PUNISH) + (profile.Pantry.Length*MISSING_ING_PUNISH)); //Worst possible efficiency score
-            efficiencyScore = (wasted/worstScore);
+            worstScore = (
+               (totals.Keys.Count * NEW_ING_PUNISH) + (profile.Pantry.Length * MISSING_ING_PUNISH)
+            ); //Worst possible efficiency score
+            efficiencyScore = (wasted / worstScore);
          }
 
          avgRating /= currentSet.Length;
-         trendScore = 1 - ((((avgRating/4)*4) + (tagPoints/tagTotal) + (ingPoints/ingTotal))/6);
+         trendScore =
+            1 - ((((avgRating / 4) * 4) + (tagPoints / tagTotal) + (ingPoints / ingTotal)) / 6);
 
          totals.Clear();
 
          if (scale == 1)
             return efficiencyScore;
          else if (scale == 2)
-            return (efficiencyScore + efficiencyScore + trendScore)/3;
+            return (efficiencyScore + efficiencyScore + trendScore) / 3;
          else if (scale == 3)
-            return (efficiencyScore + trendScore)/2;
+            return (efficiencyScore + trendScore) / 2;
          else if (scale == 4)
-            return (efficiencyScore + trendScore + trendScore)/3;
+            return (efficiencyScore + trendScore + trendScore) / 3;
          else if (scale == 5)
             return trendScore;
 
@@ -442,7 +463,10 @@ namespace KitchenPC.Core.Modeler
          if (pantryIngredients == null) //No pantry, fish through Recipe index
          {
             int rnd;
-            var tag = (AllowedTags == null) ? random.Next(RecipeTag.NUM_TAGS) : AllowedTags[random.Next(AllowedTags.Length)].Value;
+            var tag =
+               (AllowedTags == null)
+                  ? random.Next(RecipeTag.NUM_TAGS)
+                  : AllowedTags[random.Next(AllowedTags.Length)].Value;
             var recipesByTag = db.FindRecipesByTag(tag);
             if (recipesByTag == null || recipesByTag.Length == 0) //Nothing in that tag
                return Fish();
@@ -490,7 +514,7 @@ namespace KitchenPC.Core.Modeler
          //If there's a blacklist, make sure no ingredients are blacklisted otherwise try again
          if (this.ingBlacklist != null)
          {
-            var ingredients = (IngredientUsage[]) recipeNode.Ingredients;
+            var ingredients = (IngredientUsage[])recipeNode.Ingredients;
             for (var i = 0; i < ingredients.Length; i++)
             {
                if (this.ingBlacklist.Contains(ingredients[i].Ingredient))

@@ -4,5 +4,5 @@ public enum ShoppingListUpdateType
 {
    AddItem,
    RemoveItem,
-   ModifyItem
+   ModifyItem,
 };

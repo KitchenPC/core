@@ -14,10 +14,7 @@ public class ConnectorVertex
 
    public IEnumerable<IngredientNode> Connections
    {
-      get
-      {
-         return connections.AsEnumerable();
-      }
+      get { return connections.AsEnumerable(); }
    }
 
    public void AddConnection(IngredientNode node)

@@ -22,7 +22,7 @@ namespace KitchenPC.Core.NLP.Tokens
 
          while ((curByte = stream.ReadByte()) >= 0)
          {
-            buffer += (char) curByte;
+            buffer += (char)curByte;
 
             AnomalousNode node;
             var match = data.Parse(buffer, out node);

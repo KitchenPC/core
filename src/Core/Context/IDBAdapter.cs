@@ -42,14 +42,33 @@ public interface IDBAdapter : IProvisionSource, IProvisionTarget
    RecipeBrief[] GetRecipeQueue(AuthIdentity identity);
 
    // Shopping list support
-   ShoppingList[] GetShoppingLists(AuthIdentity identity, IList<ShoppingList> lists, GetShoppingListOptions options);
+   ShoppingList[] GetShoppingLists(
+      AuthIdentity identity,
+      IList<ShoppingList> lists,
+      GetShoppingListOptions options
+   );
    ShoppingListResult CreateShoppingList(AuthIdentity identity, ShoppingList list);
-   ShoppingListResult UpdateShoppingList(AuthIdentity identity, Guid? listId, Guid[] toRemove, ShoppingListModification[] toModify, IShoppingListSource[] toAdd, string newName = null);
+   ShoppingListResult UpdateShoppingList(
+      AuthIdentity identity,
+      Guid? listId,
+      Guid[] toRemove,
+      ShoppingListModification[] toModify,
+      IShoppingListSource[] toAdd,
+      string newName = null
+   );
    void DeleteShoppingLists(AuthIdentity identity, ShoppingList[] lists);
 
    // Menu support
    Menu[] GetMenus(AuthIdentity identity, IList<Menu> menus, GetMenuOptions options);
    MenuResult CreateMenu(AuthIdentity identity, Menu menu, params Guid[] recipeIds);
    void DeleteMenus(AuthIdentity identity, params Guid[] menuIds);
-   MenuResult UpdateMenu(AuthIdentity identity, Guid? menuId, Guid[] recipesAdd, Guid[] recipesRemove, MenuMove[] recipesMove, bool clear, string newName = null);
+   MenuResult UpdateMenu(
+      AuthIdentity identity,
+      Guid? menuId,
+      Guid[] recipesAdd,
+      Guid[] recipesRemove,
+      MenuMove[] recipesMove,
+      bool clear,
+      string newName = null
+   );
 }

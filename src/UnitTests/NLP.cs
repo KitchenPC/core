@@ -36,7 +36,6 @@ public class NlpTests
          "[ING]: [AMT]", //eggs: 5
          "[FORM] [ING]: [AMT]", //shredded cheddar cheese: 1 cup
          "[FORM] [ING]: [AMT] [UNIT]", //shredded cheddar cheese: 1 cup
-
          "[ING]: [AMT] [UNIT], [PREP]", //cheddar cheese: 5 cups
          "[AMT] [UNIT] [FORM] [ING], [PREP]", //5 cups melted cheddar cheese
          "[AMT] [UNIT] [ING], [PREP]", //5 cups cheddar cheese

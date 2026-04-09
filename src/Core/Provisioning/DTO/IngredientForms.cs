@@ -24,7 +24,7 @@ public class IngredientForms
          FormDisplayName = dtoForm.FormDisplayName,
          FormUnitName = dtoForm.UnitName,
          IngredientId = dtoForm.IngredientId,
-         FormAmount = new Amount(dtoForm.FormAmount, dtoForm.FormUnit)
+         FormAmount = new Amount(dtoForm.FormAmount, dtoForm.FormUnit),
       };
    }
 }

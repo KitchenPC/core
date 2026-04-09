@@ -17,11 +17,7 @@ public class IngredientForms
    public virtual Units FormUnit { get; set; }
    public virtual string FormDisplayName { get; set; }
 
-   public static IngredientForms FromId(Guid id) =>
-      new()
-      {
-         IngredientFormId = id
-      };
+   public static IngredientForms FromId(Guid id) => new() { IngredientFormId = id };
 
    public virtual IngredientForm AsIngredientForm() =>
       new()
@@ -32,7 +28,7 @@ public class IngredientForms
          FormDisplayName = FormDisplayName,
          FormUnitName = UnitName,
          IngredientId = Ingredient.IngredientId,
-         FormAmount = new Amount(FormAmount, FormUnit)
+         FormAmount = new Amount(FormAmount, FormUnit),
       };
 }
 
@@ -40,9 +36,7 @@ public class IngredientFormsMap : ClassMap<IngredientForms>
 {
    public IngredientFormsMap()
    {
-      Id(x => x.IngredientFormId, "formid")
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.IngredientFormId, "formid").GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.ConvMultiplier).Not.Nullable();
       Map(x => x.FormAmount).Not.Nullable();

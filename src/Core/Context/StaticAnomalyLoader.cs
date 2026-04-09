@@ -31,7 +31,9 @@ public class StaticAnomalyLoader : ISynonymLoader<AnomalousNode>
          var ing = anon.IngredientId;
          var ingName = ingredient.DisplayName;
 
-         IngredientForm weightForm = null, volumeForm = null, unitForm = null;
+         IngredientForm weightForm = null,
+            volumeForm = null,
+            unitForm = null;
          if (anon.WeightFormId.HasValue)
          {
             var wf = forms[anon.WeightFormId.Value];
@@ -43,7 +45,8 @@ public class StaticAnomalyLoader : ISynonymLoader<AnomalousNode>
                wf.FormDisplayName,
                wf.UnitName,
                wf.ConvMultiplier,
-               new Amount(wf.FormAmount, wf.FormUnit));
+               new Amount(wf.FormAmount, wf.FormUnit)
+            );
          }
 
          if (anon.VolumeFormId.HasValue)
@@ -57,7 +60,8 @@ public class StaticAnomalyLoader : ISynonymLoader<AnomalousNode>
                vf.FormDisplayName,
                vf.UnitName,
                vf.ConvMultiplier,
-               new Amount(vf.FormAmount, vf.FormUnit));
+               new Amount(vf.FormAmount, vf.FormUnit)
+            );
          }
 
          if (anon.UnitFormId.HasValue)
@@ -71,10 +75,16 @@ public class StaticAnomalyLoader : ISynonymLoader<AnomalousNode>
                uf.FormDisplayName,
                uf.UnitName,
                uf.ConvMultiplier,
-               new Amount(uf.FormAmount, uf.FormUnit));
+               new Amount(uf.FormAmount, uf.FormUnit)
+            );
          }
 
-         var pairings = new DefaultPairings() {Weight = weightForm, Volume = volumeForm, Unit = unitForm};
+         var pairings = new DefaultPairings()
+         {
+            Weight = weightForm,
+            Volume = volumeForm,
+            Unit = unitForm,
+         };
          var ingNode = new AnomalousIngredientNode(ing, ingName, UnitType.Unit, 0, pairings); //TODO: Must load conv type and unit weight
          ret.Add(new AnomalousNode(name, ingNode));
       }

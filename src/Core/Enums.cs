@@ -4,7 +4,7 @@ public enum UnitType
 {
    Unit = 0,
    Volume = 1,
-   Weight = 2
+   Weight = 2,
 }
 
 public enum Units

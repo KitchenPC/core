@@ -15,7 +15,8 @@ public class AnalyzerResult
 
    public override string ToString()
    {
-      return SecondPlace == Category.None ? FirstPlace.ToString()
+      return SecondPlace == Category.None
+         ? FirstPlace.ToString()
          : String.Format("{0}/{1}", FirstPlace, SecondPlace);
    }
 }

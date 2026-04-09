@@ -13,10 +13,11 @@ public class EnumMapper<T> : EnumStringType<T>
 
    public static IPropertyConvention Convention =>
       ConventionBuilder.Property.When(
-         c => c.Expect(x => x.Type == typeof (GenericEnumMapper<T>)),
+         c => c.Expect(x => x.Type == typeof(GenericEnumMapper<T>)),
          x =>
          {
             x.CustomType<EnumMapper<T>>();
-            x.CustomSqlType((typeof (T).Name));
-         });
+            x.CustomSqlType((typeof(T).Name));
+         }
+      );
 }

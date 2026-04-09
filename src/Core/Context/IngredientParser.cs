@@ -33,8 +33,7 @@ public class IngredientParser
          throw new IngredientMapNotInitializedException();
       }
 
-      string r;
-      if (nameLookup.TryGetValue(id, out r) == false)
+      if (nameLookup.TryGetValue(id, out string r) == false)
       {
          throw new IngredientMapInvalidIngredientException();
       }
@@ -49,7 +48,8 @@ public class IngredientParser
 
       foreach (var ing in datasource)
       {
-         if (String.IsNullOrWhiteSpace(ing.DisplayName)) continue;
+         if (String.IsNullOrWhiteSpace(ing.DisplayName))
+            continue;
 
          ParseString(ing.DisplayName, ing.Id);
          nameLookup.Add(ing.Id, ing.DisplayName);

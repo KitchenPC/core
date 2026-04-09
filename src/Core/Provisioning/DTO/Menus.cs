@@ -12,10 +12,6 @@ public class Menus
 
    public static Menu ToMenu(Menus dtoMenu)
    {
-      return new Menu
-      {
-         Id = dtoMenu.MenuId,
-         Title = dtoMenu.Title
-      };
+      return new Menu { Id = dtoMenu.MenuId, Title = dtoMenu.Title };
    }
 }

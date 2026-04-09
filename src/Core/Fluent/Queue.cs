@@ -18,26 +18,17 @@ public class QueueAction
 
    public QueueLoader Load
    {
-      get
-      {
-         return new QueueLoader(context);
-      }
+      get { return new QueueLoader(context); }
    }
 
    public RecipeEnqueuer Enqueue
    {
-      get
-      {
-         return new RecipeEnqueuer(context);
-      }
+      get { return new RecipeEnqueuer(context); }
    }
 
    public RecipeDequeuer Dequeue
    {
-      get
-      {
-         return new RecipeDequeuer(context);
-      }
+      get { return new RecipeDequeuer(context); }
    }
 }
 
@@ -74,30 +65,30 @@ public class RecipeEnqueuer
       recipesQueue.Add(recipe);
       return this;
    }
-      
+
    public RecipeEnqueuer Recipes(Recipe[] recipes)
    {
-      foreach(Recipe recipe in recipes ?? Enumerable.Empty<Recipe>())
+      foreach (Recipe recipe in recipes ?? Enumerable.Empty<Recipe>())
       {
          recipesQueue.Add(recipe);
       }
-         
+
       return this;
    }
-      
+
    public RecipeEnqueuer Recipe(Guid recipeId)
    {
       recipesQueue.Add(Core.Recipes.Recipe.FromId(recipeId));
       return this;
    }
-      
+
    public RecipeEnqueuer Recipes(Guid[] recipeIds)
    {
-      foreach(Guid recipeId in recipeIds ?? Enumerable.Empty<Guid>())
+      foreach (Guid recipeId in recipeIds ?? Enumerable.Empty<Guid>())
       {
          recipesQueue.Add(Core.Recipes.Recipe.FromId(recipeId));
       }
-         
+
       return this;
    }
 
@@ -123,13 +114,7 @@ public class RecipeDequeuer
 
    public RecipeDequeuer All
    {
-      get
-      {
-         return new RecipeDequeuer(context)
-         {
-            dequeueAll = true
-         };
-      }
+      get { return new RecipeDequeuer(context) { dequeueAll = true }; }
    }
 
    public RecipeDequeuer Recipe(Recipe recipe)

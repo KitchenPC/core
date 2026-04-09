@@ -35,7 +35,7 @@ public class IngredientMetadata
          Spicy = Spicy,
          Sweet = Sweet,
          HasGluten = HasGluten,
-         HasAnimal = HasAnimal
+         HasAnimal = HasAnimal,
       };
 }
 
@@ -43,9 +43,7 @@ public class IngredientMetadataMap : ClassMap<IngredientMetadata>
 {
    public IngredientMetadataMap()
    {
-      Id(x => x.IngredientMetadataId, "id")
-         .GeneratedBy.GuidComb()
-         .UnsavedValue(Guid.Empty);
+      Id(x => x.IngredientMetadataId, "id").GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
       Map(x => x.HasMeat);
       Map(x => x.CarbsPerUnit);
