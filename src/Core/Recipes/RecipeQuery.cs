@@ -6,53 +6,55 @@ public class RecipeQuery
 {
    public enum PhotoFilter
    {
-      All,
-      Photo,
-      HighRes,
+      All = 0,
+      Photo = 1,
+      HighRes = 2,
    }
 
    public enum SortOrder
    {
-      None,
-      Title,
-      PrepTime,
-      CookTime,
-      Rating,
-      Image,
+      None = 0,
+      Title = 1,
+      PrepTime = 2,
+      CookTime = 3,
+      TotalTime = 4,
+      Rating = 5,
+      Image = 6,
    }
 
    public enum SortDirection
    {
-      Ascending,
-      Descending,
+      Ascending = 0,
+      Descending = 1,
    }
 
    public enum SpicinessLevel
    {
-      Mild,
-      MildMedium,
-      Medium,
-      MediumSpicy,
-      Spicy,
+      Mild = 0,
+      MildMedium = 1,
+      Medium = 2,
+      MediumSpicy = 3,
+      Spicy = 4,
    }
 
    public enum SweetnessLevel
    {
-      Savory,
-      SavoryMedium,
-      Medium,
-      MediumSweet,
-      Sweet,
+      Savory = 0,
+      SavoryMedium = 1,
+      Medium = 2,
+      MediumSweet = 3,
+      Sweet = 4,
    }
 
    public class TimeFilter
    {
       public short? MaxPrep { get; set; }
       public short? MaxCook { get; set; }
+      public short? MaxTime { get; set; }
 
       public static implicit operator bool(TimeFilter f)
       {
-         return f.MaxPrep.HasValue || f.MaxCook.HasValue;
+         return f.MaxPrep.HasValue || f.MaxCook.HasValue || f.MaxTime.HasValue;
       }
    }
 

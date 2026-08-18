@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using KitchenPC.Core.Context;
 using KitchenPC.Core.Recipes;
 
@@ -46,6 +48,9 @@ public class QueueLoader
    {
       return context.GetRecipeQueue();
    }
+
+   public async Task<IList<RecipeBrief>> ListAsync(CancellationToken cancellationToken = default) =>
+      await context.GetRecipeQueueAsync(cancellationToken);
 }
 
 /// <summary>Provides the ability to enqueue one or more recipes.</summary>
@@ -97,6 +102,11 @@ public class RecipeEnqueuer
       if (recipesQueue.Any())
          context.EnqueueRecipes(recipesQueue.Select(r => r.Id).ToArray());
    }
+
+   public Task CommitAsync(CancellationToken cancellationToken = default) =>
+      recipesQueue.Any()
+         ? context.EnqueueRecipesAsync(recipesQueue.Select(r => r.Id).ToArray(), cancellationToken)
+         : Task.CompletedTask;
 }
 
 /// <summary>Provides the ability to dequeue one or more recipes.</summary>
@@ -130,4 +140,10 @@ public class RecipeDequeuer
       else
          context.DequeueRecipe(toDequeue.Select(r => r.Id).ToArray());
    }
+
+   public Task CommitAsync(CancellationToken cancellationToken = default) =>
+      context.DequeueRecipeAsync(
+         dequeueAll ? Array.Empty<Guid>() : toDequeue.Select(r => r.Id).ToArray(),
+         cancellationToken
+      );
 }

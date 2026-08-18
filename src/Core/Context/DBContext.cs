@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using KitchenPC.Core.Fluent;
 using KitchenPC.Core.Ingredients;
 using KitchenPC.Core.Menus;
@@ -213,6 +214,11 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    public virtual SearchResults RecipeSearch(RecipeQuery query) =>
       Adapter.RecipeSearch(Identity, query);
 
+   public virtual Task<SearchResults> RecipeSearchAsync(
+      RecipeQuery query,
+      CancellationToken cancellationToken = default
+   ) => Adapter.RecipeSearchAsync(Identity, query, cancellationToken);
+
    /// <summary>
    /// Reads full information for one or more recipes in the database.
    /// </summary>
@@ -222,12 +228,23 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    public virtual Recipe[] ReadRecipes(Guid[] recipeIds, ReadRecipeOptions options) =>
       Adapter.ReadRecipes(Identity, recipeIds, options);
 
+   public virtual Task<Recipe[]> ReadRecipesAsync(
+      Guid[] recipeIds,
+      ReadRecipeOptions options,
+      CancellationToken cancellationToken = default
+   ) => Adapter.ReadRecipesAsync(Identity, recipeIds, options, cancellationToken);
+
    /// <summary>
    /// Removes one or more recipes from the user's recipe queue.
    /// </summary>
    /// <param name="recipeIds">A list of recipe IDs to remove from the queue.  IDs not in the queue will be ignored.</param>
    public virtual void DequeueRecipe(params Guid[] recipeIds) =>
       Adapter.DequeueRecipe(Identity, recipeIds);
+
+   public virtual Task DequeueRecipeAsync(
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   ) => Adapter.DequeueRecipeAsync(Identity, recipeIds, cancellationToken);
 
    /// <summary>
    /// Adds one or more recipes to the user's recipe queue.
@@ -236,11 +253,20 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    public virtual void EnqueueRecipes(Guid[] recipeIds) =>
       Adapter.EnqueueRecipes(Identity, recipeIds);
 
+   public virtual Task EnqueueRecipesAsync(
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   ) => Adapter.EnqueueRecipesAsync(Identity, recipeIds, cancellationToken);
+
    /// <summary>
    /// Returns the user's current recipe queue.
    /// </summary>
    /// <returns>An array of RecipeBrief objects for each recipe in the queue</returns>
    public virtual RecipeBrief[] GetRecipeQueue() => Adapter.GetRecipeQueue(Identity);
+
+   public virtual Task<RecipeBrief[]> GetRecipeQueueAsync(
+      CancellationToken cancellationToken = default
+   ) => Adapter.GetRecipeQueueAsync(Identity, cancellationToken);
 
    /// <summary>
    /// Associates a rating with the current user and a specified recipe.
@@ -249,6 +275,12 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    /// <param name="rating">Rating to give this recipe</param>
    public virtual void RateRecipe(Guid recipeId, Rating rating) =>
       Adapter.RateRecipe(Identity, recipeId, rating);
+
+   public virtual Task RateRecipeAsync(
+      Guid recipeId,
+      Rating rating,
+      CancellationToken cancellationToken = default
+   ) => Adapter.RateRecipeAsync(Identity, recipeId, rating, cancellationToken);
 
    /// <summary>
    /// Creates a new recipe.
@@ -277,12 +309,22 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    public virtual Ingredient ReadIngredient(string ingredient) =>
       Adapter.ReadIngredient(ingredient);
 
+   public virtual Task<Ingredient> ReadIngredientAsync(
+      string ingredient,
+      CancellationToken cancellationToken = default
+   ) => Adapter.ReadIngredientAsync(ingredient, cancellationToken);
+
    /// <summary>
    /// Returns ingredient information, such as ID, metadata, unit information, etc.
    /// </summary>
    /// <param name="ingid">The ID of the ingredient.</param>
    /// <returns>A KitchenPC Ingredient object, or null if no matching ingredient was found.</returns>
    public virtual Ingredient ReadIngredient(Guid ingid) => Adapter.ReadIngredient(ingid);
+
+   public virtual Task<Ingredient> ReadIngredientAsync(
+      Guid ingredientId,
+      CancellationToken cancellationToken = default
+   ) => Adapter.ReadIngredientAsync(ingredientId, cancellationToken);
 
    /// <summary>
    /// Converts a usage of an ingredient within a recipe to an IngredientAggregation object, suitable for aggregating with other usages of the same ingredient.
@@ -394,6 +436,12 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    public virtual Menu[] GetMenus(IList<Menu> menus, GetMenuOptions options) =>
       Adapter.GetMenus(Identity, menus, options);
 
+   public virtual Task<Menu[]> GetMenusAsync(
+      IList<Menu> menus,
+      GetMenuOptions options,
+      CancellationToken cancellationToken = default
+   ) => Adapter.GetMenusAsync(Identity, menus, options, cancellationToken);
+
    /// <summary>
    /// Updates a specified menu owned by the current user.
    /// </summary>
@@ -414,6 +462,26 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    ) =>
       Adapter.UpdateMenu(Identity, menuId, recipesAdd, recipesRemove, recipesMove, clear, newName);
 
+   public virtual Task<MenuResult> UpdateMenuAsync(
+      Guid? menuId,
+      Guid[] recipesAdd,
+      Guid[] recipesRemove,
+      MenuMove[] recipesMove,
+      bool clear,
+      string newName = null,
+      CancellationToken cancellationToken = default
+   ) =>
+      Adapter.UpdateMenuAsync(
+         Identity,
+         menuId,
+         recipesAdd,
+         recipesRemove,
+         recipesMove,
+         clear,
+         newName,
+         cancellationToken
+      );
+
    /// <summary>
    /// Created a new menu owned by the current user.
    /// </summary>
@@ -423,11 +491,22 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    public virtual MenuResult CreateMenu(Menu menu, params Guid[] recipeIds) =>
       Adapter.CreateMenu(Identity, menu, recipeIds);
 
+   public virtual Task<MenuResult> CreateMenuAsync(
+      Menu menu,
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   ) => Adapter.CreateMenuAsync(Identity, menu, recipeIds, cancellationToken);
+
    /// <summary>
    /// Deletes one or more menus owned by the current user.
    /// </summary>
    /// <param name="menuIds">One or more menus to delete.  Note, the Favorites menu cannot be deleted.</param>
    public virtual void DeleteMenus(params Guid[] menuIds) => Adapter.DeleteMenus(Identity, menuIds);
+
+   public virtual Task DeleteMenusAsync(
+      Guid[] menuIds,
+      CancellationToken cancellationToken = default
+   ) => Adapter.DeleteMenusAsync(Identity, menuIds, cancellationToken);
 
    /// <summary>
    /// Creates a new shopping list for the current user.

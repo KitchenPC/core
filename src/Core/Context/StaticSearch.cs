@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using KitchenPC.Core.Provisioning;
 using KitchenPC.Core.Recipes;
 
@@ -39,6 +41,11 @@ internal class StaticSearch : ISearchProvider
       if (query.Time.MaxCook.HasValue)
       {
          q = q.Where(p => p.Recipe.CookTime <= query.Time.MaxCook.Value);
+      }
+
+      if (query.Time.MaxTime.HasValue)
+      {
+         q = q.Where(p => p.Recipe.PrepTime + p.Recipe.CookTime <= query.Time.MaxTime.Value);
       }
 
       if (query.Rating > 0)
@@ -164,6 +171,12 @@ internal class StaticSearch : ISearchProvider
                   ? q.OrderBy(p => p.Recipe.CookTime)
                   : q.OrderByDescending(p => p.Recipe.CookTime);
             break;
+         case RecipeQuery.SortOrder.TotalTime:
+            q =
+               (query.Direction == RecipeQuery.SortDirection.Ascending)
+                  ? q.OrderBy(p => p.Recipe.PrepTime + p.Recipe.CookTime)
+                  : q.OrderByDescending(p => p.Recipe.PrepTime + p.Recipe.CookTime);
+            break;
          case RecipeQuery.SortOrder.Image:
             q =
                (query.Direction == RecipeQuery.SortDirection.Ascending)
@@ -184,4 +197,10 @@ internal class StaticSearch : ISearchProvider
          TotalCount = q.Count(),
       };
    }
+
+   public Task<SearchResults> SearchAsync(
+      AuthIdentity identity,
+      RecipeQuery query,
+      CancellationToken cancellationToken = default
+   ) => Task.FromResult(Search(identity, query));
 }

@@ -25,10 +25,7 @@ public class Recipe
    public short AvgRating { get; set; } = 0;
    public Rating UserRating { get; set; } = Rating.None;
    public short ServingSize { get; set; } = 4;
-   public int Comments { get; set; } = 0;
    public RecipeTags Tags { get; set; }
-   public bool PublicEdit { get; set; }
-   public bool AllowDelete { get; set; }
    public int InMenus { get; set; }
 
    public static Recipe FromId(Guid recipeId)

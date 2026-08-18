@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using KitchenPC.Core;
 using KitchenPC.Core.Context;
 using KitchenPC.Core.Recipes;
 using KitchenPC.DB.Models;
+using NHibernate;
 using NHibernate.Criterion;
 using NHibernate.Criterion.Lambda;
 
@@ -25,19 +28,28 @@ public class NHSearch : ISearchProvider
 
    public SearchResults Search(AuthIdentity identity, RecipeQuery query)
    {
+      return SearchAsync(identity, query).GetAwaiter().GetResult();
+   }
+
+   public async Task<SearchResults> SearchAsync(
+      AuthIdentity identity,
+      RecipeQuery query,
+      CancellationToken cancellationToken = default
+   )
+   {
       using var session = adapter.GetSession();
       Recipes recipe = null;
 
-      var q = session.QueryOver<Recipes>(() => recipe).Where(p => !p.Hidden);
+      var q = session.QueryOver(() => recipe).Where(p => !p.Hidden);
 
-      if (!String.IsNullOrWhiteSpace(query.Keywords)) // Add keyword search
+      if (!string.IsNullOrWhiteSpace(query.Keywords)) // Add keyword search
       {
          q = q.Where(
             Restrictions.Or(
-               Restrictions.InsensitiveLike("Title", String.Format("%{0}%", query.Keywords.Trim())),
+               Restrictions.InsensitiveLike("Title", string.Format("%{0}%", query.Keywords.Trim())),
                Restrictions.InsensitiveLike(
                   "Description",
-                  String.Format("%{0}%", query.Keywords.Trim())
+                  string.Format("%{0}%", query.Keywords.Trim())
                )
             )
          );
@@ -51,6 +63,20 @@ public class NHSearch : ISearchProvider
       if (query.Time.MaxCook.HasValue)
       {
          q = q.Where(p => p.CookTime <= query.Time.MaxCook.Value);
+      }
+
+      if (query.Time.MaxTime.HasValue)
+      {
+         q = q.Where(
+            Restrictions.Le(
+               Projections.SqlProjection(
+                  "PrepTime::Int4 + CookTime::Int4 as TotalTime",
+                  ["TotalTime"],
+                  [NHibernateUtil.Int32]
+               ),
+               query.Time.MaxTime.Value
+            )
+         );
       }
 
       if (query.Rating > 0)
@@ -183,37 +209,34 @@ public class NHSearch : ISearchProvider
          }
       }
 
-      IQueryOverOrderBuilder<Recipes, Recipes> orderBy;
-      switch (query.Sort)
+      IQueryOverOrderBuilder<Recipes, Recipes> orderBy = query.Sort switch
       {
-         case RecipeQuery.SortOrder.Title:
-            orderBy = q.OrderBy(p => p.Title);
-            break;
-         case RecipeQuery.SortOrder.PrepTime:
-            orderBy = q.OrderBy(p => p.PrepTime);
-            break;
-         case RecipeQuery.SortOrder.CookTime:
-            orderBy = q.OrderBy(p => p.CookTime);
-            break;
-         case RecipeQuery.SortOrder.Image:
-            orderBy = q.OrderBy(p => p.ImageUrl);
-            break;
-         default:
-            orderBy = q.OrderBy(p => p.Rating);
-            break;
-      }
-
+         RecipeQuery.SortOrder.Title => q.OrderBy(p => p.Title),
+         RecipeQuery.SortOrder.PrepTime => q.OrderBy(p => p.PrepTime),
+         RecipeQuery.SortOrder.CookTime => q.OrderBy(p => p.CookTime),
+         RecipeQuery.SortOrder.TotalTime => q.OrderBy(
+            Projections.SqlProjection(
+               "PrepTime::Int4 + CookTime::Int4 as TotalTime",
+               ["TotalTime"],
+               [NHibernateUtil.Int32]
+            )
+         ),
+         RecipeQuery.SortOrder.Image => q.OrderBy(p => p.ImageUrl),
+         _ => q.OrderBy(p => p.Rating),
+      };
       var results = (
          query.Direction == RecipeQuery.SortDirection.Descending ? orderBy.Desc() : orderBy.Asc()
       )
          .Skip(query.Offset)
          .Take(100)
-         .List();
+         .ListAsync(cancellationToken);
+
+      var loadedResults = await results;
 
       return new SearchResults
       {
-         Briefs = results.Select(r => r.AsRecipeBrief()).ToArray(),
-         TotalCount = results.Count, // TODO: This needs to be the total matches, not the returned matches
+         Briefs = loadedResults.Select(r => r.AsRecipeBrief()).ToArray(),
+         TotalCount = loadedResults.Count, // TODO: This needs to be the total matches, not the returned matches
       };
    }
 }

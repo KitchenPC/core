@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using KitchenPC.Core.Context;
 using KitchenPC.Core.Ingredients;
 using KitchenPC.Core.NLP;
@@ -41,20 +43,9 @@ public class RecipeLoader
    private readonly IKPCContext context;
    private readonly IList<Recipe> recipesToLoad;
 
-   private bool withCommentCount;
    private bool withUserRating;
-   private bool withCookbookStatus;
+   private bool withMenuCount;
    private bool withMethod;
-   private bool withPermalink;
-
-   public RecipeLoader WithCommentCount
-   {
-      get
-      {
-         withCommentCount = true;
-         return this;
-      }
-   }
 
    public RecipeLoader WithUserRating
    {
@@ -65,11 +56,11 @@ public class RecipeLoader
       }
    }
 
-   public RecipeLoader WithCookbookStatus
+   public RecipeLoader WithMenuCount
    {
       get
       {
-         withCookbookStatus = true;
+         withMenuCount = true;
          return this;
       }
    }
@@ -79,15 +70,6 @@ public class RecipeLoader
       get
       {
          withMethod = true;
-         return this;
-      }
-   }
-
-   public RecipeLoader WithPermalink
-   {
-      get
-      {
-         withPermalink = true;
          return this;
       }
    }
@@ -108,14 +90,28 @@ public class RecipeLoader
    {
       var options = new ReadRecipeOptions
       {
-         ReturnCommentCount = withCommentCount,
-         ReturnCookbookStatus = withCookbookStatus,
+         ReturnMenuCount = withMenuCount,
          ReturnMethod = withMethod,
-         ReturnPermalink = withPermalink,
          ReturnUserRating = withUserRating,
       };
 
       return context.ReadRecipes(recipesToLoad.Select(r => r.Id).ToArray(), options);
+   }
+
+   public async Task<IList<Recipe>> ListAsync(CancellationToken cancellationToken = default)
+   {
+      var options = new ReadRecipeOptions
+      {
+         ReturnMenuCount = withMenuCount,
+         ReturnMethod = withMethod,
+         ReturnUserRating = withUserRating,
+      };
+
+      return await context.ReadRecipesAsync(
+         recipesToLoad.Select(r => r.Id).ToArray(),
+         options,
+         cancellationToken
+      );
    }
 }
 
@@ -146,6 +142,14 @@ public class RecipeRater
          context.RateRecipe(newRating.Key.Id, newRating.Value);
       }
    }
+
+   public async Task CommitAsync(CancellationToken cancellationToken = default)
+   {
+      foreach (var newRating in newRatings)
+      {
+         await context.RateRecipeAsync(newRating.Key.Id, newRating.Value, cancellationToken);
+      }
+   }
 }
 
 /// <summary>Provides the ability to search for recipe.</summary>
@@ -161,6 +165,9 @@ public class RecipeFinder
    }
 
    public SearchResults Results() => context.RecipeSearch(query);
+
+   public Task<SearchResults> ResultsAsync(CancellationToken cancellationToken = default) =>
+      context.RecipeSearchAsync(query, cancellationToken);
 }
 
 /// <summary>Provides the ability to fluently build a search query.</summary>

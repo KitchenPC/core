@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using KitchenPC.Core.Context;
 using KitchenPC.Core.Menus;
 using KitchenPC.Core.Recipes;
@@ -93,6 +95,12 @@ public class MenuLoader
 
       return context.GetMenus(menusToLoad, options);
    }
+
+   public async Task<IList<Menu>> ListAsync(CancellationToken cancellationToken = default)
+   {
+      var options = new GetMenuOptions { LoadRecipes = loadRecipes };
+      return await context.GetMenusAsync(menusToLoad, options, cancellationToken);
+   }
 }
 
 /// <summary>Represents a menu to be created.</summary>
@@ -117,7 +125,11 @@ public class MenuCreator
 
    public MenuCreator AddRecipe(Recipe recipe)
    {
-      this.recipes.Add(recipe);
+      if (recipes.All(existing => existing.Id != recipe.Id))
+      {
+         recipes.Add(recipe);
+      }
+
       return this;
    }
 
@@ -151,6 +163,16 @@ public class MenuCreator
    {
       var newMenu = new Menu(null, title);
       return context.CreateMenu(newMenu, recipes.Select(r => r.Id).ToArray());
+   }
+
+   public Task<MenuResult> CommitAsync(CancellationToken cancellationToken = default)
+   {
+      var newMenu = new Menu(null, title);
+      return context.CreateMenuAsync(
+         newMenu,
+         recipes.Select(r => r.Id).ToArray(),
+         cancellationToken
+      );
    }
 }
 
@@ -275,6 +297,26 @@ public class MenuUpdater
          newTitle
       );
    }
+
+   public Task<MenuResult> CommitAsync(CancellationToken cancellationToken = default)
+   {
+      return context.UpdateMenuAsync(
+         menu.Id,
+         addQueue.Select(r => r.Id).ToArray(),
+         removeQueue.Select(r => r.Id).ToArray(),
+         moveQueue
+            .Select(m => new MenuMove
+            {
+               MoveAll = m.All,
+               RecipesToMove = m.Recipes.Select(r => r.Id).ToArray(),
+               TargetMenu = m.TargetMenu.Id,
+            })
+            .ToArray(),
+         clearAll,
+         newTitle,
+         cancellationToken
+      );
+   }
 }
 
 /// <summary>Represents one or more menus to be deleted.</summary>
@@ -302,6 +344,9 @@ public class MenuDeleter
    {
       context.DeleteMenus(menusToDelete.Select(m => m.Id.Value).ToArray());
    }
+
+   public Task CommitAsync(CancellationToken cancellationToken = default) =>
+      context.DeleteMenusAsync(menusToDelete.Select(m => m.Id.Value).ToArray(), cancellationToken);
 }
 
 /// <summary>Represents one or more recipes to be moved from one menu to another.</summary>

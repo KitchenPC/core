@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using KitchenPC.Core;
 using KitchenPC.Core.Context;
 using KitchenPC.Core.Fluent;
@@ -139,4 +141,69 @@ internal class MockContext : IKPCContext
    public QueueAction Queue => throw new NotImplementedException();
 
    public ModelerAction Modeler => throw new NotImplementedException();
+
+   public Task<SearchResults> RecipeSearchAsync(
+      RecipeQuery query,
+      CancellationToken cancellationToken = default
+   ) => Task.FromException<SearchResults>(new NotImplementedException());
+
+   public Task<Recipe[]> ReadRecipesAsync(
+      Guid[] recipeIds,
+      ReadRecipeOptions options,
+      CancellationToken cancellationToken = default
+   ) => Task.FromException<Recipe[]>(new NotImplementedException());
+
+   public Task RateRecipeAsync(
+      Guid recipeId,
+      Rating rating,
+      CancellationToken cancellationToken = default
+   ) => Task.FromException(new NotImplementedException());
+
+   public Task DequeueRecipeAsync(
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   ) => Task.FromException(new NotImplementedException());
+
+   public Task EnqueueRecipesAsync(
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   ) => Task.FromException(new NotImplementedException());
+
+   public Task<RecipeBrief[]> GetRecipeQueueAsync(CancellationToken cancellationToken = default) =>
+      Task.FromException<RecipeBrief[]>(new NotImplementedException());
+
+   public Task<Ingredient> ReadIngredientAsync(
+      string ingredient,
+      CancellationToken cancellationToken = default
+   ) => Task.FromException<Ingredient>(new NotImplementedException());
+
+   public Task<Ingredient> ReadIngredientAsync(
+      Guid ingredientId,
+      CancellationToken cancellationToken = default
+   ) => Task.FromException<Ingredient>(new NotImplementedException());
+
+   public Task<Menu[]> GetMenusAsync(
+      IList<Menu> menus,
+      GetMenuOptions options,
+      CancellationToken cancellationToken = default
+   ) => Task.FromException<Menu[]>(new NotImplementedException());
+
+   public Task DeleteMenusAsync(Guid[] menuIds, CancellationToken cancellationToken = default) =>
+      Task.FromException(new NotImplementedException());
+
+   public Task<MenuResult> UpdateMenuAsync(
+      Guid? menuId,
+      Guid[] recipesAdd,
+      Guid[] recipesRemove,
+      MenuMove[] recipesMove,
+      bool clear,
+      string newName = null,
+      CancellationToken cancellationToken = default
+   ) => Task.FromException<MenuResult>(new NotImplementedException());
+
+   public Task<MenuResult> CreateMenuAsync(
+      Menu menu,
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   ) => Task.FromException<MenuResult>(new NotImplementedException());
 }

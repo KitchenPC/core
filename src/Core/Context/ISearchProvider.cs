@@ -1,4 +1,6 @@
-﻿using KitchenPC.Core.Recipes;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using KitchenPC.Core.Recipes;
 
 namespace KitchenPC.Core.Context;
 
@@ -8,4 +10,9 @@ namespace KitchenPC.Core.Context;
 public interface ISearchProvider
 {
    SearchResults Search(AuthIdentity identity, RecipeQuery query);
+   Task<SearchResults> SearchAsync(
+      AuthIdentity identity,
+      RecipeQuery query,
+      CancellationToken cancellationToken = default
+   );
 }

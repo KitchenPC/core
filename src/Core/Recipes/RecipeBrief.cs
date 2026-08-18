@@ -1,11 +1,9 @@
-﻿using System;
+using System;
 
 namespace KitchenPC.Core.Recipes;
 
 public class RecipeBrief
 {
-   private Uri recipeimg;
-
    public Guid Id { get; set; }
    public Guid OwnerId { get; set; }
    public String Permalink { get; set; }
@@ -15,24 +13,7 @@ public class RecipeBrief
    public short? PrepTime { get; set; }
    public short? CookTime { get; set; }
    public short AvgRating { get; set; } = 0;
-
-   public String ImageUrl
-   {
-      get { return (recipeimg == null ? "/images/img_placeholder.png" : recipeimg.ToString()); }
-      set
-      {
-         if (String.IsNullOrEmpty(value))
-         {
-            recipeimg = null;
-            return;
-         }
-
-         //UriBuilder builder = new UriBuilder(baseUri);
-         var builder = new UriBuilder();
-         builder.Path = "Thumb_" + value;
-         recipeimg = builder.Uri;
-      }
-   }
+   public String ImageUrl { get; set; }
 
    public RecipeBrief() { }
 

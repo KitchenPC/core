@@ -17,9 +17,9 @@ public struct IngredientBinding
       Units usageUnit,
       UnitType convType,
       Int32 unitWeight,
-      Units formUnit,
-      Single equivAmount,
-      Units equivUnit
+      Units? formUnit,
+      Single? equivAmount,
+      Units? equivUnit
    )
    {
       var rawUnit = Core.Unit.GetDefaultUnitType(convType);
@@ -32,6 +32,12 @@ public struct IngredientBinding
          }
          else
          {
+            if (!formUnit.HasValue || !equivAmount.HasValue || !equivUnit.HasValue)
+            {
+               qty = null;
+               return CreateBinding(ingId, recipeId, qty, rawUnit);
+            }
+
             var ing = new Ingredient
             {
                Id = ingId,
@@ -41,8 +47,8 @@ public struct IngredientBinding
 
             var form = new IngredientForm
             {
-               FormUnitType = formUnit,
-               FormAmount = new Amount(equivAmount, equivUnit),
+               FormUnitType = formUnit.Value,
+               FormAmount = new Amount(equivAmount.Value, equivUnit.Value),
                IngredientId = ingId,
             };
 
@@ -65,12 +71,20 @@ public struct IngredientBinding
          }
       }
 
-      return new IngredientBinding
+      return CreateBinding(ingId, recipeId, qty, rawUnit);
+   }
+
+   private static IngredientBinding CreateBinding(
+      Guid ingredientId,
+      Guid recipeId,
+      Single? quantity,
+      Units unit
+   ) =>
+      new IngredientBinding
       {
          RecipeId = recipeId,
-         IngredientId = ingId,
-         Qty = qty.HasValue ? (float?)Math.Round(qty.Value, 3) : null,
-         Unit = rawUnit,
+         IngredientId = ingredientId,
+         Qty = quantity.HasValue ? (float?)Math.Round(quantity.Value, 3) : null,
+         Unit = unit,
       };
-   }
 }

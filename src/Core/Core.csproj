@@ -17,12 +17,13 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <PackageReference Include="log4net" Version="3.0.2" />
+      <PackageReference Include="log4net" Version="3.3.2" />
       <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
       <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
       <PackageReference
          Include="Microsoft.Extensions.DependencyInjection.Abstractions"
          Version="5.0.0"
       />
+      <PackageReference Include="System.Text.Encodings.Web" Version="4.7.2" />
    </ItemGroup>
 </Project>

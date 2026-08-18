@@ -2,11 +2,11 @@
 
 public enum MealFilter
 {
-   All,
-   Breakfast,
-   Lunch,
-   Dinner,
-   Dessert,
+   All = 0,
+   Breakfast = 1,
+   Lunch = 2,
+   Dinner = 3,
+   Dessert = 4,
 }
 
 public enum Rating

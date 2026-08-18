@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions;
@@ -189,7 +191,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
 
       var recIngs = session
          .QueryOver<RecipeIngredients>()
-         .JoinAlias(r => r.IngredientForm, () => joinForm)
+         .Left.JoinAlias(r => r.IngredientForm, () => joinForm)
          .JoinAlias(r => r.Ingredient, () => joinIng)
          .Where(p => joinIng.IngredientId != ShoppingList.GUID_WATER) // Ignore any usage for water
          .Select(
@@ -237,6 +239,16 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
 
    public Recipe[] ReadRecipes(AuthIdentity identity, Guid[] recipeIds, ReadRecipeOptions options)
    {
+      return ReadRecipesAsync(identity, recipeIds, options).GetAwaiter().GetResult();
+   }
+
+   public async Task<Recipe[]> ReadRecipesAsync(
+      AuthIdentity identity,
+      Guid[] recipeIds,
+      ReadRecipeOptions options,
+      CancellationToken cancellationToken = default
+   )
+   {
       using var session = GetSession();
       var dbRecipes = session
          .QueryOver<Recipes>()
@@ -247,13 +259,54 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
          .AndRestrictionOn(p => p.RecipeId)
          .IsInG(recipeIds)
          .TransformUsing(Transformers.DistinctRootEntity)
-         .List();
+         .ListAsync(cancellationToken);
 
-      if (!dbRecipes.Any())
+      var loadedRecipes = await dbRecipes;
+
+      if (!loadedRecipes.Any())
          throw new RecipeNotFoundException();
 
+      var userRatings = new Dictionary<Guid, Rating>();
+      var menuCounts = new Dictionary<Guid, int>();
+
+      if (identity?.IsAuthenticated == true)
+      {
+         var recipeReferences = loadedRecipes
+            .Select(item => new Recipes { RecipeId = item.RecipeId })
+            .ToArray();
+
+         if (options.ReturnUserRating)
+         {
+            var loadedRatings = await session
+               .QueryOver<RecipeRatings>()
+               .Where(item => item.UserId == identity.UserId)
+               .AndRestrictionOn(item => item.Recipe)
+               .IsInG(recipeReferences)
+               .ListAsync(cancellationToken);
+
+            userRatings = loadedRatings.ToDictionary(
+               item => item.Recipe.RecipeId,
+               item => (Rating)item.Rating
+            );
+         }
+
+         if (options.ReturnMenuCount)
+         {
+            var loadedFavorites = await session
+               .QueryOver<Favorites>()
+               .Where(item => item.UserId == identity.UserId)
+               .AndRestrictionOn(item => item.Recipe)
+               .IsInG(recipeReferences)
+               .ListAsync(cancellationToken);
+
+            menuCounts = loadedFavorites
+               .GroupBy(item => item.Recipe.RecipeId)
+               .ToDictionary(group => group.Key, group => group.Count());
+         }
+      }
+
       var ret = new List<Recipe>();
-      foreach (var dbRecipe in dbRecipes)
+      foreach (var dbRecipe in loadedRecipes)
       {
          var recipe = new Recipe
          {
@@ -273,17 +326,11 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
          if (options.ReturnMethod)
             recipe.Method = dbRecipe.Steps;
 
-         if (options.ReturnUserRating) // TODO: We should JOIN this on the dbRecipes for faster loading
-         {
-            var id = dbRecipe.RecipeId;
-            var rating = session
-               .QueryOver<RecipeRatings>()
-               .Where(p => p.Recipe.RecipeId == id)
-               .Where(p => p.UserId == identity.UserId)
-               .SingleOrDefault();
+         if (userRatings.TryGetValue(dbRecipe.RecipeId, out var userRating))
+            recipe.UserRating = userRating;
 
-            recipe.UserRating = (rating == null ? Rating.None : (Rating)rating.Rating);
-         }
+         if (menuCounts.TryGetValue(dbRecipe.RecipeId, out var menuCount))
+            recipe.InMenus = menuCount;
 
          recipe.Ingredients = dbRecipe
             .Ingredients.Select(i => new IngredientUsage
@@ -311,7 +358,29 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
       return SearchProvider.Search(identity, query);
    }
 
+   public Task<SearchResults> RecipeSearchAsync(
+      AuthIdentity identity,
+      RecipeQuery query,
+      CancellationToken cancellationToken = default
+   )
+   {
+      if (SearchProvider == null)
+         throw new NoConfiguredSearchProvidersException();
+
+      return SearchProvider.SearchAsync(identity, query, cancellationToken);
+   }
+
    public void RateRecipe(AuthIdentity identity, Guid recipeId, Rating rating)
+   {
+      RateRecipeAsync(identity, recipeId, rating).GetAwaiter().GetResult();
+   }
+
+   public async Task RateRecipeAsync(
+      AuthIdentity identity,
+      Guid recipeId,
+      Rating rating,
+      CancellationToken cancellationToken = default
+   )
    {
       using var session = GetSession();
       using var transaction = session.BeginTransaction();
@@ -319,26 +388,29 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
          .QueryOver<RecipeRatings>()
          .Where(p => p.UserId == identity.UserId)
          .Where(p => p.Recipe.RecipeId == recipeId)
-         .SingleOrDefault();
+         .SingleOrDefaultAsync(cancellationToken);
 
-      if (existingRate != null) // Update existing
+      var loadedRate = await existingRate;
+
+      if (loadedRate != null) // Update existing
       {
-         existingRate.Rating = (byte)rating;
-         session.Update(existingRate);
+         loadedRate.Rating = (byte)rating;
+         await session.UpdateAsync(loadedRate, cancellationToken);
       }
       else // Create rating
       {
-         session.Save(
+         await session.SaveAsync(
             new RecipeRatings
             {
                UserId = identity.UserId,
                Recipe = new Recipes { RecipeId = recipeId },
                Rating = (byte)rating,
-            }
+            },
+            cancellationToken
          );
       }
 
-      transaction.Commit();
+      await transaction.CommitAsync(cancellationToken);
    }
 
    public RecipeResult CreateRecipe(AuthIdentity identity, Recipe recipe)
@@ -428,35 +500,64 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
 
    public Ingredient ReadIngredient(string ingredient)
    {
-      using var session = GetSession();
-      var dbIng = session
-         .QueryOver<Ingredients>()
-         .Fetch(SelectMode.Fetch, prop => prop.Metadata)
-         .Where(p => p.DisplayName == ingredient.Trim())
-         .SingleOrDefault();
-
-      if (dbIng == null)
-         throw new IngredientNotFoundException();
-
-      return dbIng.AsIngredient();
+      return ReadIngredientAsync(ingredient).GetAwaiter().GetResult();
    }
 
-   public Ingredient ReadIngredient(Guid ingid)
+   public async Task<Ingredient> ReadIngredientAsync(
+      string ingredient,
+      CancellationToken cancellationToken = default
+   )
    {
       using var session = GetSession();
       var dbIng = session
          .QueryOver<Ingredients>()
          .Fetch(SelectMode.Fetch, prop => prop.Metadata)
-         .Where(p => p.IngredientId == ingid)
-         .SingleOrDefault();
+         .Where(p => p.DisplayName == ingredient.Trim())
+         .SingleOrDefaultAsync(cancellationToken);
 
-      if (dbIng == null)
+      var loadedIngredient = await dbIng;
+
+      if (loadedIngredient == null)
          throw new IngredientNotFoundException();
 
-      return dbIng.AsIngredient();
+      return loadedIngredient.AsIngredient();
+   }
+
+   public Ingredient ReadIngredient(Guid ingid)
+   {
+      return ReadIngredientAsync(ingid).GetAwaiter().GetResult();
+   }
+
+   public async Task<Ingredient> ReadIngredientAsync(
+      Guid ingredientId,
+      CancellationToken cancellationToken = default
+   )
+   {
+      using var session = GetSession();
+      var dbIng = session
+         .QueryOver<Ingredients>()
+         .Fetch(SelectMode.Fetch, prop => prop.Metadata)
+         .Where(p => p.IngredientId == ingredientId)
+         .SingleOrDefaultAsync(cancellationToken);
+
+      var loadedIngredient = await dbIng;
+
+      if (loadedIngredient == null)
+         throw new IngredientNotFoundException();
+
+      return loadedIngredient.AsIngredient();
    }
 
    public void DequeueRecipe(AuthIdentity identity, params Guid[] recipeIds)
+   {
+      DequeueRecipeAsync(identity, recipeIds).GetAwaiter().GetResult();
+   }
+
+   public async Task DequeueRecipeAsync(
+      AuthIdentity identity,
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   )
    {
       using var session = GetSession();
       var recipes = (from r in recipeIds select new Recipes { RecipeId = r }).ToArray();
@@ -469,11 +570,24 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
       }
 
       using var transaction = session.BeginTransaction();
-      dbRecipes.List().ForEach(session.Delete);
-      transaction.Commit();
+      var queuedRecipes = await dbRecipes.ListAsync(cancellationToken);
+      foreach (var queuedRecipe in queuedRecipes)
+      {
+         await session.DeleteAsync(queuedRecipe, cancellationToken);
+      }
+      await transaction.CommitAsync(cancellationToken);
    }
 
    public void EnqueueRecipes(AuthIdentity identity, params Guid[] recipeIds)
+   {
+      EnqueueRecipesAsync(identity, recipeIds).GetAwaiter().GetResult();
+   }
+
+   public async Task EnqueueRecipesAsync(
+      AuthIdentity identity,
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   )
    {
       using var session = GetSession();
       // Check for dupes
@@ -484,41 +598,62 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
          .Where(p => p.UserId == identity.UserId)
          .AndRestrictionOn(p => p.Recipe)
          .IsInG(recipes)
-         .List<QueuedRecipes>();
+         .ListAsync<QueuedRecipes>(cancellationToken);
 
-      var existing = (from r in dupes select r.Recipe.RecipeId).ToList();
+      var loadedDupes = await dupes;
+
+      var existing = (from r in loadedDupes select r.Recipe.RecipeId).ToList();
 
       // Enqueue each recipe
       using var transaction = session.BeginTransaction();
       var now = DateTime.Now;
       foreach (var rid in recipeIds.Where(rid => !existing.Contains(rid)))
       {
-         session.Save(
+         await session.SaveAsync(
             new QueuedRecipes
             {
                Recipe = new Recipes { RecipeId = rid },
                UserId = identity.UserId,
                QueuedDate = now,
-            }
+            },
+            cancellationToken
          );
       }
 
-      transaction.Commit();
+      await transaction.CommitAsync(cancellationToken);
    }
 
    public RecipeBrief[] GetRecipeQueue(AuthIdentity identity)
+   {
+      return GetRecipeQueueAsync(identity).GetAwaiter().GetResult();
+   }
+
+   public async Task<RecipeBrief[]> GetRecipeQueueAsync(
+      AuthIdentity identity,
+      CancellationToken cancellationToken = default
+   )
    {
       using var session = GetSession();
       var dbRecipes = session
          .QueryOver<QueuedRecipes>()
          .Fetch(SelectMode.Fetch, prop => prop.Recipe)
          .Where(p => p.UserId == identity.UserId)
-         .List();
+         .ListAsync(cancellationToken);
 
-      return (from r in dbRecipes select r.Recipe.AsRecipeBrief()).ToArray();
+      return (from r in await dbRecipes select r.Recipe.AsRecipeBrief()).ToArray();
    }
 
    public Menu[] GetMenus(AuthIdentity identity, IList<Menu> menus, GetMenuOptions options)
+   {
+      return GetMenusAsync(identity, menus, options).GetAwaiter().GetResult();
+   }
+
+   public async Task<Menu[]> GetMenusAsync(
+      AuthIdentity identity,
+      IList<Menu> menus,
+      GetMenuOptions options,
+      CancellationToken cancellationToken = default
+   )
    {
       using var session = GetSession();
       // menus will be null if all menus should be loaded, or a list of Menu objects to specify individual menus to load
@@ -537,7 +672,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
          query = query.AndRestrictionOn(p => p.MenuId).IsInG(ids);
       }
 
-      var dbMenus = query.List();
+      var dbMenus = await query.ListAsync(cancellationToken);
       var ret = new List<Menu>();
 
       if (loadFav)
@@ -560,14 +695,16 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
          .Fetch(SelectMode.Fetch, prop => prop.Recipe)
          .Where(p => p.UserId == identity.UserId)
          .Where(filter)
-         .List();
+         .ListAsync(cancellationToken);
+
+      var loadedFavorites = await dbFavorites;
 
       return ret.Select(m => new Menu(m)
          {
             Recipes = (
                m.Id.HasValue
-                  ? dbFavorites.Where(f => f.Menu != null && f.Menu.MenuId == m.Id)
-                  : dbFavorites.Where(f => f.Menu == null)
+                  ? loadedFavorites.Where(f => f.Menu != null && f.Menu.MenuId == m.Id)
+                  : loadedFavorites.Where(f => f.Menu == null)
             )
                .Select(r => r.Recipe.AsRecipeBrief())
                .ToArray(),
@@ -576,6 +713,16 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
    }
 
    public MenuResult CreateMenu(AuthIdentity identity, Menu menu, params Guid[] recipeIds)
+   {
+      return CreateMenuAsync(identity, menu, recipeIds).GetAwaiter().GetResult();
+   }
+
+   public async Task<MenuResult> CreateMenuAsync(
+      AuthIdentity identity,
+      Menu menu,
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   )
    {
       using var session = GetSession();
       menu.Title = menu.Title.Trim();
@@ -588,23 +735,24 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
          .Where(p => p.UserId == identity.UserId)
          .Where(p => p.Title == menu.Title)
          .ToRowCountQuery()
-         .RowCount();
+         .RowCountAsync(cancellationToken);
 
-      if (dupes > 0)
+      if (await dupes > 0)
       {
          throw new MenuAlreadyExistsException();
       }
 
-      session.Save(
+      await session.SaveAsync(
          dbMenu = new Menus
          {
             UserId = identity.UserId,
             Title = menu.Title,
             CreatedDate = DateTime.Now,
-         }
+         },
+         cancellationToken
       );
 
-      foreach (var rid in recipeIds.NeverNull())
+      foreach (var rid in recipeIds.NeverNull().Distinct())
       {
          var fav = new Favorites
          {
@@ -613,10 +761,10 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
             Menu = dbMenu,
          };
 
-         session.Save(fav);
+         await session.SaveAsync(fav, cancellationToken);
       }
 
-      transaction.Commit();
+      await transaction.CommitAsync(cancellationToken);
 
       ret.MenuCreated = true;
       ret.NewMenuId = dbMenu.MenuId;
@@ -626,6 +774,15 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
 
    public void DeleteMenus(AuthIdentity identity, params Guid[] menuIds)
    {
+      DeleteMenusAsync(identity, menuIds).GetAwaiter().GetResult();
+   }
+
+   public async Task DeleteMenusAsync(
+      AuthIdentity identity,
+      Guid[] menuIds,
+      CancellationToken cancellationToken = default
+   )
+   {
       using var session = GetSession();
       using var transaction = session.BeginTransaction();
       var dbMenu = session
@@ -634,10 +791,13 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
          .IsInG(menuIds)
          .Where(p => p.UserId == identity.UserId)
          .Fetch(SelectMode.Fetch, prop => prop.Recipes)
-         .List();
+         .ListAsync(cancellationToken);
 
-      dbMenu.ForEach(session.Delete);
-      transaction.Commit();
+      foreach (var menu in await dbMenu)
+      {
+         await session.DeleteAsync(menu, cancellationToken);
+      }
+      await transaction.CommitAsync(cancellationToken);
    }
 
    public MenuResult UpdateMenu(
@@ -650,6 +810,30 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
       string newName = null
    )
    {
+      return UpdateMenuAsync(
+            identity,
+            menuId,
+            recipesAdd,
+            recipesRemove,
+            recipesMove,
+            clear,
+            newName
+         )
+         .GetAwaiter()
+         .GetResult();
+   }
+
+   public async Task<MenuResult> UpdateMenuAsync(
+      AuthIdentity identity,
+      Guid? menuId,
+      Guid[] recipesAdd,
+      Guid[] recipesRemove,
+      MenuMove[] recipesMove,
+      bool clear,
+      string newName = null,
+      CancellationToken cancellationToken = default
+   )
+   {
       var ret = new MenuResult();
       ret.MenuUpdated = true; // TODO: Verify actual changes were made before setting MenuUpdated to true
 
@@ -659,11 +843,13 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
       IList<Favorites> dbRecipes;
       if (menuId.HasValue)
       {
-         dbMenu = session
+         var loadedMenu = session
             .QueryOver<Menus>()
             .Fetch(SelectMode.Fetch, prop => prop.Recipes)
             .Where(p => p.MenuId == menuId)
-            .SingleOrDefault();
+            .SingleOrDefaultAsync(cancellationToken);
+
+         dbMenu = await loadedMenu;
 
          if (dbMenu == null)
             throw new MenuNotFoundException();
@@ -678,11 +864,13 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
       }
       else
       {
-         dbRecipes = session
+         var loadedRecipes = session
             .QueryOver<Favorites>()
             .Where(p => p.UserId == identity.UserId)
             .Where(p => p.Menu == null)
-            .List();
+            .ListAsync(cancellationToken);
+
+         dbRecipes = await loadedRecipes;
       }
 
       if (recipesAdd.Any()) // Add recipes to menu
@@ -699,7 +887,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
                Menu = dbMenu,
             };
 
-            session.Save(fav);
+            await session.SaveAsync(fav, cancellationToken);
          }
       }
 
@@ -710,12 +898,18 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
             where recipesRemove.Contains(r.Recipe.RecipeId)
             select r
          );
-         toDelete.ForEach(session.Delete);
+         foreach (var recipe in toDelete)
+         {
+            await session.DeleteAsync(recipe, cancellationToken);
+         }
       }
 
       if (clear) // Remove every recipe from menu
       {
-         dbRecipes.ForEach(session.Delete);
+         foreach (var recipe in dbRecipes)
+         {
+            await session.DeleteAsync(recipe, cancellationToken);
+         }
       }
 
       if (recipesMove.Any()) // Move items to another menu
@@ -725,11 +919,13 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
             Menus dbTarget = null;
             if (moveAction.TargetMenu.HasValue)
             {
-               dbTarget = session
+               var loadedTarget = session
                   .QueryOver<Menus>()
                   .Where(p => p.MenuId == moveAction.TargetMenu.Value)
                   .Where(p => p.UserId == identity.UserId)
-                  .SingleOrDefault();
+                  .SingleOrDefaultAsync(cancellationToken);
+
+               dbTarget = await loadedTarget;
 
                if (dbTarget == null)
                   throw new MenuNotFoundException(moveAction.TargetMenu.Value);
@@ -739,13 +935,41 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
                moveAction.MoveAll
                   ? dbRecipes
                   : dbRecipes.Where(r => moveAction.RecipesToMove.Contains(r.Recipe.RecipeId))
-            );
+            ).ToArray();
+
+            if (
+               !moveAction.MoveAll
+               && rToMove.Select(r => r.Recipe.RecipeId).Distinct().Count()
+                  != moveAction.RecipesToMove.Distinct().Count()
+            )
+            {
+               throw new MenuItemNotFoundException();
+            }
+
+            var recipeIds = rToMove.Select(r => r.Recipe.RecipeId).ToArray();
+            var destinationQuery = session
+               .QueryOver<Favorites>()
+               .Fetch(SelectMode.Fetch, p => p.Recipe)
+               .Where(p => p.UserId == identity.UserId);
+            destinationQuery = moveAction.TargetMenu.HasValue
+               ? destinationQuery.Where(p => p.Menu.MenuId == moveAction.TargetMenu.Value)
+               : destinationQuery.Where(p => p.Menu == null);
+
+            if (
+               recipeIds.Length > 0
+               && (await destinationQuery.ListAsync(cancellationToken)).Any(f =>
+                  recipeIds.Contains(f.Recipe.RecipeId)
+               )
+            )
+            {
+               throw new DuplicateCookbookException();
+            }
 
             rToMove.ForEach(a => a.Menu = dbTarget);
          }
       }
 
-      transaction.Commit();
+      await transaction.CommitAsync(cancellationToken);
 
       return ret;
    }

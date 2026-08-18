@@ -2,9 +2,9 @@
 
 public enum Category
 {
-   None,
-   Breakfast,
-   Lunch,
-   Dinner,
-   Dessert,
+   None = 0,
+   Breakfast = 1,
+   Lunch = 2,
+   Dinner = 3,
+   Dessert = 4,
 };

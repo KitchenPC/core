@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 using KitchenPC.Core.Fluent;
 using KitchenPC.Core.Ingredients;
@@ -1052,7 +1054,9 @@ public class StaticContext : IKPCContext, IProvisionTarget, IProvisionSource
             throw new UserDoesNotOwnMenuException();
       }
 
-      var dbFavorites = store.Favorites.Where(p => p.MenuId == menuId).ToList();
+      var dbFavorites = store
+         .Favorites.Where(p => p.UserId == Identity.UserId && p.MenuId == menuId)
+         .ToList();
 
       if (!String.IsNullOrWhiteSpace(newName) && dbMenu != null) // Rename menu
          dbMenu.Title = newName.Trim();
@@ -1106,7 +1110,28 @@ public class StaticContext : IKPCContext, IProvisionTarget, IProvisionSource
                moveAction.MoveAll
                   ? dbFavorites
                   : dbFavorites.Where(r => moveAction.RecipesToMove.Contains(r.RecipeId))
-            );
+            ).ToArray();
+
+            if (
+               !moveAction.MoveAll
+               && rToMove.Select(r => r.RecipeId).Distinct().Count()
+                  != moveAction.RecipesToMove.Distinct().Count()
+            )
+            {
+               throw new MenuItemNotFoundException();
+            }
+
+            var recipeIds = new HashSet<Guid>(rToMove.Select(r => r.RecipeId));
+            if (
+               store.Favorites.Any(f =>
+                  f.UserId == Identity.UserId
+                  && f.MenuId == moveAction.TargetMenu
+                  && recipeIds.Contains(f.RecipeId)
+               )
+            )
+            {
+               throw new DuplicateCookbookException();
+            }
 
             rToMove.ForEach(a => a.MenuId = dbTarget != null ? (Guid?)dbTarget.MenuId : null);
          }
@@ -1299,4 +1324,78 @@ public class StaticContext : IKPCContext, IProvisionTarget, IProvisionSource
    {
       return store;
    }
+
+   public Task<SearchResults> RecipeSearchAsync(
+      RecipeQuery query,
+      CancellationToken cancellationToken = default
+   ) => Task.FromResult(RecipeSearch(query));
+
+   public Task<Recipe[]> ReadRecipesAsync(
+      Guid[] recipeIds,
+      ReadRecipeOptions options,
+      CancellationToken cancellationToken = default
+   ) => Task.FromResult(ReadRecipes(recipeIds, options));
+
+   public Task RateRecipeAsync(
+      Guid recipeId,
+      Rating rating,
+      CancellationToken cancellationToken = default
+   )
+   {
+      RateRecipe(recipeId, rating);
+      return Task.CompletedTask;
+   }
+
+   public Task DequeueRecipeAsync(Guid[] recipeIds, CancellationToken cancellationToken = default)
+   {
+      DequeueRecipe(recipeIds);
+      return Task.CompletedTask;
+   }
+
+   public Task EnqueueRecipesAsync(Guid[] recipeIds, CancellationToken cancellationToken = default)
+   {
+      EnqueueRecipes(recipeIds);
+      return Task.CompletedTask;
+   }
+
+   public Task<RecipeBrief[]> GetRecipeQueueAsync(CancellationToken cancellationToken = default) =>
+      Task.FromResult(GetRecipeQueue());
+
+   public Task<Ingredient> ReadIngredientAsync(
+      string ingredient,
+      CancellationToken cancellationToken = default
+   ) => Task.FromResult(ReadIngredient(ingredient));
+
+   public Task<Ingredient> ReadIngredientAsync(
+      Guid ingredientId,
+      CancellationToken cancellationToken = default
+   ) => Task.FromResult(ReadIngredient(ingredientId));
+
+   public Task<Menu[]> GetMenusAsync(
+      IList<Menu> menus,
+      GetMenuOptions options,
+      CancellationToken cancellationToken = default
+   ) => Task.FromResult(GetMenus(menus, options));
+
+   public Task<MenuResult> CreateMenuAsync(
+      Menu menu,
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   ) => Task.FromResult(CreateMenu(menu, recipeIds));
+
+   public Task DeleteMenusAsync(Guid[] menuIds, CancellationToken cancellationToken = default)
+   {
+      DeleteMenus(menuIds);
+      return Task.CompletedTask;
+   }
+
+   public Task<MenuResult> UpdateMenuAsync(
+      Guid? menuId,
+      Guid[] recipesAdd,
+      Guid[] recipesRemove,
+      MenuMove[] recipesMove,
+      bool clear,
+      string newName = null,
+      CancellationToken cancellationToken = default
+   ) => Task.FromResult(UpdateMenu(menuId, recipesAdd, recipesRemove, recipesMove, clear, newName));
 }

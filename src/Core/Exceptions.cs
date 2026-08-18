@@ -32,6 +32,10 @@ public class IngredientMapInvalidIngredientException : KPCException { }
 
 public class RecipeNotFoundException : KPCException { }
 
+public class MenuItemNotFoundException : KPCException { }
+
+public class DuplicateCookbookException : KPCException { }
+
 public class IngredientNotFoundException : KPCException { }
 
 public class MenuNotFoundException : KPCException
