@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace KitchenPC.Recipes
-{
-   public class RecipeResult
-   {
-      public bool RecipeCreated;
-      public bool RecipeUpdated;
+namespace KitchenPC.Core.Recipes;
 
-      public Guid? NewRecipeId;
-   }
+public class RecipeResult
+{
+   public bool RecipeCreated;
+   public bool RecipeUpdated;
+
+   public Guid? NewRecipeId;
 }

@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace KitchenPC.Categorization
+namespace KitchenPC.Core.Categorization;
+
+public interface IIngredientCommonality
 {
-   public interface IIngredientCommonality
-   {
-      Guid IngredientId { get; }
-      Single Commonality { get; }
-   }
+   Guid IngredientId { get; }
+   Single Commonality { get; }
 }

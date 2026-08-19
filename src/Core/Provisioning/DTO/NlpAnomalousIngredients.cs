@@ -1,14 +1,13 @@
 using System;
 
-namespace KitchenPC.Data.DTO
+namespace KitchenPC.Core.Provisioning.DTO;
+
+public class NlpAnomalousIngredients
 {
-   public class NlpAnomalousIngredients
-   {
-      public Guid AnomalousIngredientId { get; set; }
-      public String Name { get; set; }
-      public Guid IngredientId { get; set; }
-      public Guid? WeightFormId { get; set; }
-      public Guid? VolumeFormId { get; set; }
-      public Guid? UnitFormId { get; set; }
-   }
+   public Guid AnomalousIngredientId { get; set; }
+   public String Name { get; set; }
+   public Guid IngredientId { get; set; }
+   public Guid? WeightFormId { get; set; }
+   public Guid? VolumeFormId { get; set; }
+   public Guid? UnitFormId { get; set; }
 }

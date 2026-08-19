@@ -1,27 +1,26 @@
-﻿namespace KitchenPC.NLP
+﻿namespace KitchenPC.Core.NLP;
+
+public class PrepNode
 {
-   public class PrepNode
+   public string Prep;
+
+   public PrepNode(string prep)
    {
-      public string Prep;
+      Prep = prep.ToLower().Trim();
+   }
 
-      public PrepNode(string prep)
-      {
-         Prep = prep.ToLower().Trim();
-      }
+   public static implicit operator PrepNode(string p)
+   {
+      return new PrepNode(p);
+   }
 
-      public static implicit operator PrepNode(string p)
-      {
-         return new PrepNode(p);
-      }
+   public static implicit operator string(PrepNode p)
+   {
+      return p.Prep;
+   }
 
-      public static implicit operator string(PrepNode p)
-      {
-         return p.Prep;
-      }
-
-      public override string ToString()
-      {
-         return Prep;
-      }
+   public override string ToString()
+   {
+      return Prep;
    }
 }

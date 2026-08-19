@@ -1,89 +1,95 @@
 ﻿using System;
-using KitchenPC.Context.Fluent;
+using KitchenPC.Core.Fluent;
 
-namespace KitchenPC.Ingredients
+namespace KitchenPC.Core.Ingredients;
+
+public class IngredientUsage
 {
-   public class IngredientUsage
+   public Ingredient Ingredient { get; set; }
+   public IngredientForm Form { get; set; }
+   public Amount Amount { get; set; }
+   public String PrepNote { get; set; }
+   public String Section { get; set; }
+
+   public static IngredientUsageCreator Create
    {
-      public Ingredient Ingredient;
-      public IngredientForm Form;
-      public Amount Amount;
-      public String PrepNote;
-      public String Section;
+      get { return new IngredientUsageCreator(new IngredientUsage()); }
+   }
 
-      public static IngredientUsageCreator Create
+   public IngredientUsage(
+      Ingredient ingredient,
+      IngredientForm form,
+      Amount amount,
+      String prepnote
+   )
+   {
+      Ingredient = ingredient;
+      Form = form;
+      Amount = amount;
+      PrepNote = prepnote;
+   }
+
+   public IngredientUsage() { }
+
+   /// <summary>Renders Ingredient Usage, using ingredientTemplate for the ingredient name.</summary>
+   /// <param name="ingredientTemplate">A string template for the ingredient name, {0} will be the Ingredient Id and {1} will be the ingredient name.</param>
+   /// <param name="amountTemplate">Optional string template for displaying amounts.  {0} will be numeric value, {1} will be unit.</param>
+   /// <param name="multiplier">Number to multiply amount by, used to adjust recipe servings.</param>
+   /// <returns>Ingredient Name (form): Amount (prep note)</returns>
+   public string ToString(string ingredientTemplate, string amountTemplate, float multiplier)
+   {
+      var ingname = String.IsNullOrEmpty(ingredientTemplate)
+         ? Ingredient.Name
+         : String.Format(ingredientTemplate, Ingredient.Id, Ingredient.Name);
+      var prep = String.Empty;
+      string amount;
+
+      if (!String.IsNullOrEmpty(PrepNote))
       {
-         get
-         {
-            return new IngredientUsageCreator(new IngredientUsage());
-         }
+         prep = String.Format(" ({0})", PrepNote);
       }
 
-      public IngredientUsage(Ingredient ingredient, IngredientForm form, Amount amount, String prepnote)
+      if (Amount == null) //Just display ingredient and prep
       {
-         Ingredient = ingredient;
-         Form = form;
-         Amount = amount;
-         PrepNote = prepnote;
+         return String.Format("{0}{1}", ingname, prep);
       }
 
-      public IngredientUsage()
+      //Normalize amount and form
+      var normalizedAmt = (Amount == null ? null : Amount.Normalize(Amount, multiplier));
+      if (Form.FormUnitType != Units.Unit && !String.IsNullOrEmpty(Form.FormDisplayName))
       {
+         ingname += String.Format(" ({0})", Form.FormDisplayName);
       }
 
-      /// <summary>Renders Ingredient Usage, using ingredientTemplate for the ingredient name.</summary>
-      /// <param name="ingredientTemplate">A string template for the ingredient name, {0} will be the Ingredient Id and {1} will be the ingredient name.</param>
-      /// <param name="amountTemplate">Optional string template for displaying amounts.  {0} will be numeric value, {1} will be unit.</param>
-      /// <param name="multiplier">Number to multiply amount by, used to adjust recipe servings.</param>
-      /// <returns>Ingredient Name (form): Amount (prep note)</returns>
-      public string ToString(string ingredientTemplate, string amountTemplate, float multiplier)
+      var unitType = Unit.GetConvType(Form.FormUnitType);
+
+      if (unitType == UnitType.Unit && !String.IsNullOrEmpty(Form.FormUnitName))
       {
-         var ingname = String.IsNullOrEmpty(ingredientTemplate) ? Ingredient.Name : String.Format(ingredientTemplate, Ingredient.Id, Ingredient.Name);
-         var prep = String.Empty;
-         string amount;
-
-         if (!String.IsNullOrEmpty(PrepNote))
-         {
-            prep = String.Format(" ({0})", PrepNote);
-         }
-
-         if (Amount == null) //Just display ingredient and prep
-         {
-            return String.Format("{0}{1}", ingname, prep);
-         }
-
-         //Normalize amount and form
-         var normalizedAmt = (Amount == null ? null : Amount.Normalize(Amount, multiplier));
-         if (Form.FormUnitType != Units.Unit && !String.IsNullOrEmpty(Form.FormDisplayName))
-         {
-            ingname += String.Format(" ({0})", Form.FormDisplayName);
-         }
-
-         var unitType = Unit.GetConvType(Form.FormUnitType);
-
-         if (unitType == UnitType.Unit && !String.IsNullOrEmpty(Form.FormUnitName))
-         {
-            var names = Form.FormUnitName.Split('/');
-            var unitName = (normalizedAmt.SizeLow.HasValue || normalizedAmt.SizeHigh > 1) ? names[1] : names[0];
-            amount = normalizedAmt.ToString(unitName);
-         }
-         else
-         {
-            amount = normalizedAmt.ToString();
-         }
-
-         var amt = String.Format(String.IsNullOrEmpty(amountTemplate) ? "{0}{1}" : amountTemplate, amount, prep);
-         return String.Format("{0}: {1}", ingname, amt);
+         var names = Form.FormUnitName.Split('/');
+         var unitName =
+            (normalizedAmt.SizeLow.HasValue || normalizedAmt.SizeHigh > 1) ? names[1] : names[0];
+         amount = normalizedAmt.ToString(unitName);
+      }
+      else
+      {
+         amount = normalizedAmt.ToString();
       }
 
-      public string ToString(float multiplier)
-      {
-         return ToString(null, null, multiplier);
-      }
+      var amt = String.Format(
+         String.IsNullOrEmpty(amountTemplate) ? "{0}{1}" : amountTemplate,
+         amount,
+         prep
+      );
+      return String.Format("{0}: {1}", ingname, amt);
+   }
 
-      public override string ToString()
-      {
-         return ToString(null, null, 1);
-      }
+   public string ToString(float multiplier)
+   {
+      return ToString(null, null, multiplier);
+   }
+
+   public override string ToString()
+   {
+      return ToString(null, null, 1);
    }
 }

@@ -1,22 +1,22 @@
 ﻿using System;
 
-namespace KitchenPC.Categorization
+namespace KitchenPC.Core.Categorization;
+
+public class AnalyzerResult
 {
-   public class AnalyzerResult
+   public Category FirstPlace { get; private set; }
+   public Category SecondPlace { get; private set; }
+
+   public AnalyzerResult(Category first, Category second)
    {
-      public Category FirstPlace { get; private set; }
-      public Category SecondPlace { get; private set; }
+      FirstPlace = first;
+      SecondPlace = second;
+   }
 
-      public AnalyzerResult(Category first, Category second)
-      {
-         FirstPlace = first;
-         SecondPlace = second;
-      }
-
-      public override string ToString()
-      {
-         return SecondPlace == Category.None ? FirstPlace.ToString()
-            : String.Format("{0}/{1}", FirstPlace, SecondPlace);
-      }
+   public override string ToString()
+   {
+      return SecondPlace == Category.None
+         ? FirstPlace.ToString()
+         : String.Format("{0}/{1}", FirstPlace, SecondPlace);
    }
 }

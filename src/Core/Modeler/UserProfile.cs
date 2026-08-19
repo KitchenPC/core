@@ -1,42 +1,41 @@
 using System;
-using KitchenPC.Recipes;
+using KitchenPC.Core.Recipes;
 
-namespace KitchenPC.Modeler
+namespace KitchenPC.Core.Modeler;
+
+public class UserProfile : IUserProfile
 {
-   public class UserProfile : IUserProfile
+   private static IUserProfile anonymous;
+
+   /// <summary>
+   /// Represents a modeling profile that has no user context, such as a saved pantry, favorite ingredients, blacklists, etc.
+   /// </summary>
+   public static IUserProfile Anonymous
    {
-      static IUserProfile anonymous;
-
-      /// <summary>
-      /// Represents a modeling profile that has no user context, such as a saved pantry, favorite ingredients, blacklists, etc.
-      /// </summary>
-      public static IUserProfile Anonymous
+      get
       {
-         get
+         if (anonymous == null)
          {
-            if (anonymous == null)
+            anonymous = new UserProfile
             {
-               anonymous = new UserProfile
-               {
-                  UserId = Guid.Empty,
-                  Ratings = new RecipeRating[0],
-                  FavoriteIngredients = new Guid[0],
-                  FavoriteTags = RecipeTags.None,
-                  BlacklistedIngredients = new Guid[0]
-               };
-            }
-
-            return anonymous;
+               UserId = Guid.Empty,
+               Ratings = new RecipeRating[0],
+               FavoriteIngredients = new Guid[0],
+               FavoriteTags = RecipeTags.None,
+               BlacklistedIngredients = new Guid[0],
+            };
          }
-      }
 
-      public Guid UserId { get; set; }
-      public RecipeRating[] Ratings { get; set; }
-      public PantryItem[] Pantry { get; set; }
-      public Guid[] FavoriteIngredients { get; set; }
-      public RecipeTags FavoriteTags { get; set; }
-      public Guid[] BlacklistedIngredients { get; set; }
-      public Guid? AvoidRecipe { get; set; }
-      public RecipeTags AllowedTags { get; set; }
+         return anonymous;
+      }
    }
+
+   public Guid UserId { get; set; }
+   public RecipeRating[] Ratings { get; set; }
+   public PantryItem[] Pantry { get; set; }
+   public Guid[] FavoriteIngredients { get; set; }
+   public RecipeTags FavoriteTags { get; set; }
+   public Guid[] BlacklistedIngredients { get; set; }
+   public Guid? AvoidRecipe { get; set; }
+   public RecipeTags AllowedTags { get; set; }
 }

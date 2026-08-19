@@ -1,9 +1,8 @@
-﻿namespace KitchenPC.ShoppingLists
+﻿namespace KitchenPC.Core.ShoppingLists;
+
+public enum ShoppingListUpdateType
 {
-   public enum ShoppingListUpdateType
-   {
-      AddItem,
-      RemoveItem,
-      ModifyItem
-   };
-}
+   AddItem = 0,
+   RemoveItem = 1,
+   ModifyItem = 2,
+};

@@ -1,48 +1,42 @@
 ﻿using System;
-using KitchenPC.Recipes;
+using KitchenPC.Core.Recipes;
 
-namespace KitchenPC.Modeler
+namespace KitchenPC.Core.Modeler;
+
+/// <summary>
+/// A fully compiled result set from the modeler containing full recipe briefs and ingredient aggregation data.
+/// </summary>
+public class CompiledModel
 {
-   /// <summary>
-   /// A fully compiled result set from the modeler containing full recipe briefs and ingredient aggregation data.
-   /// </summary>
-   public class CompiledModel
+   private static CompiledModel empty;
+
+   public RecipeBrief[] Briefs;
+   public Guid[] RecipeIds { get; set; }
+   public PantryItem[] Pantry { get; set; }
+   public SuggestedRecipe[] Recipes { get; set; }
+
+   public int Count
    {
-      static CompiledModel empty;
+      get { return (Recipes == null ? 0 : Recipes.Length); }
+      set { }
+   }
 
-      public RecipeBrief[] Briefs;
-      public Guid[] RecipeIds { get; set; }
-      public PantryItem[] Pantry { get; set; }
-      public SuggestedRecipe[] Recipes { get; set; }
-
-      public int Count
+   public static CompiledModel Empty
+   {
+      get
       {
-         get
+         if (empty == null)
          {
-            return (Recipes == null ? 0 : Recipes.Length);
-         }
-         set
-         {
-         }
-      }
-
-      public static CompiledModel Empty
-      {
-         get
-         {
-            if (empty == null)
+            empty = new CompiledModel()
             {
-               empty = new CompiledModel()
-               {
-                  Briefs = new RecipeBrief[0],
-                  Pantry = new PantryItem[0],
-                  RecipeIds = new Guid[0],
-                  Recipes = new SuggestedRecipe[0]
-               };
-            }
-
-            return empty;
+               Briefs = new RecipeBrief[0],
+               Pantry = new PantryItem[0],
+               RecipeIds = new Guid[0],
+               Recipes = new SuggestedRecipe[0],
+            };
          }
+
+         return empty;
       }
    }
 }

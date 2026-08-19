@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
 
-namespace KitchenPC.Ingredients
-{
-   public class IngredientUsageCollection : List<IngredientUsage>
-   {
-   }
-}
+namespace KitchenPC.Core.Ingredients;
+
+public class IngredientUsageCollection : List<IngredientUsage> { }

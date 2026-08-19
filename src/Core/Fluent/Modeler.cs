@@ -1,191 +1,190 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using KitchenPC.Ingredients;
-using KitchenPC.Modeler;
-using KitchenPC.Recipes;
-using IngredientUsage = KitchenPC.Ingredients.IngredientUsage;
+using KitchenPC.Core.Context;
+using KitchenPC.Core.Ingredients;
+using KitchenPC.Core.Modeler;
+using KitchenPC.Core.Recipes;
+using IngredientUsage = KitchenPC.Core.Ingredients.IngredientUsage;
 
-namespace KitchenPC.Context.Fluent
+namespace KitchenPC.Core.Fluent;
+
+/// <summary>Provides the ability to fluently express modeler related actions, such as generating or compiling a model.</summary>
+public class ModelerAction
 {
-   /// <summary>Provides the ability to fluently express modeler related actions, such as generating or compiling a model.</summary>
-   public class ModelerAction
+   private readonly IKPCContext context;
+
+   public ModelerAction(IKPCContext context)
    {
-      readonly IKPCContext context;
-
-      public ModelerAction(IKPCContext context)
-      {
-         this.context = context;
-      }
-
-      public ModelingSessionAction WithSession(ModelingSession session)
-      {
-         return new ModelingSessionAction(session);
-      }
-
-      public ModelingSessionAction WithProfile(IUserProfile profile)
-      {
-         return new ModelingSessionAction(context, profile);
-      }
-
-      public ModelingSessionAction WithProfile(Func<ProfileCreator, ProfileCreator> profileCreator)
-      {
-         var creator = profileCreator(new ProfileCreator());
-
-         return new ModelingSessionAction(context, creator.Profile);
-      }
-
-      public ModelingSessionAction WithAnonymous
-      {
-         get
-         {
-            return new ModelingSessionAction(context, UserProfile.Anonymous);
-         }
-      }
+      this.context = context;
    }
 
-   public class ProfileCreator
+   public ModelingSessionAction WithSession(ModelingSession session)
    {
-      Guid userid;
-      readonly IList<RecipeRating> ratings;
-      readonly IList<PantryItem> pantry;
-      readonly IList<Guid> favIngs;
-      RecipeTags favTags;
-      readonly IList<Guid> blacklistIng;
-      Guid avoidRecipe;
-      RecipeTags allowedTags;
-
-      public ProfileCreator()
-      {
-         ratings = new List<RecipeRating>();
-         pantry = new List<PantryItem>();
-         favIngs = new List<Guid>();
-         blacklistIng = new List<Guid>();
-      }
-
-      public ProfileCreator WithUserId(Guid userid)
-      {
-         this.userid = userid;
-         return this;
-      }
-
-      public ProfileCreator AddRating(RecipeRating rating)
-      {
-         ratings.Add(rating);
-         return this;
-      }
-
-      public ProfileCreator AddRating(Recipe recipe, byte rating)
-      {
-         ratings.Add(new RecipeRating
-         {
-            RecipeId = recipe.Id,
-            Rating = rating
-         });
-
-         return this;
-      }
-
-      public ProfileCreator AddPantryItem(PantryItem item)
-      {
-         pantry.Add(item);
-         return this;
-      }
-
-      public ProfileCreator AddPantryItem(IngredientUsage usage)
-      {
-         pantry.Add(new PantryItem(usage));
-         return this;
-      }
-
-      public ProfileCreator AddFavoriteIngredient(Ingredient ingredient)
-      {
-         favIngs.Add(ingredient.Id);
-         return this;
-      }
-
-      public ProfileCreator FavoriteTags(RecipeTags tags)
-      {
-         favTags = tags;
-         return this;
-      }
-
-      public ProfileCreator AddBlacklistedIngredient(Ingredient ingredient)
-      {
-         blacklistIng.Add(ingredient.Id);
-         return this;
-      }
-
-      public ProfileCreator AvoidRecipe(Recipe recipe)
-      {
-         avoidRecipe = recipe.Id;
-         return this;
-      }
-
-      public ProfileCreator AllowedTags(RecipeTags tags)
-      {
-         allowedTags = tags;
-         return this;
-      }
-
-      public IUserProfile Profile
-      {
-         get
-         {
-            return new UserProfile
-            {
-               UserId = userid,
-               Ratings = ratings.ToArray(),
-               Pantry = pantry.Any() ? pantry.ToArray() : null, // Pantry must be null or more than 0 items
-               FavoriteIngredients = favIngs.ToArray(),
-               FavoriteTags = favTags,
-               BlacklistedIngredients = blacklistIng.ToArray(),
-               AvoidRecipe = avoidRecipe,
-               AllowedTags = allowedTags
-            };
-         }
-      }
+      return new ModelingSessionAction(session);
    }
 
-   public class ModelingSessionAction
+   public ModelingSessionAction WithProfile(IUserProfile profile)
    {
-      readonly ModelingSession session;
+      return new ModelingSessionAction(context, profile);
+   }
 
-      int recipes = 5;
-      byte scale = 2;
+   public ModelingSessionAction WithProfile(Func<ProfileCreator, ProfileCreator> profileCreator)
+   {
+      var creator = profileCreator(new ProfileCreator());
 
-      public ModelingSessionAction(ModelingSession session)
+      return new ModelingSessionAction(context, creator.Profile);
+   }
+
+   public ModelingSessionAction WithAnonymous
+   {
+      get { return new ModelingSessionAction(context, UserProfile.Anonymous); }
+   }
+}
+
+public class ProfileCreator
+{
+   private Guid userid;
+   private readonly IList<RecipeRating> ratings;
+   private readonly IList<PantryItem> pantry;
+   private readonly IList<Guid> favIngs;
+   private RecipeTags favTags;
+   private readonly IList<Guid> blacklistIng;
+   private Guid avoidRecipe;
+   private RecipeTags allowedTags;
+
+   public ProfileCreator()
+   {
+      ratings = new List<RecipeRating>();
+      pantry = new List<PantryItem>();
+      favIngs = new List<Guid>();
+      blacklistIng = new List<Guid>();
+   }
+
+   public ProfileCreator WithUserId(Guid userid)
+   {
+      this.userid = userid;
+      return this;
+   }
+
+   public ProfileCreator AddRating(RecipeRating rating)
+   {
+      ratings.Add(rating);
+      return this;
+   }
+
+   public ProfileCreator AddRating(Recipe recipe, byte rating)
+   {
+      ratings.Add(new RecipeRating { RecipeId = recipe.Id, Rating = rating });
+
+      return this;
+   }
+
+   public ProfileCreator AddPantryItem(PantryItem item)
+   {
+      pantry.Add(item);
+      return this;
+   }
+
+   public ProfileCreator AddPantryItem(IngredientUsage usage)
+   {
+      pantry.Add(new PantryItem(usage));
+      return this;
+   }
+
+   public ProfileCreator AddFavoriteIngredient(Ingredient ingredient)
+   {
+      favIngs.Add(ingredient.Id);
+      return this;
+   }
+
+   public ProfileCreator FavoriteTags(RecipeTags tags)
+   {
+      favTags = tags;
+      return this;
+   }
+
+   public ProfileCreator AddBlacklistedIngredient(Ingredient ingredient)
+   {
+      blacklistIng.Add(ingredient.Id);
+      return this;
+   }
+
+   public ProfileCreator AvoidRecipe(Recipe recipe)
+   {
+      avoidRecipe = recipe.Id;
+      return this;
+   }
+
+   public ProfileCreator AvoidRecipe(Guid recipeId)
+   {
+      avoidRecipe = recipeId;
+      return this;
+   }
+
+   public ProfileCreator AllowedTags(RecipeTags tags)
+   {
+      allowedTags = tags;
+      return this;
+   }
+
+   public IUserProfile Profile
+   {
+      get
       {
-         this.session = session;
+         return new UserProfile
+         {
+            UserId = userid,
+            Ratings = ratings.ToArray(),
+            Pantry = pantry.Any() ? pantry.ToArray() : null, // Pantry must be null or more than 0 items
+            FavoriteIngredients = favIngs.ToArray(),
+            FavoriteTags = favTags,
+            BlacklistedIngredients = blacklistIng.ToArray(),
+            AvoidRecipe = avoidRecipe,
+            AllowedTags = allowedTags,
+         };
       }
+   }
+}
 
-      public ModelingSessionAction(IKPCContext context, IUserProfile profile)
-      {
-         session = context.CreateModelingSession(profile);
-      }
+public class ModelingSessionAction
+{
+   private readonly ModelingSession session;
 
-      public ModelingSessionAction NumRecipes(int recipes)
-      {
-         this.recipes = recipes;
-         return this;
-      }
+   private int recipes = 5;
+   private byte scale = 2;
 
-      public ModelingSessionAction Scale(byte scale)
-      {
-         this.scale = scale;
-         return this;
-      }
+   public ModelingSessionAction(ModelingSession session)
+   {
+      this.session = session;
+   }
 
-      public Model Generate()
-      {
-         return session.Generate(recipes, scale);
-      }
+   public ModelingSessionAction(IKPCContext context, IUserProfile profile)
+   {
+      session = context.CreateModelingSession(profile);
+   }
 
-      public CompiledModel Compile()
-      {
-         var model = Generate();
+   public ModelingSessionAction NumRecipes(int recipes)
+   {
+      this.recipes = recipes;
+      return this;
+   }
 
-         return session.Compile(model);
-      }
+   public ModelingSessionAction Scale(byte scale)
+   {
+      this.scale = scale;
+      return this;
+   }
+
+   public Model Generate()
+   {
+      return session.Generate(recipes, scale);
+   }
+
+   public CompiledModel Compile()
+   {
+      var model = Generate();
+
+      return session.Compile(model);
    }
 }

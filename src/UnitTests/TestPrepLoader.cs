@@ -1,22 +1,20 @@
 using System;
 using System.Collections.Generic;
-using KitchenPC.NLP;
+using KitchenPC.Core.NLP;
 
-namespace KitchenPC.UnitTests
+namespace KitchenPC.UnitTests;
+
+internal class TestPrepLoader : ISynonymLoader<PrepNode>
 {
-   internal class TestPrepLoader : ISynonymLoader<PrepNode>
-   {
-      public Pairings LoadFormPairings()
-      {
-         throw new NotImplementedException();
-      }
+   public Pairings LoadFormPairings() => throw new NotImplementedException();
 
-      public IEnumerable<PrepNode> LoadSynonyms()
+   public IEnumerable<PrepNode> LoadSynonyms() =>
+      new PrepNode[]
       {
-         return new PrepNode[]
-         {
-            "sliced", "shredded", "crumbled", "diced", "chopped" //Test prep nodes (approved prep notes for any ingredient)
-         };
-      }
-   }
+         "sliced",
+         "shredded",
+         "crumbled",
+         "diced",
+         "chopped", //Test prep nodes (approved prep notes for any ingredient)
+      };
 }

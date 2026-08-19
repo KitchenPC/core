@@ -1,12 +1,11 @@
-﻿namespace KitchenPC.NLP
-{
-   public class FormNode
-   {
-      public string FormName;
+﻿namespace KitchenPC.Core.NLP;
 
-      public FormNode(string name)
-      {
-         FormName = name.Trim();
-      }
+public class FormNode
+{
+   public string FormName;
+
+   public FormNode(string name)
+   {
+      FormName = name.Trim();
    }
 }

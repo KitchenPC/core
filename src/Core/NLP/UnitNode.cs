@@ -1,28 +1,27 @@
 ﻿using System;
 
-namespace KitchenPC.NLP
+namespace KitchenPC.Core.NLP;
+
+public class UnitNode
 {
-   public class UnitNode
+   public string Name;
+   public Units Unit;
+
+   public UnitNode(string name, Units unit)
    {
-      public string Name;
-      public Units Unit;
+      this.Name = name.Trim();
+      this.Unit = unit;
+   }
 
-      public UnitNode(string name, Units unit)
+   public override string ToString()
+   {
+      if (String.IsNullOrEmpty(Name))
       {
-         this.Name = name.Trim();
-         this.Unit = unit;
+         return Name;
       }
-
-      public override string ToString()
+      else
       {
-         if (String.IsNullOrEmpty(Name))
-         {
-            return Name;
-         }
-         else
-         {
-            return Unit.ToString();
-         }
+         return Unit.ToString();
       }
    }
 }

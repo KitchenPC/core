@@ -1,45 +1,44 @@
 ﻿using System;
-using KitchenPC.Context;
+using KitchenPC.Core.Context;
 
-namespace KitchenPC.Modeler
+namespace KitchenPC.Core.Modeler;
+
+public class ModelerProxy
 {
-   public class ModelerProxy
+   private DBSnapshot db;
+   private readonly IKPCContext context;
+
+   public ModelerProxy(IKPCContext context)
    {
-      DBSnapshot db;
-      readonly IKPCContext context;
+      this.context = context;
+   }
 
-      public ModelerProxy(IKPCContext context)
-      {
-         this.context = context;
-      }
+   public void LoadSnapshot()
+   {
+      db = new DBSnapshot(context);
+   }
 
-      public void LoadSnapshot()
-      {
-         db = new DBSnapshot(context);
-      }
+   public ModelingSession CreateSession(IUserProfile profile)
+   {
+      if (db == null)
+         throw new Exception("ModelerProxy has not been initialized.");
 
-      public ModelingSession CreateSession(IUserProfile profile)
-      {
-         if (db == null)
-            throw new Exception("ModelerProxy has not been initialized.");
+      return new ModelingSession(context, db, profile);
+   }
 
-         return new ModelingSession(context, db, profile);
-      }
+   public RecipeNode FindRecipe(Guid id)
+   {
+      if (db == null)
+         throw new Exception("ModelerProxy has not been initialized.");
 
-      public RecipeNode FindRecipe(Guid id)
-      {
-         if (db == null)
-            throw new Exception("ModelerProxy has not been initialized.");
+      return db.FindRecipe(id);
+   }
 
-         return db.FindRecipe(id);
-      }
+   public IngredientNode FindIngredient(Guid id)
+   {
+      if (db == null)
+         throw new Exception("ModelerProxy has not been initialized.");
 
-      public IngredientNode FindIngredient(Guid id)
-      {
-         if (db == null)
-            throw new Exception("ModelerProxy has not been initialized.");
-
-         return db.FindIngredient(id);
-      }
+      return db.FindIngredient(id);
    }
 }

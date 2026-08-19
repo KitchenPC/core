@@ -1,11 +1,8 @@
-﻿using KitchenPC.Data;
+﻿namespace KitchenPC.Core.Provisioning;
 
-namespace KitchenPC.Provisioning
+/// <summary>Represents a target which can be provisioned based on data exported from an IProvisionSource.</summary>
+public interface IProvisionTarget
 {
-   /// <summary>Represents a target which can be provisioned based on data exported from an IProvisionSource.</summary>
-   public interface IProvisionTarget
-   {
-      void Import(IProvisionSource source);
-      void InitializeStore();
-   }
+   void Import(IProvisionSource source);
+   void InitializeStore();
 }

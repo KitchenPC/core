@@ -1,111 +1,113 @@
 using System;
 
-namespace KitchenPC
+namespace KitchenPC.Core;
+
+public class Weight : IComparable, IFormattable, IComparable<int>, IEquatable<int>
 {
-   public class Weight : IComparable, IFormattable, IComparable<int>, IEquatable<int>
+   public int Value;
+
+   public Weight()
    {
-      public int Value;
+      Value = 0;
+   }
 
-      public Weight()
+   public Weight(int grams)
+   {
+      Value = grams;
+   }
+
+   public static implicit operator Weight(int grams)
+   {
+      return new Weight(grams);
+   }
+
+   public static implicit operator int(Weight weight)
+   {
+      if ((object)weight == null)
       {
-         Value = 0;
+         return 0;
+      }
+      else
+      {
+         return weight.Value;
+      }
+   }
+
+   public static bool operator ==(Weight x, Weight y)
+   {
+      if (ReferenceEquals(x, y))
+      {
+         return true;
       }
 
-      public Weight(int grams)
+      if ((object)x == null || ((object)y == null))
       {
-         Value = grams;
+         return false;
       }
 
-      public static implicit operator Weight(int grams)
+      return x.Value == y.Value;
+   }
+
+   public static bool operator !=(Weight x, Weight y)
+   {
+      return !(x == y);
+   }
+
+   public int CompareTo(object obj)
+   {
+      if (obj is Weight)
       {
-         return new Weight(grams);
+         return this.Value.CompareTo(((Weight)obj).Value);
       }
-
-      public static implicit operator int(Weight weight)
+      else
       {
-         if ((object) weight == null)
-         {
-            return 0;
-         }
-         else
-         {
-            return weight.Value;
-         }
+         return this.Value.CompareTo(obj);
       }
+   }
 
-      public static bool operator ==(Weight x, Weight y)
-      {
-         if (ReferenceEquals(x, y))
-         {
-            return true;
-         }
+   public int CompareTo(int other)
+   {
+      return this.Value.CompareTo(other);
+   }
 
-         if ((object) x == null || ((object) y == null))
-         {
-            return false;
-         }
+   public bool Equals(int other)
+   {
+      return this.Value.Equals(other);
+   }
 
-         return x.Value == y.Value;
-      }
+   public override bool Equals(object o)
+   {
+      if (o is Int32)
+         return (this.Value == (Int32)o);
+      else if (o is Weight)
+         return (this.Value == ((Weight)o).Value);
+      else
+         return false;
+   }
 
-      public static bool operator !=(Weight x, Weight y)
-      {
-         return !(x == y);
-      }
+   public override string ToString()
+   {
+      return String.Format("{0:f} g.", Value);
+   }
 
-      public int CompareTo(object obj)
-      {
-         if (obj is Weight)
-         {
-            return this.Value.CompareTo(((Weight) obj).Value);
-         }
-         else
-         {
-            return this.Value.CompareTo(obj);
-         }
-      }
+   public string ToString(string format, IFormatProvider formatProvider)
+   {
+      return ToString();
+   }
 
-      public int CompareTo(int other)
-      {
-         return this.Value.CompareTo(other);
-      }
+   public override int GetHashCode()
+   {
+      return Value.GetHashCode();
+   }
 
-      public bool Equals(int other)
-      {
-         return this.Value.Equals(other);
-      }
+   public new bool Equals(object x, object y)
+   {
+      if (ReferenceEquals(x, y))
+         return true;
 
-      public override bool Equals(object o)
-      {
-         if (o is Int32)
-            return (this.Value == (Int32) o);
-         else if (o is Weight)
-            return (this.Value == ((Weight) o).Value);
-         else return false;
-      }
+      if (x == null || y == null)
+         return false;
 
-      public override string ToString()
-      {
-         return String.Format("{0:f} g.", Value);
-      }
-
-      public string ToString(string format, IFormatProvider formatProvider)
-      {
-         return ToString();
-      }
-
-      public override int GetHashCode()
-      {
-         return Value.GetHashCode();
-      }
-
-      public new bool Equals(object x, object y)
-      {
-         if (ReferenceEquals(x, y)) return true;
-
-         if (x == null || y == null) return false;
-
-         return x.Equals(y);
-      }
+      return x.Equals(y);
    }
 }

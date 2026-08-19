@@ -1,9 +1,8 @@
-namespace KitchenPC.Data.DTO
+namespace KitchenPC.Core.Provisioning.DTO;
+
+public class RecipeData
 {
-   public class RecipeData
-   {
-      public Recipes Recipe { get; set; }
-      public RecipeIngredients[] Ingredients { get; set; }
-      public RecipeMetadata Metadata { get; set; }
-   }
+   public Recipes Recipe { get; set; }
+   public RecipeIngredients[] Ingredients { get; set; }
+   public RecipeMetadata Metadata { get; set; }
 }

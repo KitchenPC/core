@@ -1,7 +1,7 @@
-src/Core/bin/
-src/Core/obj/
-src/DB/bin/
-src/DB/obj/
-src/UnitTests/bin/
-src/UnitTests/obj/
+src/**/bin/
+src/**/obj/
+src/packages/
 *.suo
+*.user
+*/.vs
+**/.idea/

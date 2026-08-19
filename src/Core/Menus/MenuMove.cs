@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace KitchenPC.Menus
+namespace KitchenPC.Core.Menus;
+
+public class MenuMove
 {
-   public class MenuMove
-   {
-      public Guid? TargetMenu { get; set; }
-      public Guid[] RecipesToMove { get; set; }
-      public bool MoveAll { get; set; }
-   }
+   public Guid? TargetMenu { get; set; }
+   public Guid[] RecipesToMove { get; set; }
+   public bool MoveAll { get; set; }
 }
