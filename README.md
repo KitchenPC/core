@@ -20,3 +20,28 @@ The best way to get up and running is to read the blog post titled [Getting Star
 2. [Provisioning a Database](http://blog.kitchenpc.com/2014/02/11/kitchenpc-database-provisioning-101/)
 3. [Logging](http://blog.kitchenpc.com/2014/02/13/kitchenpc-logging-101/)
 4. [Creating a Recipe](http://blog.kitchenpc.com/2014/02/14/lets-make-a-recipe/)
+
+Building and Testing
+====
+
+Install the .NET 10 SDK, then restore, build, and test from the repository root:
+
+```bash
+dotnet restore src/core.slnx
+dotnet build src/core.slnx --configuration Release --no-restore
+dotnet test src/UnitTests/UnitTests.csproj --configuration Release --no-build --no-restore
+```
+
+The build includes `KitchenPC.Core`, `KitchenPC.DB`, the unit tests, and the WebApp sample.
+
+Packages and Releases
+====
+
+Every push and pull request builds and tests the solution, then creates matching prerelease packages for CI validation. Version tags publish `KitchenPC.Core` and `KitchenPC.DB` to NuGet with the same version. For example:
+
+```bash
+git tag -a v1.0.0 -m "KitchenPC 1.0.0"
+git push origin v1.0.0
+```
+
+NuGet package versions are immutable. Always increment the version for a subsequent release.

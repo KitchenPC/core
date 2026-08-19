@@ -1,0 +1,67 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_NOLOGO: true
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore src/core.slnx
+
+      - name: Build
+        run: dotnet build src/core.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: >-
+          dotnet test src/UnitTests/UnitTests.csproj
+          --configuration Release
+          --no-build
+          --no-restore
+
+      - name: Pack Core
+        run: >-
+          dotnet pack src/Core/Core.csproj
+          --configuration Release
+          --no-build
+          --output artifacts
+          -p:PackageVersion=1.0.0-ci.${{ github.run_number }}
+
+      - name: Pack DB
+        run: >-
+          dotnet pack src/DB/DB.csproj
+          --configuration Release
+          --no-build
+          --output artifacts
+          -p:PackageVersion=1.0.0-ci.${{ github.run_number }}
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: KitchenPC-${{ github.run_number }}
+          path: artifacts/*
+          if-no-files-found: error
