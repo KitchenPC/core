@@ -1,0 +1,35 @@
+name: Bug report
+description: Report reproducible incorrect behavior
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for helping improve KitchenPC Core.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Provide the smallest code sample or sequence of steps that reproduces the problem.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: KitchenPC version
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include the .NET version, operating system, database, and any other relevant details.
