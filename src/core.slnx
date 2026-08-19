@@ -1,0 +1,21 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <BuildType Name="Staging" />
+  </Configurations>
+  <Folder Name="/Samples/">
+    <Project Path="Samples/WebApp/WebApp.csproj">
+      <BuildType Solution="Staging|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Project Path="Core/Core.csproj">
+    <BuildType Solution="Staging|*" Project="Release" />
+  </Project>
+  <Project Path="DB/DB.csproj">
+    <BuildType Solution="Staging|*" Project="Release" />
+  </Project>
+  <Project Path="UnitTests/UnitTests.csproj">
+    <BuildType Solution="Staging|*" Project="Release" />
+  </Project>
+</Solution>
