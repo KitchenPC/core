@@ -156,45 +156,52 @@ internal class StaticSearch : ISearchProvider
          case RecipeQuery.SortOrder.Title:
             q =
                (query.Direction == RecipeQuery.SortDirection.Ascending)
-                  ? q.OrderBy(p => p.Recipe.Title)
-                  : q.OrderByDescending(p => p.Recipe.Title);
+                  ? q.OrderBy(p => p.Recipe.Title).ThenBy(p => p.Recipe.RecipeId)
+                  : q.OrderByDescending(p => p.Recipe.Title).ThenBy(p => p.Recipe.RecipeId);
             break;
          case RecipeQuery.SortOrder.PrepTime:
             q =
                (query.Direction == RecipeQuery.SortDirection.Ascending)
-                  ? q.OrderBy(p => p.Recipe.PrepTime)
-                  : q.OrderByDescending(p => p.Recipe.PrepTime);
+                  ? q.OrderBy(p => p.Recipe.PrepTime).ThenBy(p => p.Recipe.RecipeId)
+                  : q.OrderByDescending(p => p.Recipe.PrepTime).ThenBy(p => p.Recipe.RecipeId);
             break;
          case RecipeQuery.SortOrder.CookTime:
             q =
                (query.Direction == RecipeQuery.SortDirection.Ascending)
-                  ? q.OrderBy(p => p.Recipe.CookTime)
-                  : q.OrderByDescending(p => p.Recipe.CookTime);
+                  ? q.OrderBy(p => p.Recipe.CookTime).ThenBy(p => p.Recipe.RecipeId)
+                  : q.OrderByDescending(p => p.Recipe.CookTime).ThenBy(p => p.Recipe.RecipeId);
             break;
          case RecipeQuery.SortOrder.TotalTime:
             q =
                (query.Direction == RecipeQuery.SortDirection.Ascending)
                   ? q.OrderBy(p => p.Recipe.PrepTime + p.Recipe.CookTime)
-                  : q.OrderByDescending(p => p.Recipe.PrepTime + p.Recipe.CookTime);
+                     .ThenBy(p => p.Recipe.RecipeId)
+                  : q.OrderByDescending(p => p.Recipe.PrepTime + p.Recipe.CookTime)
+                     .ThenBy(p => p.Recipe.RecipeId);
             break;
          case RecipeQuery.SortOrder.Image:
             q =
                (query.Direction == RecipeQuery.SortDirection.Ascending)
-                  ? q.OrderBy(p => p.Recipe.ImageUrl)
-                  : q.OrderByDescending(p => p.Recipe.ImageUrl);
+                  ? q.OrderBy(p => p.Recipe.ImageUrl).ThenBy(p => p.Recipe.RecipeId)
+                  : q.OrderByDescending(p => p.Recipe.ImageUrl).ThenBy(p => p.Recipe.RecipeId);
             break;
          default:
             q =
                (query.Direction == RecipeQuery.SortDirection.Ascending)
-                  ? q.OrderBy(p => p.Recipe.Rating)
-                  : q.OrderByDescending(p => p.Recipe.Rating);
+                  ? q.OrderBy(p => p.Recipe.Rating).ThenBy(p => p.Recipe.RecipeId)
+                  : q.OrderByDescending(p => p.Recipe.Rating).ThenBy(p => p.Recipe.RecipeId);
             break;
       }
 
+      var totalCount = q.LongCount();
+
       return new SearchResults
       {
-         Briefs = q.Select(r => Provisioning.DTO.Recipes.ToRecipeBrief(r.Recipe)).ToArray(),
-         TotalCount = q.Count(),
+         Briefs = q.Skip(query.Offset)
+            .Take(RecipeQuery.PageSize)
+            .Select(r => Provisioning.DTO.Recipes.ToRecipeBrief(r.Recipe))
+            .ToArray(),
+         TotalCount = totalCount,
       };
    }
 

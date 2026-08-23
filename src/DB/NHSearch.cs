@@ -224,19 +224,20 @@ public class NHSearch : ISearchProvider
          RecipeQuery.SortOrder.Image => q.OrderBy(p => p.ImageUrl),
          _ => q.OrderBy(p => p.Rating),
       };
-      var results = (
+      var totalCount = await q.ToRowCountInt64Query().RowCountInt64Async(cancellationToken);
+      var results = await (
          query.Direction == RecipeQuery.SortDirection.Descending ? orderBy.Desc() : orderBy.Asc()
       )
+         .ThenBy(p => p.RecipeId)
+         .Asc()
          .Skip(query.Offset)
-         .Take(100)
+         .Take(RecipeQuery.PageSize)
          .ListAsync(cancellationToken);
-
-      var loadedResults = await results;
 
       return new SearchResults
       {
-         Briefs = loadedResults.Select(r => r.AsRecipeBrief()).ToArray(),
-         TotalCount = loadedResults.Count, // TODO: This needs to be the total matches, not the returned matches
+         Briefs = results.Select(r => r.AsRecipeBrief()).ToArray(),
+         TotalCount = totalCount,
       };
    }
 }

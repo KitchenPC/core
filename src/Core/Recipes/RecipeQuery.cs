@@ -4,6 +4,8 @@ namespace KitchenPC.Core.Recipes;
 
 public class RecipeQuery
 {
+   public const int PageSize = 100;
+
    public enum PhotoFilter
    {
       All = 0,
