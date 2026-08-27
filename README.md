@@ -12,7 +12,7 @@ KitchenPC is a free, open-source framework written in C# for working with recipe
 How To Get Started
 ====
 
-Getting started is simple, and data can be loaded locally from an XML file for testing.  Sample data is included with the source, which includes a few dozen recipes, along with sample menus and shopping lists.
+Getting started is simple, and data can be loaded locally from an XML file for testing. Example applications and a small static data snapshot are available in the [KitchenPC Samples repository](https://github.com/KitchenPC/Samples).
 
 The best way to get up and running is to read the blog post titled [Getting Started with KitchenPC](http://blog.kitchenpc.com/2014/02/10/getting-started-with-kitchenpc/) which includes an introduction to core concepts as well as several samples.
 
@@ -32,7 +32,7 @@ dotnet build src/core.slnx --configuration Release --no-restore
 dotnet test src/UnitTests/UnitTests.csproj --configuration Release --no-build --no-restore
 ```
 
-The build includes `KitchenPC.Core`, `KitchenPC.DB`, the unit tests, and the WebApp sample.
+The build includes `KitchenPC.Core`, `KitchenPC.DB`, and the unit tests.
 
 Packages and Releases
 ====
