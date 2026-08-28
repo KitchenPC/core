@@ -203,7 +203,8 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
             p => joinIng.UnitWeight,
             p => joinForm.UnitType,
             p => joinForm.FormAmount,
-            p => joinForm.FormUnit
+            p => joinForm.FormUnit,
+            p => joinIng.DisplayName
          )
          .TransformUsing(IngredientGraphTransformer.Create())
          .List<IngredientBinding>();

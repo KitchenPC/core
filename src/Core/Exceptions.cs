@@ -1,4 +1,5 @@
 ﻿using System;
+using KitchenPC.Core.Context;
 using KitchenPC.Core.Ingredients;
 using KitchenPC.Core.NLP;
 
@@ -18,6 +19,17 @@ public class InvalidConfigurationException : KPCException
 
    public InvalidConfigurationException(string message)
       : base(message) { }
+}
+
+public class ContextCapabilityNotEnabledException : KPCException
+{
+   public ContextCapabilityNotEnabledException(DBContextCapabilities capability)
+      : base($"The DBContext capability '{capability}' is not enabled.")
+   {
+      Capability = capability;
+   }
+
+   public DBContextCapabilities Capability { get; }
 }
 
 public class DataStoreException : KPCException

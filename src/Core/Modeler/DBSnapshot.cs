@@ -137,6 +137,7 @@ public sealed partial class DBSnapshot
                   ingNode = new IngredientNode()
                   {
                      IngredientId = ingid,
+                     DisplayName = o.IngredientName,
                      RecipesByTag = nodes,
                      ConvType = convType,
                   }

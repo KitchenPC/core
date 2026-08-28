@@ -24,6 +24,7 @@ public class IngredientGraphTransformer : IResultTransformer
          (int)tuple[5], //I.UnitWeight
          tuple[6] is Units formUnit ? formUnit : null, //F.UnitType
          tuple[7] is float formAmount ? formAmount : null, //F.FormAmount
-         tuple[8] is Units formAmountUnit ? formAmountUnit : null //F.FormUnit
+         tuple[8] is Units formAmountUnit ? formAmountUnit : null, //F.FormUnit
+         (String)tuple[9] //I.DisplayName
       );
 }

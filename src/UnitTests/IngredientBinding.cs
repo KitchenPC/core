@@ -20,11 +20,13 @@ public class IngredientBindingTest
          0,
          null,
          null,
-         null
+         null,
+         "flour"
       );
 
       Assert.AreEqual(16f, binding.Qty);
       Assert.AreEqual(Units.Ounce, binding.Unit);
+      Assert.AreEqual("flour", binding.IngredientName);
    }
 
    [TestMethod]

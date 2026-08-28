@@ -10,6 +10,7 @@ public sealed class IngredientNode
 
    public Int32 Key; //Interally, ingredients will have numeric keys for faster hashing
    public Guid IngredientId; //KPC Shopping Ingredient ID
+   public String DisplayName; //Ingredient display name used outside the autocomplete index
    public UnitType ConvType; //Conversion type for this ingredient
    public IEnumerable<RecipeNode>[] RecipesByTag; //Recipes that use this ingredient (does not include Hidden recipes)
    public RecipeTags AvailableTags; //Which indices in RecipesByTag are not null

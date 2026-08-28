@@ -62,7 +62,8 @@ public class StaticModelerLoader : IModelerLoader
             i.Value.UnitWeight,
             f.Value.UnitType,
             f.Value.FormAmount,
-            f.Value.FormUnit
+            f.Value.FormUnit,
+            i.Value.DisplayName
          )
       );
 
