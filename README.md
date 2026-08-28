@@ -9,17 +9,22 @@ KitchenPC is a free, open-source framework written in C# for working with recipe
 4. A **categorization engine** which can take recipe objects and catagorize them as breakfast, lunch, dinner or dessert.  This engine can also derive nutrional information based on USDA data, a taste profile (sweet, savory, spicy, mild) based on ingredients and amounts used, dietary flags (vegetarian, gluten-free, low-calorie, etc) and other aspects of the recipe.
 5. An extensible framework to define how data is loaded and saved to a persistence mechanism, such as a SQL database or full-text search engine.
 
-How To Get Started
+Documentation
 ====
 
-Getting started is simple, and data can be loaded locally from an XML file for testing. Example applications and a small static data snapshot are available in the [KitchenPC Samples repository](https://github.com/KitchenPC/Samples).
+The [KitchenPC developer Wiki](https://github.com/KitchenPC/core/wiki) documents the current API,
+architecture, setup, and extension points. Start with these guides:
 
-The best way to get up and running is to read the blog post titled [Getting Started with KitchenPC](http://blog.kitchenpc.com/2014/02/10/getting-started-with-kitchenpc/) which includes an introduction to core concepts as well as several samples.
+1. [Getting started](https://github.com/KitchenPC/core/wiki/Getting-Started)
+2. [Contexts and configuration](https://github.com/KitchenPC/core/wiki/Contexts-and-Configuration)
+3. [Recipes and search](https://github.com/KitchenPC/core/wiki/Recipes-and-Search)
+4. [Ingredient parsing and units](https://github.com/KitchenPC/core/wiki/Ingredient-Parsing-and-Units)
+5. [Shopping lists and aggregation](https://github.com/KitchenPC/core/wiki/Shopping-Lists-and-Aggregation)
+6. [PostgreSQL and database provisioning](https://github.com/KitchenPC/core/wiki/PostgreSQL-and-Database-Provisioning)
+7. [ASP.NET Core integration](https://github.com/KitchenPC/core/wiki/ASP.NET-Core-Integration)
 
-1. [Getting Started](http://blog.kitchenpc.com/2014/02/10/getting-started-with-kitchenpc/)
-2. [Provisioning a Database](http://blog.kitchenpc.com/2014/02/11/kitchenpc-database-provisioning-101/)
-3. [Logging](http://blog.kitchenpc.com/2014/02/13/kitchenpc-logging-101/)
-4. [Creating a Recipe](http://blog.kitchenpc.com/2014/02/14/lets-make-a-recipe/)
+Example applications and a small static data snapshot are available in the
+[KitchenPC Samples repository](https://github.com/KitchenPC/Samples).
 
 Building and Testing
 ====
@@ -68,7 +73,8 @@ capability was not enabled throws `ContextCapabilityNotEnabledException`. Recipe
 the in-memory graph when the modeler is enabled and falls back to loading recipes from the database
 when it is disabled.
 
-See [DBContext capability profiles](docs/context-capabilities.md) for capability requirements and
+See [DBContext capability profiles](https://github.com/KitchenPC/core/wiki/DBContext-Capability-Profiles)
+for capability requirements and
 sample-data startup and memory measurements.
 
 Packages and Releases
