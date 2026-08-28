@@ -34,6 +34,19 @@ dotnet test src/UnitTests/UnitTests.csproj --configuration Release --no-build --
 
 The build includes `KitchenPC.Core`, `KitchenPC.DB`, and the unit tests.
 
+Database Schema Naming
+====
+
+The PostgreSQL persistence adapter uses `shoppingingredients` as the physical table name for the
+ingredient catalog. This legacy name is retained for compatibility with the KitchenPC website.
+Public domain types and provisioning data continue to use the simpler `Ingredient` and
+`Ingredients` terminology; those names describe application data rather than database tables.
+
+`DBContext.InitializeStore()` recreates the KitchenPC schema and deletes existing KitchenPC data.
+Use it only with a new database or when replacing all existing data is intentional. See the
+[KitchenPC Samples repository](https://github.com/KitchenPC/Samples) for a PostgreSQL initializer
+and a small sample dataset.
+
 Packages and Releases
 ====
 

@@ -39,7 +39,7 @@ public class IngredientsMap : ClassMap<Ingredients>
 {
    public IngredientsMap()
    {
-      Table("ShoppingIngredients");
+      Table("shoppingingredients");
 
       Id(x => x.IngredientId).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
 
@@ -53,7 +53,7 @@ public class IngredientsMap : ClassMap<Ingredients>
          .Not.Nullable()
          .Length(200)
          .Unique()
-         .Index("IDX_Ingredients_DisplayName");
+         .Index("idx_shoppingingredients_displayname");
       Map(x => x.UsdaDesc).Length(200);
 
       HasMany(x => x.Forms).KeyColumn("IngredientId");

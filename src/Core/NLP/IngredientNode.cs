@@ -31,12 +31,12 @@ public class IngredientNode
    public UnitType ConversionType
    {
       get { return (parent == null) ? convtype : parent.convtype; }
-   } //Default conversion type for this ingredient (from ShoppingIngredients)
+   } //Default conversion type for this ingredient (from the shoppingingredients table)
 
    public Weight UnitWeight
    {
       get { return (parent == null) ? unitweight : parent.unitweight; }
-   } //How much a single unit weighs (from ShoppingIngredients)
+   } //How much a single unit weighs (from the shoppingingredients table)
 
    public IngredientNode(
       Guid id,
