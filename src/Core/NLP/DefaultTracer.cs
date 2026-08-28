@@ -1,37 +1,35 @@
-﻿using log4net;
+﻿using System;
+using System.Globalization;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace KitchenPC.Core.NLP;
 
-/// <summary>Implementation of ITracer that uses Log4Net</summary>
+/// <summary>Implementation of ITracer that uses Microsoft.Extensions.Logging.</summary>
 public class DefaultTracer : ITracer
 {
-   private readonly ILog log;
+   private readonly ILogger log;
 
-   public DefaultTracer()
-   {
-      log = LogManager.GetLogger(typeof(Parser));
-      log.Info("Initialized logger for new NLP parser.");
-   }
+   public DefaultTracer() : this(NullLoggerFactory.Instance) { }
+
+   public DefaultTracer(ILoggerFactory loggerFactory) =>
+      log = (loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory)))
+         .CreateLogger<Parser>();
 
    public void Trace(TraceLevel level, string message, params object[] args)
    {
-      switch (level)
-      {
-         case TraceLevel.Debug:
-            log.DebugFormat(message, args);
-            break;
-         case TraceLevel.Error:
-            log.ErrorFormat(message, args);
-            break;
-         case TraceLevel.Fatal:
-            log.FatalFormat(message, args);
-            break;
-         case TraceLevel.Info:
-            log.InfoFormat(message, args);
-            break;
-         case TraceLevel.Warn:
-            log.WarnFormat(message, args);
-            break;
-      }
+      var formattedMessage = string.Format(CultureInfo.InvariantCulture, message, args);
+      log.Log(MapLevel(level), "{Message}", formattedMessage);
    }
+
+   private static LogLevel MapLevel(TraceLevel level) =>
+      level switch
+      {
+         TraceLevel.Debug => LogLevel.Debug,
+         TraceLevel.Error => LogLevel.Error,
+         TraceLevel.Fatal => LogLevel.Critical,
+         TraceLevel.Info => LogLevel.Information,
+         TraceLevel.Warn => LogLevel.Warning,
+         _ => LogLevel.None,
+      };
 }

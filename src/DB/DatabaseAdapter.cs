@@ -23,6 +23,8 @@ using NHibernate.Cfg;
 using NHibernate.Criterion;
 using NHibernate.Tool.hbm2ddl;
 using NHibernate.Transform;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using IngredientNode = KitchenPC.Core.NLP.IngredientNode;
 using IngredientUsage = KitchenPC.Core.Ingredients.IngredientUsage;
 
@@ -38,6 +40,8 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
    public IPersistenceConfigurer DatabaseConfiguration { get; set; }
    public List<IConvention> DatabaseConventions { get; set; }
    public ISearchProvider SearchProvider { get; set; }
+   public Microsoft.Extensions.Logging.ILoggerFactory LoggerFactory { get; set; } =
+      NullLoggerFactory.Instance;
 
    public static DatabaseAdapterBuilder Configure => new DatabaseAdapter().builder;
 
@@ -74,6 +78,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
 
    public void Initialize(IKPCContext context)
    {
+      LoggerFactory = context.LoggerFactory;
       sessionFactory ??= InitializeSessionFactory();
    }
 
@@ -1272,7 +1277,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
    public DataStore Export()
    {
       var store = new DataStore();
-      using var exporter = new DatabaseExporter(GetStatelessSession());
+      using var exporter = new DatabaseExporter(GetStatelessSession(), LoggerFactory);
       store.IngredientForms = exporter.IngredientForms();
       store.IngredientMetadata = exporter.IngredientMetadata();
       store.Ingredients = exporter.Ingredients();
@@ -1306,7 +1311,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
       if (sessionFactory == null)
          InitializeSessionFactory();
 
-      using (var importer = new DatabaseImporter(GetSession()))
+      using (var importer = new DatabaseImporter(GetSession(), LoggerFactory))
       {
          // Note: Import order is important to maintain referential integrity of database
          importer.Import(store.Ingredients);

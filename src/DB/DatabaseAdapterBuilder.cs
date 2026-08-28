@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FluentNHibernate.Cfg.Db;
 using FluentNHibernate.Conventions;
 using KitchenPC.Core.Context;
+using Microsoft.Extensions.Logging;
 
 namespace KitchenPC.DB;
 
@@ -34,6 +35,12 @@ public class DatabaseAdapterBuilder : IConfigurationBuilder<DatabaseAdapter>
       where T : ISearchProvider
    {
       adapter.SearchProvider = createProvider(adapter);
+      return this;
+   }
+
+   public DatabaseAdapterBuilder Logging(ILoggerFactory loggerFactory)
+   {
+      adapter.LoggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
       return this;
    }
 

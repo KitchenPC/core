@@ -11,6 +11,8 @@ using KitchenPC.Core.Modeler;
 using KitchenPC.Core.NLP;
 using KitchenPC.Core.Recipes;
 using KitchenPC.Core.ShoppingLists;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using IngredientNode = KitchenPC.Core.Context.IngredientNode;
 using IngredientUsage = KitchenPC.Core.Ingredients.IngredientUsage;
 
@@ -18,6 +20,7 @@ namespace KitchenPC.UnitTests.Mock;
 
 internal class MockContext : IKPCContext
 {
+   public ILoggerFactory LoggerFactory => NullLoggerFactory.Instance;
    public void Initialize()
    {
       ModelerProxy = new ModelerProxy(this);

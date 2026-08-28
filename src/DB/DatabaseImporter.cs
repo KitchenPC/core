@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using KitchenPC.Core.Provisioning.DTO;
-using log4net;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NHibernate;
 
 namespace KitchenPC.DB;
@@ -10,11 +11,17 @@ namespace KitchenPC.DB;
 public class DatabaseImporter : IDisposable
 {
    private readonly ISession session;
-   private static readonly ILog logger = LogManager.GetLogger(typeof(DatabaseImporter));
+   private readonly ILogger<DatabaseImporter> logger;
 
-   public DatabaseImporter(ISession session)
+   public DatabaseImporter(ISession session) : this(session, NullLoggerFactory.Instance) { }
+
+   public DatabaseImporter(
+      ISession session,
+      Microsoft.Extensions.Logging.ILoggerFactory loggerFactory
+   )
    {
       this.session = session;
+      logger = loggerFactory.CreateLogger<DatabaseImporter>();
    }
 
    public void Import(IEnumerable<Ingredients> data)
@@ -39,7 +46,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.IngredientId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in shoppingingredients", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in shoppingingredients", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -65,7 +72,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.IngredientFormId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in IngredientForms", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in IngredientForms", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -97,7 +104,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.IngredientMetadataId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in IngredientMetadata", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in IngredientMetadata", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -127,7 +134,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.AnomalousIngredientId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in NlpAnomalousIngredients", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in NlpAnomalousIngredients", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -156,7 +163,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.DefaultPairingId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in NlpDefaultPairings", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in NlpDefaultPairings", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -178,7 +185,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.FormSynonymId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in NlpFormSynonyms", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in NlpFormSynonyms", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -200,7 +207,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.IngredientSynonymId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in NlpIngredientSynonyms", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in NlpIngredientSynonyms", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -216,7 +223,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow);
       }
 
-      logger.DebugFormat("Created {0} row(s) in NlpPrepNotes", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in NlpPrepNotes", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -238,7 +245,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.UnitSynonymId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in NlpUnitSynonyms", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in NlpUnitSynonyms", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -270,7 +277,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.RecipeId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in Recipes", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in Recipes", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -300,7 +307,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.RecipeIngredientId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in RecipeIngredients", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in RecipeIngredients", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -347,7 +354,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.RecipeMetadataId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in RecipeMetadata", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in RecipeMetadata", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -369,7 +376,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.MenuId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in Menus", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in Menus", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -391,7 +398,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.FavoriteId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in Favorites", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in Favorites", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -413,7 +420,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.QueueId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in QueuedRecipes", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in QueuedRecipes", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -435,7 +442,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.RatingId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in RecipeRatings", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in RecipeRatings", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -456,7 +463,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.ShoppingListId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in ShoppingLists", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in ShoppingLists", d.Count());
       transaction.Commit();
       session.Flush();
    }
@@ -487,7 +494,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbItem, row.ItemId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in ShoppingListItems", d.Count());
+      logger.LogDebug("Created {RowCount} row(s) in ShoppingListItems", d.Count());
       transaction.Commit();
       session.Flush();
    }

@@ -9,6 +9,7 @@ using KitchenPC.Core.Modeler;
 using KitchenPC.Core.NLP;
 using KitchenPC.Core.Recipes;
 using KitchenPC.Core.ShoppingLists;
+using Microsoft.Extensions.Logging;
 using IngredientUsage = KitchenPC.Core.Ingredients.IngredientUsage;
 
 namespace KitchenPC.Core.Context;
@@ -18,6 +19,7 @@ public interface IKPCContext
 {
    void Initialize();
    AuthIdentity Identity { get; }
+   ILoggerFactory LoggerFactory { get; }
 
    // Autocomplete support
    IEnumerable<IngredientNode> AutocompleteIngredient(string query);

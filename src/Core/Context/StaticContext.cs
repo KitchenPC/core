@@ -15,6 +15,8 @@ using KitchenPC.Core.Provisioning;
 using KitchenPC.Core.Provisioning.DTO;
 using KitchenPC.Core.Recipes;
 using KitchenPC.Core.ShoppingLists;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using IngredientUsage = KitchenPC.Core.Ingredients.IngredientUsage;
 
 namespace KitchenPC.Core.Context;
@@ -27,6 +29,7 @@ public class StaticContext : IKPCContext, IProvisionTarget, IProvisionSource
    public Func<AuthIdentity> GetIdentity { get; set; }
    public Parser Parser { get; private set; }
    public ModelerProxy ModelerProxy { get; private set; }
+   public ILoggerFactory LoggerFactory { get; internal set; } = NullLoggerFactory.Instance;
 
    private DataStore store;
    private IngredientParser ingParser;
@@ -51,6 +54,7 @@ public class StaticContext : IKPCContext, IProvisionTarget, IProvisionSource
    /// </summary>
    public void Initialize()
    {
+      NlpTracer.SetTracer(new DefaultTracer(LoggerFactory));
       var file = CompressedStore ? "KPCData.gz" : "KPCData.xml";
       var path = Path.Combine(DataDirectory, file);
       // TODO Fix logging

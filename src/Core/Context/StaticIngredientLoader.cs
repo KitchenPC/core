@@ -84,7 +84,7 @@ public class StaticIngredientLoader : ISynonymLoader<NLP.IngredientNode>
 
          if (nodes.ContainsKey(ingId))
          {
-            Parser.Log.ErrorFormat(
+            NlpTracer.Trace(TraceLevel.Error,
                "[NLP Loader] Duplicate ingredient key due to bad DB data: {0} ({1})",
                name,
                ingId

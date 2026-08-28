@@ -42,25 +42,24 @@ public class ModelerTests
    }
 
    [TestMethod]
-   [ExpectedException(typeof(ImpossibleQueryException))]
    public void TestImpossibleFilterModeler()
    {
       Trace.WriteLine("Running ImpossibleFilter Test.");
       var profile = new MockImpossibleFilterUserProfile(); // Only No Pork recipes are allowed, of which there are none in our mock data
 
-      var session = context.CreateModelingSession(profile);
-      session.Generate(5, 1);
+      Assert.ThrowsExactly<ImpossibleQueryException>(() =>
+         context.CreateModelingSession(profile).Generate(5, 1)
+      );
    }
 
    [TestMethod]
-   [ExpectedException(typeof(ImpossibleQueryException))]
    public void TestImpossiblePantryModeler()
    {
       Trace.WriteLine("Running ImpossiblePantry Test.");
       var profile = new MockImpossiblePantryUserProfile();
-      var session = context.CreateModelingSession(profile);
-
-      session.Generate(5, 1);
+      Assert.ThrowsExactly<ImpossibleQueryException>(() =>
+         context.CreateModelingSession(profile).Generate(5, 1)
+      );
    }
 
    [TestMethod]
