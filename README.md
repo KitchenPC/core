@@ -47,6 +47,30 @@ Use it only with a new database or when replacing all existing data is intention
 [KitchenPC Samples repository](https://github.com/KitchenPC/Samples) for a PostgreSQL initializer
 and a small sample dataset.
 
+Optional DBContext Capabilities
+====
+
+`DBContext` initializes its autocomplete index, ingredient-text parser, and recipe-modeler graph
+by default. Applications that do not use every feature can select only the in-memory capabilities
+they need while retaining ordinary database-backed operations:
+
+```csharp
+var context = DBContext.Configure
+   .Adapter(/* database adapter configuration */)
+   .Capabilities(DBContextCapabilities.IngredientParsing)
+   .Identity(() => AuthIdentity.Anonymous)
+   .Create();
+```
+
+The available flags are `IngredientAutocomplete`, `IngredientParsing`, and `RecipeModeler`.
+`DBContextCapabilities.All` is the default for backward compatibility. Calling an API whose
+capability was not enabled throws `ContextCapabilityNotEnabledException`. Recipe aggregation uses
+the in-memory graph when the modeler is enabled and falls back to loading recipes from the database
+when it is disabled.
+
+See [DBContext capability profiles](docs/context-capabilities.md) for capability requirements and
+sample-data startup and memory measurements.
+
 Packages and Releases
 ====
 

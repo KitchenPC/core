@@ -30,7 +30,8 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
          ModelerProxy modeler,
          Parser parser,
          IDBAdapter adapter,
-         AuthIdentity identity
+         AuthIdentity identity,
+         DBContextCapabilities capabilities
       )
       {
          this.ingParser = ingParser;
@@ -39,10 +40,18 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
          this.Adapter = adapter;
          this.Identity = identity;
          this.GetIdentity = () => identity;
+         this.Capabilities = capabilities;
       }
 
       public static AsUser Clone(DBContext context, AuthIdentity identity) =>
-         new AsUser(context.ingParser, context.modeler, context.parser, context.Adapter, identity);
+         new AsUser(
+            context.ingParser,
+            context.modeler,
+            context.parser,
+            context.Adapter,
+            identity,
+            context.Capabilities
+         );
    }
 
    private static readonly ReaderWriterLockSlim InitLock = new();
@@ -51,6 +60,9 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    protected IngredientParser ingParser;
    protected ModelerProxy modeler;
    protected Parser parser;
+
+   /// <summary>Gets the optional in-memory capabilities configured for this context.</summary>
+   public DBContextCapabilities Capabilities { get; internal set; } = DBContextCapabilities.All;
 
    /// <summary>Gets or sets the IDBAdapter used to directly talk with the database.</summary>
    public IDBAdapter Adapter { get; set; }
@@ -79,6 +91,7 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    {
       get
       {
+         EnsureCapabilityEnabled(DBContextCapabilities.IngredientParsing);
          using (InitLock.ReadLock())
          {
             return parser;
@@ -90,6 +103,7 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    {
       get
       {
+         EnsureCapabilityEnabled(DBContextCapabilities.RecipeModeler);
          using (InitLock.ReadLock())
          {
             return modeler;
@@ -110,7 +124,14 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    public virtual QueueAction Queue => new(this);
 
    /// <summary>Provides the ability to fluently work with the recipe modeler.</summary>
-   public virtual ModelerAction Modeler => new(this);
+   public virtual ModelerAction Modeler
+   {
+      get
+      {
+         EnsureCapabilityEnabled(DBContextCapabilities.RecipeModeler);
+         return new(this);
+      }
+   }
 
    /// <summary>
    /// Initializes the context and loads necessary data into memory through the configured database adapter.
@@ -128,41 +149,47 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
       // Initialize NHibernate session
       Adapter.Initialize(this);
 
-      new Thread(
-         delegate()
+      using (InitLock.WriteLock())
+      {
+         if (HasCapability(DBContextCapabilities.IngredientAutocomplete))
          {
-            using (InitLock.WriteLock())
-            {
-               // Initialize ingredient parser
-               ingParser = new IngredientParser();
-               var ingredientIndex = Adapter.LoadIngredientsForIndex();
-               ingParser.CreateIndex(ingredientIndex);
-
-               // Initialize modeler
-               modeler = new ModelerProxy(this);
-               modeler.LoadSnapshot();
-
-               // Initialize natural language parsing
-               IngredientSynonyms.InitIndex(Adapter.IngredientLoader);
-               UnitSynonyms.InitIndex(Adapter.UnitLoader);
-               FormSynonyms.InitIndex(Adapter.FormLoader);
-               PrepNotes.InitIndex(Adapter.PrepLoader);
-               Anomalies.InitIndex(Adapter.AnomalyLoader);
-               NumericVocab.InitIndex();
-
-               parser = new Parser();
-               LoadTemplates();
-            }
+            ingParser = new IngredientParser();
+            var ingredientIndex = Adapter.LoadIngredientsForIndex();
+            ingParser.CreateIndex(ingredientIndex);
          }
-      ).Start();
 
-      Thread.Sleep(500); // Provides time for initialize thread to start and acquire InitLock
+         if (HasCapability(DBContextCapabilities.RecipeModeler))
+         {
+            modeler = new ModelerProxy(this);
+            modeler.LoadSnapshot();
+         }
+
+         if (HasCapability(DBContextCapabilities.IngredientParsing))
+         {
+            IngredientSynonyms.InitIndex(Adapter.IngredientLoader);
+            UnitSynonyms.InitIndex(Adapter.UnitLoader);
+            FormSynonyms.InitIndex(Adapter.FormLoader);
+            PrepNotes.InitIndex(Adapter.PrepLoader);
+            Anomalies.InitIndex(Adapter.AnomalyLoader);
+            NumericVocab.InitIndex();
+
+            parser = new Parser();
+            LoadTemplates();
+         }
+      }
    }
 
    /// <summary>
    /// Returns an object able to load modeling information.  This will be called automatically when the modeler is initialized.
    /// </summary>
-   public virtual IModelerLoader ModelerLoader => new DBModelerLoader(Adapter);
+   public virtual IModelerLoader ModelerLoader
+   {
+      get
+      {
+         EnsureCapabilityEnabled(DBContextCapabilities.RecipeModeler);
+         return new DBModelerLoader(Adapter);
+      }
+   }
 
    /// <summary>
    /// Takes part of an ingredient name and returns possible matches, useful for autocomplete UIs.
@@ -171,6 +198,7 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    /// <returns>An enumeration of IngredientNode objects describing possible matches and their IDs.</returns>
    public virtual IEnumerable<IngredientNode> AutocompleteIngredient(string query)
    {
+      EnsureCapabilityEnabled(DBContextCapabilities.IngredientAutocomplete);
       using (InitLock.ReadLock())
       {
          return ingParser.MatchIngredient(query);
@@ -386,6 +414,21 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    /// <returns>A list of IngredientAggregation objects, one per unique ingredient in the set of recipes</returns>
    public virtual IList<IngredientAggregation> AggregateRecipes(params Guid[] recipeIds)
    {
+      if (recipeIds == null)
+         throw new ArgumentNullException(nameof(recipeIds));
+      if (recipeIds.Length == 0)
+         return Array.Empty<IngredientAggregation>();
+
+      if (!HasCapability(DBContextCapabilities.RecipeModeler))
+      {
+         var recipes = Adapter.ReadRecipes(Identity, recipeIds, ReadRecipeOptions.None);
+         return AggregateRecipeUsages(
+            recipes
+               .SelectMany(recipe => recipe.Ingredients)
+               .Where(usage => usage.Ingredient.Id != ShoppingList.GUID_WATER)
+         );
+      }
+
       using (InitLock.ReadLock())
       {
          var ings = new Dictionary<Guid, IngredientAggregation>(); //List of all ingredients and total usage
@@ -400,7 +443,9 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
             foreach (var usage in rNode.Ingredients)
             {
                var ingId = usage.Ingredient.IngredientId;
-               var ingName = ingParser.GetIngredientById(ingId);
+               var ingName = usage.Ingredient.DisplayName;
+               if (String.IsNullOrWhiteSpace(ingName))
+                  ingName = Adapter.ReadIngredient(ingId)?.Name;
                var ing = new Ingredient(ingId, ingName);
                ing.ConversionType = usage.Ingredient.ConvType;
 
@@ -425,6 +470,38 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
 
          return ings.Values.ToList();
       }
+   }
+
+   private IList<IngredientAggregation> AggregateRecipeUsages(
+      IEnumerable<IngredientUsage> usages
+   ) =>
+      usages
+         .GroupBy(usage => usage.Ingredient.Id)
+         .Select(group =>
+         {
+            var aggregation = new IngredientAggregation(group.First().Ingredient);
+            foreach (var usage in group)
+            {
+               if (usage.Amount == null)
+               {
+                  aggregation.Amount = null;
+                  break;
+               }
+
+               aggregation.AddUsage(usage);
+            }
+
+            return aggregation;
+         })
+         .ToArray();
+
+   private bool HasCapability(DBContextCapabilities capability) =>
+      (Capabilities & capability) == capability;
+
+   private void EnsureCapabilityEnabled(DBContextCapabilities capability)
+   {
+      if (!HasCapability(capability))
+         throw new ContextCapabilityNotEnabledException(capability);
    }
 
    /// <summary>
