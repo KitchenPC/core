@@ -5,7 +5,8 @@ using System.Linq;
 using KitchenPC.Core;
 using KitchenPC.Core.Provisioning;
 using KitchenPC.Core.Provisioning.DTO;
-using log4net;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NHibernate;
 using NHibernate.Persister.Entity;
 
@@ -14,11 +15,17 @@ namespace KitchenPC.DB;
 public class DatabaseExporter : IDisposable, IProvisioner
 {
    private readonly IStatelessSession session;
-   private static readonly ILog logger = LogManager.GetLogger(typeof(DatabaseExporter));
+   private readonly ILogger<DatabaseExporter> logger;
 
-   public DatabaseExporter(IStatelessSession session)
+   public DatabaseExporter(IStatelessSession session) : this(session, NullLoggerFactory.Instance) { }
+
+   public DatabaseExporter(
+      IStatelessSession session,
+      Microsoft.Extensions.Logging.ILoggerFactory loggerFactory
+   )
    {
       this.session = session;
+      logger = loggerFactory.CreateLogger<DatabaseExporter>();
    }
 
    private IEnumerable<D> ImportTableData<T, D>(Func<IDataReader, D> action)
@@ -54,7 +61,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToArray();
 
-      logger.DebugFormat("Read {0} row(s) from IngredientForms.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from IngredientForms.", list.Count());
       return list;
    }
 
@@ -81,7 +88,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          )
          .ToArray();
 
-      logger.DebugFormat("Read {0} row(s) from IngredientMetadata.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from IngredientMetadata.", list.Count());
       return list;
    }
 
@@ -101,7 +108,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToArray();
 
-      logger.DebugFormat("Read {0} row(s) from shoppingingredients.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from shoppingingredients.", list.Count());
       return list;
    }
 
@@ -120,7 +127,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          )
          .ToArray();
 
-      logger.DebugFormat("Read {0} row(s) from NlpAnomalousIngredients.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from NlpAnomalousIngredients.", list.Count());
       return list;
    }
 
@@ -138,7 +145,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          )
          .ToArray();
 
-      logger.DebugFormat("Read {0} row(s) from NlpDefaultPairings.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from NlpDefaultPairings.", list.Count());
       return list;
    }
 
@@ -153,7 +160,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToArray();
 
-      logger.DebugFormat("Read {0} row(s) from NlpFormSynonyms.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from NlpFormSynonyms.", list.Count());
       return list;
    }
 
@@ -170,7 +177,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          )
          .ToArray();
 
-      logger.DebugFormat("Read {0} row(s) from NlpIngredientSynonyms.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from NlpIngredientSynonyms.", list.Count());
       return list;
    }
 
@@ -182,7 +189,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToArray();
 
-      logger.DebugFormat("Read {0} row(s) from NlpPrepNotes.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from NlpPrepNotes.", list.Count());
       return list;
    }
 
@@ -197,7 +204,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToArray();
 
-      logger.DebugFormat("Read {0} row(s) from NlpUnitSynonyms.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from NlpUnitSynonyms.", list.Count());
       return list;
    }
 
@@ -221,7 +228,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToList();
 
-      logger.DebugFormat("Read {0} row(s) from Recipes.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from Recipes.", list.Count());
       return list;
    }
 
@@ -261,7 +268,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToList();
 
-      logger.DebugFormat("Read {0} row(s) from RecipeMetadata.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from RecipeMetadata.", list.Count());
       return list;
    }
 
@@ -284,7 +291,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          )
          .ToList();
 
-      logger.DebugFormat("Read {0} row(s) from RecipeIngredients.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from RecipeIngredients.", list.Count());
       return list;
    }
 
@@ -299,7 +306,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToList();
 
-      logger.DebugFormat("Read {0} row(s) from Favorites.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from Favorites.", list.Count());
       return list;
    }
 
@@ -314,7 +321,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToList();
 
-      logger.DebugFormat("Read {0} row(s) from Menus.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from Menus.", list.Count());
       return list;
    }
 
@@ -329,7 +336,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToList();
 
-      logger.DebugFormat("Read {0} row(s) from QueuedRecipes.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from QueuedRecipes.", list.Count());
       return list;
    }
 
@@ -344,7 +351,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToList();
 
-      logger.DebugFormat("Read {0} row(s) from RecipeRatings.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from RecipeRatings.", list.Count());
       return list;
    }
 
@@ -358,7 +365,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToList();
 
-      logger.DebugFormat("Read {0} row(s) from ShoppingLists.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from ShoppingLists.", list.Count());
       return list;
    }
 
@@ -380,7 +387,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          )
          .ToList();
 
-      logger.DebugFormat("Read {0} row(s) from ShoppingListItems.", list.Count());
+      logger.LogDebug("Read {RowCount} row(s) from ShoppingListItems.", list.Count());
       return list;
    }
 

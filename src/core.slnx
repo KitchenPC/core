@@ -7,6 +7,9 @@
   <Project Path="Core/Core.csproj">
     <BuildType Solution="Staging|*" Project="Release" />
   </Project>
+  <Project Path="Core.AspNetCore/Core.AspNetCore.csproj">
+    <BuildType Solution="Staging|*" Project="Release" />
+  </Project>
   <Project Path="DB/DB.csproj">
     <BuildType Solution="Staging|*" Project="Release" />
   </Project>

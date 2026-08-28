@@ -1,17 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
-      <LangVersion>default</LangVersion>
-      <GenerateDocumentationFile>true</GenerateDocumentationFile>
-      <NoWarn>$(NoWarn);1591</NoWarn>
-      <AssemblyName>KitchenPC.Core</AssemblyName>
-      <AssemblyTitle>KitchenPC.Core</AssemblyTitle>
-      <Product>KitchenPC.Core</Product>
-      <Description>KitchenPC Core Engine</Description>
-      <Company>KitchenPC</Company>
-      <OutputPath>bin\$(Configuration)\</OutputPath>
+      <AssemblyName>KitchenPC.Core.AspNetCore</AssemblyName>
+      <RootNamespace>KitchenPC.Core</RootNamespace>
+      <Description>ASP.NET Core integration for the KitchenPC recipe engine</Description>
       <Authors>Mike Christensen</Authors>
-      <PackageId>KitchenPC.Core</PackageId>
+      <Company>KitchenPC</Company>
+      <PackageId>KitchenPC.Core.AspNetCore</PackageId>
       <Version>2.0.0</Version>
       <PackageProjectUrl>https://github.com/KitchenPC/core</PackageProjectUrl>
       <RepositoryUrl>https://github.com/KitchenPC/core.git</RepositoryUrl>
@@ -19,18 +14,19 @@
       <PackageLicenseExpression>MIT</PackageLicenseExpression>
       <PackageReadmeFile>README.md</PackageReadmeFile>
       <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-      <PackageTags>recipes;ingredients;shopping-list;meal-planning</PackageTags>
+      <PackageTags>recipes;aspnetcore;dependency-injection</PackageTags>
       <PublishRepositoryUrl>true</PublishRepositoryUrl>
       <EmbedUntrackedSources>true</EmbedUntrackedSources>
       <IncludeSymbols>true</IncludeSymbols>
       <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-      <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-      <RootNamespace>KitchenPC.Core</RootNamespace>
+      <GenerateDocumentationFile>true</GenerateDocumentationFile>
+      <NoWarn>$(NoWarn);1591</NoWarn>
    </PropertyGroup>
 
    <ItemGroup>
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
+      <ProjectReference Include="..\Core\Core.csproj" />
       <None Include="..\..\LICENSE" Pack="true" PackagePath="/" />
       <None Include="..\..\README.md" Pack="true" PackagePath="/" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.11" />
    </ItemGroup>
 </Project>

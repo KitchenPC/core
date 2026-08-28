@@ -44,7 +44,7 @@ public class DBContextCapabilitiesTest
       Assert.AreEqual(DBContextCapabilities.IngredientParsing, userContext.Capabilities);
    }
 
-   [DataTestMethod]
+   [TestMethod]
    [DataRow(DBContextCapabilities.None, false, false, false)]
    [DataRow(DBContextCapabilities.IngredientAutocomplete, true, false, false)]
    [DataRow(DBContextCapabilities.IngredientParsing, false, true, false)]
@@ -237,14 +237,14 @@ public class DBContextCapabilitiesTest
    [TestMethod]
    public void RejectsUnknownCapabilities()
    {
-      Assert.ThrowsException<ArgumentOutOfRangeException>(() =>
+      Assert.ThrowsExactly<ArgumentOutOfRangeException>(() =>
          DBContext.Configure.Capabilities((DBContextCapabilities)8)
       );
    }
 
    private static void AssertCapabilityError(DBContextCapabilities expected, Action action)
    {
-      var exception = Assert.ThrowsException<ContextCapabilityNotEnabledException>(action);
+      var exception = Assert.ThrowsExactly<ContextCapabilityNotEnabledException>(action);
       Assert.AreEqual(expected, exception.Capability);
    }
 

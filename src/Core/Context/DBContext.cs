@@ -11,6 +11,8 @@ using KitchenPC.Core.NLP;
 using KitchenPC.Core.Provisioning;
 using KitchenPC.Core.Recipes;
 using KitchenPC.Core.ShoppingLists;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using IngredientUsage = KitchenPC.Core.Ingredients.IngredientUsage;
 
 namespace KitchenPC.Core.Context;
@@ -31,7 +33,8 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
          Parser parser,
          IDBAdapter adapter,
          AuthIdentity identity,
-         DBContextCapabilities capabilities
+         DBContextCapabilities capabilities,
+         ILoggerFactory loggerFactory
       )
       {
          this.ingParser = ingParser;
@@ -41,6 +44,7 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
          this.Identity = identity;
          this.GetIdentity = () => identity;
          this.Capabilities = capabilities;
+         this.LoggerFactory = loggerFactory;
       }
 
       public static AsUser Clone(DBContext context, AuthIdentity identity) =>
@@ -50,7 +54,8 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
             context.parser,
             context.Adapter,
             identity,
-            context.Capabilities
+            context.Capabilities,
+            context.LoggerFactory
          );
    }
 
@@ -63,6 +68,7 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
 
    /// <summary>Gets the optional in-memory capabilities configured for this context.</summary>
    public DBContextCapabilities Capabilities { get; internal set; } = DBContextCapabilities.All;
+   public ILoggerFactory LoggerFactory { get; internal set; } = NullLoggerFactory.Instance;
 
    /// <summary>Gets or sets the IDBAdapter used to directly talk with the database.</summary>
    public IDBAdapter Adapter { get; set; }
@@ -166,6 +172,7 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
 
          if (HasCapability(DBContextCapabilities.IngredientParsing))
          {
+            NlpTracer.SetTracer(new DefaultTracer(LoggerFactory));
             IngredientSynonyms.InitIndex(Adapter.IngredientLoader);
             UnitSynonyms.InitIndex(Adapter.UnitLoader);
             FormSynonyms.InitIndex(Adapter.FormLoader);

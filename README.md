@@ -29,7 +29,7 @@ Example applications and a small static data snapshot are available in the
 Building and Testing
 ====
 
-Install the .NET 10 SDK, then restore, build, and test from the repository root:
+Install the .NET 8 and .NET 10 SDKs, then restore, build, and test from the repository root:
 
 ```bash
 dotnet restore src/core.slnx
@@ -37,7 +37,20 @@ dotnet build src/core.slnx --configuration Release --no-restore
 dotnet test src/UnitTests/UnitTests.csproj --configuration Release --no-build --no-restore
 ```
 
-The build includes `KitchenPC.Core`, `KitchenPC.DB`, and the unit tests.
+The build includes `KitchenPC.Core`, `KitchenPC.DB`, `KitchenPC.Core.AspNetCore`, and the unit tests.
+
+`KitchenPC.Core` contains the engine and static context. Add `KitchenPC.DB` when using PostgreSQL,
+and add `KitchenPC.Core.AspNetCore` only when registering a context with ASP.NET Core dependency
+injection. Applications can connect KitchenPC to standard Microsoft logging through either context
+builder:
+
+```csharp
+var context = DBContext.Configure
+   .Logging(loggerFactory)
+   .Adapter(/* database adapter configuration */)
+   .Identity(() => AuthIdentity.Anonymous)
+   .Create();
+```
 
 Database Schema Naming
 ====
@@ -80,11 +93,13 @@ sample-data startup and memory measurements.
 Packages and Releases
 ====
 
-Every push and pull request builds and tests the solution, then creates matching prerelease packages for CI validation. Version tags publish `KitchenPC.Core` and `KitchenPC.DB` to NuGet with the same version. For example:
+Every push and pull request builds and tests the solution, then creates matching prerelease packages
+for CI validation. Version tags publish `KitchenPC.Core`, `KitchenPC.DB`, and
+`KitchenPC.Core.AspNetCore` to NuGet with the same version. For example:
 
 ```bash
-git tag -a v1.0.0 -m "KitchenPC 1.0.0"
-git push origin v1.0.0
+git tag -a v2.0.0 -m "KitchenPC 2.0.0"
+git push origin v2.0.0
 ```
 
 NuGet package versions are immutable. Always increment the version for a subsequent release.

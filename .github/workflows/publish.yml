@@ -15,7 +15,7 @@ env:
 
 jobs:
   publish:
-    name: Publish Core and DB
+    name: Publish KitchenPC packages
     runs-on: ubuntu-latest
     environment: nuget
 
@@ -37,7 +37,9 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: |
+            8.0.x
+            10.0.x
 
       - name: Restore dependencies
         run: dotnet restore src/core.slnx
@@ -58,7 +60,7 @@ jobs:
           --configuration Release
           --no-build
           --output artifacts
-          -p:PackageVersion=${{ steps.version.outputs.value }}
+          -p:Version=${{ steps.version.outputs.value }}
 
       - name: Pack DB
         run: >-
@@ -66,7 +68,15 @@ jobs:
           --configuration Release
           --no-build
           --output artifacts
-          -p:PackageVersion=${{ steps.version.outputs.value }}
+          -p:Version=${{ steps.version.outputs.value }}
+
+      - name: Pack ASP.NET Core integration
+        run: >-
+          dotnet pack src/Core.AspNetCore/Core.AspNetCore.csproj
+          --configuration Release
+          --no-build
+          --output artifacts
+          -p:Version=${{ steps.version.outputs.value }}
 
       - name: Upload release packages
         uses: actions/upload-artifact@v7
@@ -93,6 +103,14 @@ jobs:
         run: >-
           dotnet nuget push
           artifacts/KitchenPC.DB.${{ steps.version.outputs.value }}.nupkg
+          --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
+
+      - name: Publish ASP.NET Core integration to NuGet
+        run: >-
+          dotnet nuget push
+          artifacts/KitchenPC.Core.AspNetCore.${{ steps.version.outputs.value }}.nupkg
           --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
           --source https://api.nuget.org/v3/index.json
           --skip-duplicate

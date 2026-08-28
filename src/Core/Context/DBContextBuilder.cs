@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace KitchenPC.Core.Context;
 
@@ -21,6 +22,12 @@ public class DBContextBuilder : IConfigurationBuilder<DBContext>
    public DBContextBuilder Identity(Func<AuthIdentity> getIdentity)
    {
       context.GetIdentity = getIdentity;
+      return this;
+   }
+
+   public DBContextBuilder Logging(ILoggerFactory loggerFactory)
+   {
+      context.LoggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
       return this;
    }
 

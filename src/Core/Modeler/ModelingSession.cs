@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using KitchenPC.Core.Context;
 using KitchenPC.Core.Recipes;
-using log4net;
+using Microsoft.Extensions.Logging;
 
 namespace KitchenPC.Core.Modeler
 {
@@ -36,7 +36,7 @@ namespace KitchenPC.Core.Modeler
       private readonly DBSnapshot db;
       private readonly IKPCContext context;
       private readonly IUserProfile profile;
-      public static ILog Log = LogManager.GetLogger(typeof(ModelingSession));
+      private readonly ILogger<ModelingSession> logger;
 
       /// <summary>
       /// Create a ModelingSession instance.
@@ -49,6 +49,7 @@ namespace KitchenPC.Core.Modeler
          this.db = db;
          this.context = context;
          this.profile = profile;
+         this.logger = context.LoggerFactory.CreateLogger<ModelingSession>();
          this.favTags = new bool[RecipeTag.NUM_TAGS];
          this.favIngs = new int[profile.FavoriteIngredients.Length];
 
@@ -190,8 +191,8 @@ namespace KitchenPC.Core.Modeler
          }
 
          timer.Stop();
-         Log.InfoFormat(
-            "Generating set of {0} recipes took {1}ms.",
+         logger.LogInformation(
+            "Generating set of {RecipeCount} recipes took {ElapsedMilliseconds}ms.",
             recipes,
             timer.ElapsedMilliseconds
          );

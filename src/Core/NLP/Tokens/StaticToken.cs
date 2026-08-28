@@ -26,7 +26,15 @@ public class StaticToken : IGrammar
       //Read the stream to make sure it matches the complete token, return false if not
       var count = this.phrase.Length;
       var readBytes = new byte[count];
-      stream.Read(readBytes, 0, count);
+      var bytesRead = 0;
+      while (bytesRead < count)
+      {
+         var read = stream.Read(readBytes, bytesRead, count - bytesRead);
+         if (read == 0)
+            return false;
+
+         bytesRead += read;
+      }
 
       return (Encoding.Default.GetString(readBytes) == this.phrase);
    }

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
-      <TargetFramework>net10.0</TargetFramework>
+      <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
       <IsTestProject>true</IsTestProject>
       <LangVersion>default</LangVersion>
       <AssemblyTitle>KitchenPC.UnitTests</AssemblyTitle>
@@ -11,10 +11,10 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <PackageReference Include="FluentNHibernate" Version="2.1.2" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
-      <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
-      <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+      <PackageReference Include="FluentNHibernate" Version="3.4.1" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+      <PackageReference Include="MSTest.TestAdapter" Version="4.3.3" />
+      <PackageReference Include="MSTest.TestFramework" Version="4.3.3" />
    </ItemGroup>
 
    <ItemGroup>

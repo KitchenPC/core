@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using KitchenPC.Core.Context;
 using KitchenPC.Core.Recipes;
+using Microsoft.Extensions.Logging;
 
 namespace KitchenPC.Core.Modeler;
 
@@ -52,8 +53,8 @@ public sealed partial class DBSnapshot
             ratingGraph.AddRating(r, uid, rid);
          }
 
-         ModelingSession.Log.InfoFormat(
-            "Building Rating Graph took {0}ms.",
+         snapshot.logger.LogInformation(
+            "Building Rating Graph took {ElapsedMilliseconds}ms.",
             timer.ElapsedMilliseconds
          );
          timer.Reset();
@@ -72,8 +73,8 @@ public sealed partial class DBSnapshot
             }
          ).ToDictionary(k => k.RecipeId);
 
-         ModelingSession.Log.InfoFormat(
-            "Building empty RecipeNodes took {0}ms.",
+         snapshot.logger.LogInformation(
+            "Building empty RecipeNodes took {ElapsedMilliseconds}ms.",
             timer.ElapsedMilliseconds
          );
          timer.Reset();
@@ -108,8 +109,8 @@ public sealed partial class DBSnapshot
             }
          }
 
-         ModelingSession.Log.InfoFormat(
-            "Indexing recipes by tag took {0}ms.",
+         snapshot.logger.LogInformation(
+            "Indexing recipes by tag took {ElapsedMilliseconds}ms.",
             timer.ElapsedMilliseconds
          );
          timer.Reset();
@@ -173,8 +174,8 @@ public sealed partial class DBSnapshot
             );
          }
 
-         ModelingSession.Log.InfoFormat(
-            "Creating IngredientUsage vertices took {0}ms.",
+         snapshot.logger.LogInformation(
+            "Creating IngredientUsage vertices took {ElapsedMilliseconds}ms.",
             timer.ElapsedMilliseconds
          );
          timer.Reset();
@@ -189,8 +190,8 @@ public sealed partial class DBSnapshot
             ).ToArray();
          }
 
-         ModelingSession.Log.InfoFormat(
-            "Building suggestions for each recipe took {0}ms.",
+         snapshot.logger.LogInformation(
+            "Building suggestions for each recipe took {ElapsedMilliseconds}ms.",
             timer.ElapsedMilliseconds
          );
          timer.Reset();
@@ -233,8 +234,8 @@ public sealed partial class DBSnapshot
          GC.Collect(); //Force garbage collection now, since there might be several hundred megs of unreachable allocations
 
          timer.Stop();
-         ModelingSession.Log.InfoFormat(
-            "Cleaning up Indexer took {0}ms.",
+         snapshot.logger.LogInformation(
+            "Cleaning up Indexer took {ElapsedMilliseconds}ms.",
             timer.ElapsedMilliseconds
          );
       }
@@ -243,6 +244,7 @@ public sealed partial class DBSnapshot
 
 public sealed partial class DBSnapshot
 {
+   private readonly ILogger<DBSnapshot> logger;
    private Dictionary<Guid, RecipeNode> recipeMap; //Recipe Index (will include hidden recipes)
    private Dictionary<Guid, IngredientNode> ingredientMap; //Ingredient Index
    private IEnumerable<RecipeNode>[] recipeList; //Ordinal recipe index keyed by tag (for picking random recipes)
@@ -254,6 +256,7 @@ public sealed partial class DBSnapshot
 
    public DBSnapshot(IKPCContext context)
    {
+      logger = context.LoggerFactory.CreateLogger<DBSnapshot>();
       var timer = new Stopwatch();
       timer.Start();
 
@@ -263,8 +266,8 @@ public sealed partial class DBSnapshot
       }
 
       timer.Stop();
-      ModelingSession.Log.InfoFormat(
-         "Total time building snapshot was {0}ms.",
+      logger.LogInformation(
+         "Total time building snapshot was {ElapsedMilliseconds}ms.",
          timer.ElapsedMilliseconds
       );
    }
