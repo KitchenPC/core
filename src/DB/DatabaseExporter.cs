@@ -101,7 +101,7 @@ public class DatabaseExporter : IDisposable, IProvisioner
          })
          .ToArray();
 
-      logger.DebugFormat("Read {0} row(s) from Ingredients.", list.Count());
+      logger.DebugFormat("Read {0} row(s) from shoppingingredients.", list.Count());
       return list;
    }
 

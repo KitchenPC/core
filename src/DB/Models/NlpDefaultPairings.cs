@@ -14,11 +14,11 @@ public class NlpDefaultPairings
 
 public class NlpDefaultPairingsMap : ClassMap<NlpDefaultPairings>
 {
-   // TODO: KitchenPC doesn't have this data in a normalized manner, so we use the shoppingingredientsfornlp view to create it on the fly
-   // Website could create a new adapter that can load this view, or the base adapter can be configurable so we can map to a certain view and columns
+   // This table stores the default weight, volume, and unit forms used by ingredient parsing.
+   // The original KitchenPC website populated the same shape through a database view.
    public NlpDefaultPairingsMap()
    {
-      Table("shoppingingredientsfornlp"); // TODO: Make this configurable and less KitchenPC database specific
+      Table("shoppingingredientsfornlp");
       Id(x => x.DefaultPairingId, "DefaultPairingId")
          .GeneratedBy.GuidComb()
          .UnsavedValue(Guid.Empty);

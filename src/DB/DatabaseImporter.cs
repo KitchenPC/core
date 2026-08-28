@@ -39,7 +39,7 @@ public class DatabaseImporter : IDisposable
          session.Save(dbRow, row.IngredientId);
       }
 
-      logger.DebugFormat("Created {0} row(s) in Ingredients", d.Count());
+      logger.DebugFormat("Created {0} row(s) in shoppingingredients", d.Count());
       transaction.Commit();
       session.Flush();
    }

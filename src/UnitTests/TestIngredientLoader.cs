@@ -93,7 +93,7 @@ internal class TestIngredientLoader : ISynonymLoader<IngredientNode>
       );
 
       //Add in some test ingredients, but this will eventually come from a massive Synonyms database
-      //DB will first load ShoppingIngredients and create root nodes for all of those, with default form data, then will load IngredientSynonyms for all aliases
+      //DB will first load shoppingingredients and create root nodes for all of those, with default form data, then will load IngredientSynonyms for all aliases
       //TODO: Maybe there is a way to have ingredient nodes contain a singular and plural description so we don't need aliases for all the singulars
       IngredientNode[] ings =
       {
