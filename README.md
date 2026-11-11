@@ -103,3 +103,48 @@ git push origin v2.0.0
 ```
 
 NuGet package versions are immutable. Always increment the version for a subsequent release.
+
+
+Owner-aware recipe search (2.1.0)
+====
+
+`RecipeQuery.UserId` is an optional owner filter. The existing search providers apply
+visibility using the context's trusted `AuthIdentity`, independently of that filter:
+
+- Anonymous callers see public (`Hidden == false`) recipes only.
+- Authenticated callers see public recipes plus their own hidden recipes.
+- `UserId` narrows that visible set to the specified owner. Set it to the authenticated
+  user's ID for My Recipes; another user's ID never grants access to their hidden data.
+- Empty keywords and `Photos = RecipeQuery.PhotoFilter.All` include image-less recipes.
+  Filtering precedes counts, sorting, and paging. Recipe ID breaks sort ties.
+
+Both PostgreSQL/NHSearch and XML/StaticSearch implement the same visibility rules.
+The caller must obtain identity from its authentication system, not from the query.
+`Recipe.OwnerId`/`OwnerAlias` and `RecipeBrief.OwnerId`/`Author` contain the owner ID
+and public username (`users.alias`). `Hidden` is available on both responses.
+Ownerless records retain `Guid.Empty` in the public DTOs; nullable ownership is
+preserved in the database and provisioning DTO. The DB owner mapping is read-only
+and loads only the public ID/alias, not credentials or profile data.
+
+Provisioning includes owner IDs and the public alias snapshot for XML searches.
+Database import preserves the ID and resolves the current alias from `users`;
+accounts with those IDs must already exist in the destination. Accounts and their
+credentials are not copied by the recipe exporter. Older XML without owner fields
+continues to load as ownerless data. Ingredient reads and writes preserve display
+order, amount ranges, forms, sections, and prep notes.
+
+This release provides the core groundwork for KitchenPC/Website#73. Hosts still
+own recipe creation, mutation authorization, sharing, and deletion; these search
+rules are not a universal authorization layer for other recipe-ID APIs. A host
+must not use the legacy CreateRecipe operation as a private-recipe write API.
+For fresh shopping aggregation, the existing `DBContext` with
+`DBContextCapabilities.RecipeModeler` disabled reads usages from the database and
+performs form-aware conversions. A separately configured context can use that path
+without changing the modeler-backed context. Website's freshness/access integration
+remains a separate slice; no new core aggregation API is required.
+
+PostgreSQL search and round-trip integration tests run when `KPC_TEST_POSTGRES`
+contains an Npgsql connection string. They create and drop a uniquely named schema,
+leaving existing tables alone. CI and release workflows supply disposable PostgreSQL.
+The Website migration adds a leading `recipes.ownerid` btree only when no suitable
+index exists; it is not created implicitly by library initialization.

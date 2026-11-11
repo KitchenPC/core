@@ -221,6 +221,9 @@ public class StaticContext : IKPCContext, IProvisionTarget, IProvisionSource
          var recipe = new Recipe
          {
             Id = r.RecipeId,
+            OwnerId = r.OwnerId ?? Guid.Empty,
+            OwnerAlias = r.OwnerAlias,
+            Hidden = r.Hidden,
             Title = r.Title,
             Description = r.Description,
             DateEntered = r.DateEntered,
@@ -244,10 +247,13 @@ public class StaticContext : IKPCContext, IProvisionTarget, IProvisionSource
             recipe.UserRating = userRating != null ? (Rating)userRating.Rating : Rating.None;
          }
 
-         recipe.Ingredients = riIndex[r.RecipeId]
+         recipe.Ingredients = riIndex
+            .GetValueOrDefault(r.RecipeId, [])
+            .OrderBy(i => i.DisplayOrder)
+            .ThenBy(i => i.RecipeIngredientId)
             .Select(i => new IngredientUsage
             {
-               Amount = i.Qty.HasValue ? new Amount(i.Qty.Value, i.Unit) : null,
+               Amount = i.Qty.HasValue ? new Amount(i.QtyLow, i.Qty.Value, i.Unit) : null,
                PrepNote = i.PrepNote,
                Section = i.Section,
                Form = i.IngredientFormId.HasValue
@@ -340,6 +346,7 @@ public class StaticContext : IKPCContext, IProvisionTarget, IProvisionSource
                Qty = (i.Amount != null ? (float?)i.Amount.SizeHigh : null),
                QtyLow = (i.Amount != null ? (float?)i.Amount.SizeLow : null),
                Unit = (i.Amount != null ? i.Amount.Unit : Units.Unit),
+               PrepNote = i.PrepNote,
                Section = i.Section,
                DisplayOrder = ++displayOrder,
             }

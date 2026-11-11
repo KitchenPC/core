@@ -19,6 +19,22 @@ jobs:
     runs-on: ubuntu-latest
     environment: nuget
 
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: kitchenpc_tests
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      KPC_TEST_POSTGRES: Host=localhost;Port=5432;Database=kitchenpc_tests;Username=postgres;Password=postgres
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v7

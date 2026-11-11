@@ -124,6 +124,8 @@ public class RecipeQuery
       }
    }
 
+   /// <summary>Restricts results to this owner. Visibility still uses the authenticated identity.</summary>
+   public Guid? UserId { get; set; }
    public string Keywords { get; set; }
    public MealFilter Meal { get; set; }
    public Rating? Rating { get; set; }
@@ -150,6 +152,13 @@ public class RecipeQuery
 
    public RecipeQuery(RecipeQuery query)
    {
+      this.UserId = query.UserId;
+      this.Meal = query.Meal;
+      this.Offset = query.Offset;
+      this.Diet = query.Diet;
+      this.Nutrition = query.Nutrition;
+      this.Skill = query.Skill;
+      this.Taste = query.Taste;
       this.Keywords = query.Keywords;
       this.Rating = query.Rating;
       if (query.Include != null)

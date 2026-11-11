@@ -11,6 +11,7 @@ public class Recipe
 
    public Guid Id { get; set; }
    public Guid OwnerId { get; set; }
+   public bool Hidden { get; set; }
    public String OwnerAlias { get; set; }
    public String Title { get; set; }
    public String Description { get; set; }

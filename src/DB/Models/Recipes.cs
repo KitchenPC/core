@@ -8,6 +8,8 @@ namespace KitchenPC.DB.Models;
 public class Recipes
 {
    public virtual Guid RecipeId { get; set; }
+   public virtual Guid? OwnerId { get; set; }
+   public virtual RecipeOwner Owner { get; set; }
    public virtual short? CookTime { get; set; }
    public virtual string Steps { get; set; }
    public virtual short? PrepTime { get; set; }
@@ -28,6 +30,9 @@ public class Recipes
       new()
       {
          Id = RecipeId,
+         OwnerId = OwnerId ?? Guid.Empty,
+         Author = Owner?.Alias,
+         Hidden = Hidden,
          ImageUrl = ImageUrl,
          AvgRating = Rating,
          CookTime = CookTime,
@@ -44,6 +49,10 @@ public class RecipesMap : ClassMap<Recipes>
    public RecipesMap()
    {
       Id(x => x.RecipeId).GeneratedBy.GuidComb().UnsavedValue(Guid.Empty);
+
+      Map(x => x.OwnerId).Nullable();
+      // Read the public alias with the recipe; never load account credentials or issue one query per owner.
+      References(x => x.Owner).Column("OwnerId").Nullable().Not.Insert().Not.Update().Fetch.Join();
 
       Map(x => x.CookTime).Index("IDX_Recipes_Cooktime");
       Map(x => x.Steps).Length(10000);
