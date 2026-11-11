@@ -12,7 +12,7 @@
       <OutputPath>bin\$(Configuration)\</OutputPath>
       <Authors>Mike Christensen</Authors>
       <PackageId>KitchenPC.Core</PackageId>
-      <Version>2.0.0</Version>
+      <Version>2.1.0</Version>
       <PackageProjectUrl>https://github.com/KitchenPC/core</PackageProjectUrl>
       <RepositoryUrl>https://github.com/KitchenPC/core.git</RepositoryUrl>
       <RepositoryType>git</RepositoryType>

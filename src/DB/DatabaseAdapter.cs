@@ -18,13 +18,13 @@ using KitchenPC.Core.Recipes;
 using KitchenPC.Core.ShoppingLists;
 using KitchenPC.DB.Models;
 using KitchenPC.DB.NLP;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Criterion;
 using NHibernate.Tool.hbm2ddl;
 using NHibernate.Transform;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using IngredientNode = KitchenPC.Core.NLP.IngredientNode;
 using IngredientUsage = KitchenPC.Core.Ingredients.IngredientUsage;
 
@@ -317,6 +317,9 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
          var recipe = new Recipe
          {
             Id = dbRecipe.RecipeId,
+            OwnerId = dbRecipe.OwnerId ?? Guid.Empty,
+            OwnerAlias = dbRecipe.Owner?.Alias,
+            Hidden = dbRecipe.Hidden,
             Title = dbRecipe.Title,
             Description = dbRecipe.Description,
             DateEntered = dbRecipe.DateEntered,
@@ -339,9 +342,11 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
             recipe.InMenus = menuCount;
 
          recipe.Ingredients = dbRecipe
-            .Ingredients.Select(i => new IngredientUsage
+            .Ingredients.OrderBy(i => i.DisplayOrder)
+            .ThenBy(i => i.RecipeIngredientId)
+            .Select(i => new IngredientUsage
             {
-               Amount = i.Qty.HasValue ? new Amount(i.Qty.Value, i.Unit) : null,
+               Amount = i.Qty.HasValue ? new Amount(i.QtyLow, i.Qty.Value, i.Unit) : null,
                PrepNote = i.PrepNote,
                Section = i.Section,
                Form = i.IngredientForm?.AsIngredientForm(), // Note: Form will be null when usage has no amount
@@ -453,6 +458,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
             Qty = (i.Amount != null ? (float?)i.Amount.SizeHigh : null),
             QtyLow = (i.Amount != null ? (float?)i.Amount.SizeLow : null),
             Unit = (i.Amount != null ? i.Amount.Unit : Units.Unit),
+            PrepNote = i.PrepNote,
             Section = i.Section,
             DisplayOrder = ++displayOrder,
          };

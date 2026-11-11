@@ -21,6 +21,22 @@ jobs:
     name: Build and test
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: kitchenpc_tests
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      KPC_TEST_POSTGRES: Host=localhost;Port=5432;Database=kitchenpc_tests;Username=postgres;Password=postgres
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -51,7 +67,7 @@ jobs:
           --configuration Release
           --no-build
           --output artifacts
-          -p:Version=2.0.0-ci.${{ github.run_number }}
+          -p:Version=2.1.0-ci.${{ github.run_number }}
 
       - name: Pack ASP.NET Core integration
         run: >-
@@ -59,7 +75,7 @@ jobs:
           --configuration Release
           --no-build
           --output artifacts
-          -p:Version=2.0.0-ci.${{ github.run_number }}
+          -p:Version=2.1.0-ci.${{ github.run_number }}
 
       - name: Pack DB
         run: >-
@@ -67,7 +83,7 @@ jobs:
           --configuration Release
           --no-build
           --output artifacts
-          -p:Version=2.0.0-ci.${{ github.run_number }}
+          -p:Version=2.1.0-ci.${{ github.run_number }}
 
       - name: Upload packages
         uses: actions/upload-artifact@v7

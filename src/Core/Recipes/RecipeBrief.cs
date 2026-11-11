@@ -6,6 +6,7 @@ public class RecipeBrief
 {
    public Guid Id { get; set; }
    public Guid OwnerId { get; set; }
+   public bool Hidden { get; set; }
    public String Permalink { get; set; }
    public String Title { get; set; }
    public String Description { get; set; }
@@ -21,6 +22,7 @@ public class RecipeBrief
    {
       this.Id = r.Id;
       this.OwnerId = r.OwnerId;
+      this.Hidden = r.Hidden;
       this.Title = r.Title;
       this.Description = r.Description;
       this.ImageUrl = r.ImageUrl;

@@ -20,7 +20,13 @@ internal class StaticSearch : ISearchProvider
    {
       var index = store.GetSearchIndex();
 
-      var q = index.Where(p => !p.Recipe.Hidden);
+      var q = index.Where(p =>
+         !p.Recipe.Hidden
+         || (identity?.IsAuthenticated == true && p.Recipe.OwnerId == identity.UserId)
+      );
+
+      if (query.UserId.HasValue)
+         q = q.Where(p => p.Recipe.OwnerId == query.UserId.Value);
 
       if (!String.IsNullOrWhiteSpace(query.Keywords))
       {
@@ -55,12 +61,12 @@ internal class StaticSearch : ISearchProvider
 
       if (query.Include != null && query.Include.Length > 0) // Add ingredients to include
       {
-         q = q.Where(p => p.Ingredients.Any(i => query.Include.Contains(i.IngredientId)));
+         q = q.Where(p => (p.Ingredients ?? []).Any(i => query.Include.Contains(i.IngredientId)));
       }
 
       if (query.Exclude != null && query.Exclude.Length > 0) // Add ingredients to exclude
       {
-         q = q.Where(p => !p.Ingredients.Any(i => query.Exclude.Contains(i.IngredientId)));
+         q = q.Where(p => !(p.Ingredients ?? []).Any(i => query.Exclude.Contains(i.IngredientId)));
       }
 
       if (
@@ -80,6 +86,7 @@ internal class StaticSearch : ISearchProvider
          || (query.Photos == RecipeQuery.PhotoFilter.HighRes)
       ) //Need to search in metadata
       {
+         q = q.Where(p => p.Metadata != null);
          //Meal
          if (query.Meal != MealFilter.All)
          {
@@ -182,8 +189,12 @@ internal class StaticSearch : ISearchProvider
          case RecipeQuery.SortOrder.Image:
             q =
                (query.Direction == RecipeQuery.SortDirection.Ascending)
-                  ? q.OrderBy(p => p.Recipe.ImageUrl).ThenBy(p => p.Recipe.RecipeId)
-                  : q.OrderByDescending(p => p.Recipe.ImageUrl).ThenBy(p => p.Recipe.RecipeId);
+                  ? q.OrderBy(p => p.Recipe.ImageUrl == null)
+                     .ThenBy(p => p.Recipe.ImageUrl)
+                     .ThenBy(p => p.Recipe.RecipeId)
+                  : q.OrderByDescending(p => p.Recipe.ImageUrl == null)
+                     .ThenByDescending(p => p.Recipe.ImageUrl)
+                     .ThenBy(p => p.Recipe.RecipeId);
             break;
          default:
             q =

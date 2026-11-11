@@ -8,6 +8,7 @@ using KitchenPC.Core.Provisioning.DTO;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NHibernate;
+using NHibernate.Linq;
 using NHibernate.Persister.Entity;
 
 namespace KitchenPC.DB;
@@ -17,7 +18,8 @@ public class DatabaseExporter : IDisposable, IProvisioner
    private readonly IStatelessSession session;
    private readonly ILogger<DatabaseExporter> logger;
 
-   public DatabaseExporter(IStatelessSession session) : this(session, NullLoggerFactory.Instance) { }
+   public DatabaseExporter(IStatelessSession session)
+      : this(session, NullLoggerFactory.Instance) { }
 
    public DatabaseExporter(
       IStatelessSession session,
@@ -210,9 +212,14 @@ public class DatabaseExporter : IDisposable, IProvisioner
 
    public List<Recipes> Recipes()
    {
+      var owners = session
+         .Query<Models.RecipeOwner>()
+         .ToDictionary(owner => owner.UserId, owner => owner.Alias);
       var list = ImportTableData<Models.Recipes, Recipes>(r => new Recipes
          {
             RecipeId = (Guid)r["RecipeId"],
+            OwnerId = r["OwnerId"] as Guid?,
+            OwnerAlias = r["OwnerId"] is Guid ownerId ? owners.GetValueOrDefault(ownerId) : null,
             CookTime = r["CookTime"] as Int16?,
             Steps = r["Steps"] as String,
             PrepTime = r["PrepTime"] as Int16?,

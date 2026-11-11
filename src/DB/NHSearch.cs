@@ -40,7 +40,14 @@ public class NHSearch : ISearchProvider
       using var session = adapter.GetSession();
       Recipes recipe = null;
 
-      var q = session.QueryOver(() => recipe).Where(p => !p.Hidden);
+      var q = session.QueryOver(() => recipe);
+      if (identity?.IsAuthenticated == true)
+         q = q.Where(p => !p.Hidden || p.OwnerId == identity.UserId);
+      else
+         q = q.Where(p => !p.Hidden);
+
+      if (query.UserId.HasValue)
+         q = q.Where(p => p.OwnerId == query.UserId.Value);
 
       if (!string.IsNullOrWhiteSpace(query.Keywords)) // Add keyword search
       {

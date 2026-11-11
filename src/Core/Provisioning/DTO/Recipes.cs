@@ -6,6 +6,8 @@ namespace KitchenPC.Core.Provisioning.DTO;
 public class Recipes
 {
    public Guid RecipeId { get; set; }
+   public Guid? OwnerId { get; set; }
+   public string OwnerAlias { get; set; }
    public short? CookTime { get; set; }
    public string Steps { get; set; }
    public short? PrepTime { get; set; }
@@ -24,6 +26,9 @@ public class Recipes
       return new RecipeBrief
       {
          Id = dtoRecipe.RecipeId,
+         OwnerId = dtoRecipe.OwnerId ?? Guid.Empty,
+         Author = dtoRecipe.OwnerAlias,
+         Hidden = dtoRecipe.Hidden,
          ImageUrl = dtoRecipe.ImageUrl,
          AvgRating = dtoRecipe.Rating,
          CookTime = dtoRecipe.CookTime,

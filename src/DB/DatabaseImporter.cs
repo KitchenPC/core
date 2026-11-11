@@ -259,6 +259,7 @@ public class DatabaseImporter : IDisposable
          var dbRow = new Models.Recipes
          {
             RecipeId = row.RecipeId,
+            OwnerId = row.OwnerId,
             CookTime = row.CookTime,
             Steps = row.Steps,
             PrepTime = row.PrepTime,
