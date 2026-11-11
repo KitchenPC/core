@@ -92,6 +92,14 @@ public interface IKPCContext
       string newName = null
    );
    IList<IngredientAggregation> AggregateRecipes(params Guid[] recipeIds);
+   Task<IList<IngredientAggregation>> AggregateRecipesAsync(
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   )
+   {
+      cancellationToken.ThrowIfCancellationRequested();
+      return Task.FromResult(AggregateRecipes(recipeIds));
+   }
    IList<IngredientAggregation> AggregateIngredients(params IngredientUsage[] usages);
    void DeleteShoppingLists(ShoppingList[] lists);
 

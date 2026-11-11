@@ -43,19 +43,28 @@ public class IngredientAggregation : IShoppingListSource
             "Can only call IngredientAggregation::AddUsage() on original ingredient."
          );
 
-      //Calculate new total
-      if (
-         this.Amount.Unit == ingredient.Amount.Unit
-         || UnitConverter.CanConvert(this.Amount.Unit, ingredient.Amount.Unit)
-      ) //Just add
+      Amount amount;
+      if (UnitConverter.CanConvert(this.Amount.Unit, ingredient.Amount.Unit))
+         amount = UnitConverter.Convert(ingredient.Amount, this.Amount.Unit);
+      else
       {
-         this.Amount += ingredient.Amount;
+         // The usage carries full ingredient metadata; a cached public usage may not have unit weight.
+         amount = FormConversion.GetNativeAmountForUsage(ingredient.Ingredient, ingredient);
+         if (ingredient.Amount.SizeLow.HasValue)
+         {
+            var lowUsage = new IngredientUsage
+            {
+               Ingredient = ingredient.Ingredient,
+               Form = ingredient.Form,
+               Amount = new Amount(ingredient.Amount.SizeLow.Value, ingredient.Amount.Unit),
+            };
+            amount.SizeLow = FormConversion
+               .GetNativeAmountForUsage(ingredient.Ingredient, lowUsage)
+               .SizeHigh;
+         }
+         amount = UnitConverter.Convert(amount, this.Amount.Unit);
       }
-      else //Find a conversion path between Ingredient and Form
-      {
-         var amount = FormConversion.GetNativeAmountForUsage(this.Ingredient, ingredient);
-         this.Amount += amount;
-      }
+      this.Amount += amount;
 
       return this; // Allows AddUsage calls to be chained together
    }

@@ -29,6 +29,7 @@ public class StaticModelerLoader : IModelerLoader
       var metadata = store.GetIndexedRecipeMetadata();
       var graph = (
          from r in store.Recipes
+         where !r.Hidden
          join m in metadata on r.RecipeId equals m.Key
          select new RecipeBinding
          {
@@ -50,6 +51,7 @@ public class StaticModelerLoader : IModelerLoader
       var ingredients = store.GetIndexedIngredients();
       var graph = (
          from ri in store.RecipeIngredients
+         join recipe in store.Recipes.Where(r => !r.Hidden) on ri.RecipeId equals recipe.RecipeId
          join f in forms on ri.IngredientFormId equals f.Key
          join i in ingredients on ri.IngredientId equals i.Key
          where i.Key != ShoppingList.GUID_WATER
@@ -77,6 +79,7 @@ public class StaticModelerLoader : IModelerLoader
 
       var graph = (
          from r in store.RecipeRatings
+         join recipe in store.Recipes.Where(r => !r.Hidden) on r.RecipeId equals recipe.RecipeId
          select new RatingBinding
          {
             RecipeId = r.RecipeId,

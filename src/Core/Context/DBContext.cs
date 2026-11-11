@@ -419,88 +419,43 @@ public class DBContext : IKPCContext, IProvisionSource, IProvisionTarget
    /// </summary>
    /// <param name="recipeIds">A list of recipe IDs to aggregate.</param>
    /// <returns>A list of IngredientAggregation objects, one per unique ingredient in the set of recipes</returns>
-   public virtual IList<IngredientAggregation> AggregateRecipes(params Guid[] recipeIds)
+   public virtual IList<IngredientAggregation> AggregateRecipes(params Guid[] recipeIds) =>
+      AggregateRecipesAsync(recipeIds).GetAwaiter().GetResult();
+
+   /// <summary>Aggregates cached public recipes and resolves all cache misses in one batch.</summary>
+   public virtual async Task<IList<IngredientAggregation>> AggregateRecipesAsync(
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   )
    {
-      if (recipeIds == null)
-         throw new ArgumentNullException(nameof(recipeIds));
+      ArgumentNullException.ThrowIfNull(recipeIds);
+      cancellationToken.ThrowIfCancellationRequested();
       if (recipeIds.Length == 0)
          return Array.Empty<IngredientAggregation>();
-
+      recipeIds = (Guid[])recipeIds.Clone();
       if (!HasCapability(DBContextCapabilities.RecipeModeler))
       {
-         var recipes = Adapter.ReadRecipes(Identity, recipeIds, ReadRecipeOptions.None);
-         return AggregateRecipeUsages(
-            recipes
-               .SelectMany(recipe => recipe.Ingredients)
-               .Where(usage => usage.Ingredient.Id != ShoppingList.GUID_WATER)
-         );
+         var recipes = await Adapter
+            .ReadRecipesAsync(Identity, recipeIds, ReadRecipeOptions.None, cancellationToken)
+            .ConfigureAwait(false);
+         return RecipeAggregation.AggregateUsages(recipes.SelectMany(recipe => recipe.Ingredients));
       }
 
+      Dictionary<Guid, KitchenPC.Core.Modeler.RecipeNode> cached;
       using (InitLock.ReadLock())
-      {
-         var ings = new Dictionary<Guid, IngredientAggregation>(); //List of all ingredients and total usage
+         cached = recipeIds.Distinct().ToDictionary(id => id, id => modeler.FindRecipe(id));
 
-         foreach (var id in recipeIds)
-         {
-            //Lookup ingredient through modeler cache
-            var rNode = modeler.FindRecipe(id);
-            if (rNode == null) //Our cache is out of date, skip this result
-               continue;
-
-            foreach (var usage in rNode.Ingredients)
-            {
-               var ingId = usage.Ingredient.IngredientId;
-               var ingName = usage.Ingredient.DisplayName;
-               if (String.IsNullOrWhiteSpace(ingName))
-                  ingName = Adapter.ReadIngredient(ingId)?.Name;
-               var ing = new Ingredient(ingId, ingName);
-               ing.ConversionType = usage.Ingredient.ConvType;
-
-               IngredientAggregation agg;
-               if (!ings.TryGetValue(ingId, out agg))
-               {
-                  ings.Add(
-                     ingId,
-                     agg = new IngredientAggregation(ing) { Amount = new Amount(0, usage.Unit) }
-                  );
-               }
-
-               //TODO: If usage.Unit is different than agg.Amount.Unit then we have a problem, throw an exception if that happens?
-               if (agg.Amount == null) //This aggregation contains an empty amount, so we can't aggregate
-                  continue;
-               else if (!usage.Amt.HasValue) //This amount is null, cancel aggregation
-                  agg.Amount = null;
-               else
-                  agg.Amount += usage.Amt.Value;
-            }
-         }
-
-         return ings.Values.ToList();
-      }
+      // Release the thread-affine initialization lock before invoking asynchronous application code.
+      return await RecipeAggregation
+         .AggregateAsync(
+            recipeIds,
+            cached,
+            Adapter.RecipeResolver,
+            () => Identity,
+            cancellationToken
+         )
+         .ConfigureAwait(false);
    }
-
-   private IList<IngredientAggregation> AggregateRecipeUsages(
-      IEnumerable<IngredientUsage> usages
-   ) =>
-      usages
-         .GroupBy(usage => usage.Ingredient.Id)
-         .Select(group =>
-         {
-            var aggregation = new IngredientAggregation(group.First().Ingredient);
-            foreach (var usage in group)
-            {
-               if (usage.Amount == null)
-               {
-                  aggregation.Amount = null;
-                  break;
-               }
-
-               aggregation.AddUsage(usage);
-            }
-
-            return aggregation;
-         })
-         .ToArray();
 
    private bool HasCapability(DBContextCapabilities capability) =>
       (Capabilities & capability) == capability;

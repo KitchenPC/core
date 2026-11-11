@@ -14,6 +14,8 @@ namespace KitchenPC.Core.Context;
 
 public interface IDBAdapter : IProvisionSource, IProvisionTarget
 {
+   IBatchedRecipeResolver RecipeResolver => null;
+
    void Initialize(IKPCContext context);
    IEnumerable<IngredientSource> LoadIngredientsForIndex();
 

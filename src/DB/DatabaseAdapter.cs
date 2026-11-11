@@ -40,6 +40,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
    public IPersistenceConfigurer DatabaseConfiguration { get; set; }
    public List<IConvention> DatabaseConventions { get; set; }
    public ISearchProvider SearchProvider { get; set; }
+   public IBatchedRecipeResolver RecipeResolver { get; set; }
    public Microsoft.Extensions.Logging.ILoggerFactory LoggerFactory { get; set; } =
       NullLoggerFactory.Instance;
 
@@ -138,6 +139,7 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
       var recipes = session
          .QueryOver<Recipes>()
          .JoinAlias(r => r.RecipeMetadata, () => metadata)
+         .Where(r => !r.Hidden)
          .Select(
             p => p.RecipeId,
             p => p.Rating,
@@ -193,9 +195,12 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
       using var session = GetStatelessSession();
       IngredientForms joinForm = null;
       Ingredients joinIng = null;
+      Recipes joinRecipe = null;
 
       var recIngs = session
          .QueryOver<RecipeIngredients>()
+         .JoinAlias(r => r.Recipe, () => joinRecipe)
+         .Where(() => !joinRecipe.Hidden)
          .Left.JoinAlias(r => r.IngredientForm, () => joinForm)
          .JoinAlias(r => r.Ingredient, () => joinIng)
          .Where(p => joinIng.IngredientId != ShoppingList.GUID_WATER) // Ignore any usage for water
@@ -221,7 +226,12 @@ public class DatabaseAdapter : IDBAdapter, IDisposable
    {
       using var session = GetStatelessSession();
       //Load ratings
-      var ratings = session.QueryOver<RecipeRatings>().List();
+      Recipes recipe = null;
+      var ratings = session
+         .QueryOver<RecipeRatings>()
+         .JoinAlias(r => r.Recipe, () => recipe)
+         .Where(() => !recipe.Hidden)
+         .List();
 
       return new List<RatingBinding>(
          ratings.Select(s => new RatingBinding

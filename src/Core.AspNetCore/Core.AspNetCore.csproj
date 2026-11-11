@@ -7,7 +7,7 @@
       <Authors>Mike Christensen</Authors>
       <Company>KitchenPC</Company>
       <PackageId>KitchenPC.Core.AspNetCore</PackageId>
-      <Version>2.1.0</Version>
+      <Version>2.1.1</Version>
       <PackageProjectUrl>https://github.com/KitchenPC/core</PackageProjectUrl>
       <RepositoryUrl>https://github.com/KitchenPC/core.git</RepositoryUrl>
       <RepositoryType>git</RepositoryType>
