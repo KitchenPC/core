@@ -31,6 +31,8 @@
    <ItemGroup>
       <None Include="..\..\LICENSE" Pack="true" PackagePath="/" />
       <None Include="..\..\README.md" Pack="true" PackagePath="/" />
-      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0" />
+      <!-- Logging 11 no longer supports net8.0; retain the supported dependency for that asset. -->
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.11" Condition="'$(TargetFramework)' == 'net8.0'" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0" Condition="'$(TargetFramework)' != 'net8.0'" />
    </ItemGroup>
 </Project>
