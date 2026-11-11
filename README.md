@@ -26,6 +26,15 @@ architecture, setup, and extension points. Start with these guides:
 Example applications and a small static data snapshot are available in the
 [KitchenPC Samples repository](https://github.com/KitchenPC/Samples).
 
+Batched recipe resolution (2.1.1)
+====
+
+An optional `.RecipeResolver(adapter => new PersonalRecipeResolver(adapter))` factory
+resolves aggregation cache misses in one batch with the current user identity.
+Public recipes stay in memory; personal recipes stay out of the modeler and can be
+loaded fresh for shopping lists and printing. See the [configuration, authorization,
+and sample guide](docs/recipe-resolvers.md).
+
 Building and Testing
 ====
 

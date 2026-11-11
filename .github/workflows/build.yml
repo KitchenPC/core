@@ -67,7 +67,7 @@ jobs:
           --configuration Release
           --no-build
           --output artifacts
-          -p:Version=2.1.0-ci.${{ github.run_number }}
+          -p:Version=2.1.1-ci.${{ github.run_number }}
 
       - name: Pack ASP.NET Core integration
         run: >-
@@ -75,7 +75,7 @@ jobs:
           --configuration Release
           --no-build
           --output artifacts
-          -p:Version=2.1.0-ci.${{ github.run_number }}
+          -p:Version=2.1.1-ci.${{ github.run_number }}
 
       - name: Pack DB
         run: >-
@@ -83,7 +83,7 @@ jobs:
           --configuration Release
           --no-build
           --output artifacts
-          -p:Version=2.1.0-ci.${{ github.run_number }}
+          -p:Version=2.1.1-ci.${{ github.run_number }}
 
       - name: Upload packages
         uses: actions/upload-artifact@v7

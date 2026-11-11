@@ -144,7 +144,7 @@ public class DBContextCapabilitiesTest
 
       Assert.AreEqual("eggs", result.Ingredient.Name);
       Assert.AreEqual(new Amount(12, Units.Unit), result.Amount);
-      Assert.AreEqual(1, adapter.CallCount("ReadRecipes"));
+      Assert.AreEqual(1, adapter.CallCount("ReadRecipesAsync"));
       Assert.AreEqual(0, adapter.CallCount("LoadRecipeGraph"));
    }
 
@@ -231,7 +231,7 @@ public class DBContextCapabilitiesTest
       Assert.AreEqual("eggs", result.Ingredient.Name);
       Assert.AreEqual(new Amount(2, Units.Unit), result.Amount);
       Assert.AreEqual(0, adapter.CallCount("LoadIngredientsForIndex"));
-      Assert.AreEqual(0, adapter.CallCount("ReadRecipes"));
+      Assert.AreEqual(0, adapter.CallCount("ReadRecipesAsync"));
    }
 
    [TestMethod]
@@ -248,7 +248,7 @@ public class DBContextCapabilitiesTest
       Assert.AreEqual(expected, exception.Capability);
    }
 
-   private static (DBContext Context, TrackingAdapter Adapter) CreateContext(
+   internal static (DBContext Context, TrackingAdapter Adapter) CreateContext(
       DBContextCapabilities capabilities
    )
    {
@@ -281,6 +281,8 @@ public class TrackingAdapter : DispatchProxy
    private readonly List<string> calls = [];
 
    public Recipe[] Recipes { get; set; } = [];
+   public IBatchedRecipeResolver Resolver { get; set; }
+   public RatingBinding[] RatingBindings { get; set; } = [];
    public RecipeBinding[] RecipeBindings { get; set; } = [];
    public IngredientBinding[] IngredientBindings { get; set; } = [];
 
@@ -292,11 +294,18 @@ public class TrackingAdapter : DispatchProxy
 
       return targetMethod.Name switch
       {
+         "CreateShoppingList" => new ShoppingListResult { List = (ShoppingList)args[1] },
+         "UpdateShoppingList" => new ShoppingListResult
+         {
+            List = new ShoppingList(null, "updated", (IShoppingListSource[])args[4]),
+         },
          "Initialize" => null,
          "LoadIngredientsForIndex" => Array.Empty<IngredientSource>(),
          "LoadRecipeGraph" => RecipeBindings,
          "LoadIngredientGraph" => IngredientBindings,
-         "LoadRatingGraph" => Array.Empty<RatingBinding>(),
+         "LoadRatingGraph" => RatingBindings,
+         "get_RecipeResolver" => Resolver,
+         "ReadRecipesAsync" => Task.FromResult(Recipes),
          "get_IngredientLoader" => new EmptySynonymLoader<NlpIngredientNode>(),
          "get_UnitLoader" => new EmptySynonymLoader<UnitNode>(),
          "get_FormLoader" => new EmptySynonymLoader<FormNode>(),

@@ -39,30 +39,10 @@ public sealed partial class DBSnapshot
          ratingGraph = new RatingGraph();
          var loader = context.ModelerLoader;
 
-         foreach (var dataItem in loader.LoadRatingGraph())
-         {
-            var r = dataItem.Rating;
-            var uid = dataItem.UserId;
-            var rid = dataItem.RecipeId;
-
-            if (r < 4) //Rating too low to worry about
-            {
-               continue; //TODO: Might not be needed, DB should only query for 4 or 5 star ratings
-            }
-
-            ratingGraph.AddRating(r, uid, rid);
-         }
-
-         snapshot.logger.LogInformation(
-            "Building Rating Graph took {ElapsedMilliseconds}ms.",
-            timer.ElapsedMilliseconds
-         );
-         timer.Reset();
-         timer.Start();
-
          //Create empty recipe nodes without links
          snapshot.recipeMap = (
             from o in loader.LoadRecipeGraph()
+            where !o.Hidden
             select new RecipeNode()
             {
                RecipeId = o.Id,
@@ -75,6 +55,27 @@ public sealed partial class DBSnapshot
 
          snapshot.logger.LogInformation(
             "Building empty RecipeNodes took {ElapsedMilliseconds}ms.",
+            timer.ElapsedMilliseconds
+         );
+         timer.Reset();
+         timer.Start();
+
+         foreach (var dataItem in loader.LoadRatingGraph())
+         {
+            var r = dataItem.Rating;
+            var uid = dataItem.UserId;
+            var rid = dataItem.RecipeId;
+
+            if (r < 4 || !snapshot.recipeMap.ContainsKey(rid)) // Ignore low ratings and recipes excluded from the public graph
+            {
+               continue; //TODO: Might not be needed, DB should only query for 4 or 5 star ratings
+            }
+
+            ratingGraph.AddRating(r, uid, rid);
+         }
+
+         snapshot.logger.LogInformation(
+            "Building Rating Graph took {ElapsedMilliseconds}ms.",
             timer.ElapsedMilliseconds
          );
          timer.Reset();
@@ -128,7 +129,8 @@ public sealed partial class DBSnapshot
 
             List<RecipeNode>[] nodes;
             IngredientNode ingNode;
-            var node = snapshot.recipeMap[rid];
+            if (!snapshot.recipeMap.TryGetValue(rid, out var node))
+               continue;
 
             if (!snapshot.ingredientMap.TryGetValue(ingid, out ingNode)) //New ingredient, create node for it
             {
@@ -245,7 +247,7 @@ public sealed partial class DBSnapshot
 public sealed partial class DBSnapshot
 {
    private readonly ILogger<DBSnapshot> logger;
-   private Dictionary<Guid, RecipeNode> recipeMap; //Recipe Index (will include hidden recipes)
+   private Dictionary<Guid, RecipeNode> recipeMap; //Public recipe index
    private Dictionary<Guid, IngredientNode> ingredientMap; //Ingredient Index
    private IEnumerable<RecipeNode>[] recipeList; //Ordinal recipe index keyed by tag (for picking random recipes)
 

@@ -38,9 +38,25 @@ public class DatabaseAdapterBuilder : IConfigurationBuilder<DatabaseAdapter>
       return this;
    }
 
+   /// <summary>Configures a shared resolver for recipes absent from the public modeler snapshot.</summary>
+   public DatabaseAdapterBuilder RecipeResolver(
+      Func<DatabaseAdapter, IBatchedRecipeResolver> createResolver
+   )
+   {
+      ArgumentNullException.ThrowIfNull(createResolver);
+      adapter.RecipeResolver =
+         createResolver(adapter)
+         ?? throw new ArgumentException(
+            "The resolver factory returned null.",
+            nameof(createResolver)
+         );
+      return this;
+   }
+
    public DatabaseAdapterBuilder Logging(ILoggerFactory loggerFactory)
    {
-      adapter.LoggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+      adapter.LoggerFactory =
+         loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
       return this;
    }
 

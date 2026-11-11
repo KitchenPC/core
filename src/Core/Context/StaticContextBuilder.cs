@@ -35,9 +35,16 @@ public class StaticContextBuilder : IConfigurationBuilder<StaticContext>
       return this;
    }
 
+   public StaticContextBuilder RecipeResolver(IBatchedRecipeResolver resolver)
+   {
+      context.RecipeResolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
+      return this;
+   }
+
    public StaticContextBuilder Logging(ILoggerFactory loggerFactory)
    {
-      context.LoggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+      context.LoggerFactory =
+         loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
       return this;
    }
 

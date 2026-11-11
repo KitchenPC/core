@@ -34,6 +34,7 @@ public class StaticContext : IKPCContext, IProvisionTarget, IProvisionSource
    private DataStore store;
    private IngredientParser ingParser;
    private ISearchProvider searchProvder;
+   internal IBatchedRecipeResolver RecipeResolver { get; set; }
 
    /// <summary>
    /// Returns a StaticContextBuilder used to configure a StaticContext instance.
@@ -873,44 +874,25 @@ public class StaticContext : IKPCContext, IProvisionTarget, IProvisionSource
    /// </summary>
    /// <param name="recipeIds">A list of recipe IDs to aggregate.</param>
    /// <returns>A list of IngredientAggregation objects, one per unique ingredient in the set of recipes</returns>
-   public IList<IngredientAggregation> AggregateRecipes(params Guid[] recipeIds)
+   public IList<IngredientAggregation> AggregateRecipes(params Guid[] recipeIds) =>
+      AggregateRecipesAsync(recipeIds).GetAwaiter().GetResult();
+
+   public Task<IList<IngredientAggregation>> AggregateRecipesAsync(
+      Guid[] recipeIds,
+      CancellationToken cancellationToken = default
+   )
    {
-      var ings = new Dictionary<Guid, IngredientAggregation>(); //List of all ingredients and total usage
-
-      foreach (var id in recipeIds)
-      {
-         //Lookup ingredient through modeler cache
-         var rNode = ModelerProxy.FindRecipe(id);
-         if (rNode == null) //Our cache is out of date, skip this result
-            continue;
-
-         foreach (var usage in rNode.Ingredients)
-         {
-            var ingId = usage.Ingredient.IngredientId;
-            var ingName = ingParser.GetIngredientById(ingId);
-            var ing = new Ingredient(ingId, ingName);
-            ing.ConversionType = usage.Ingredient.ConvType;
-
-            IngredientAggregation agg;
-            if (!ings.TryGetValue(ingId, out agg))
-            {
-               ings.Add(
-                  ingId,
-                  agg = new IngredientAggregation(ing) { Amount = new Amount(0, usage.Unit) }
-               );
-            }
-
-            //TODO: If usage.Unit is different than agg.Amount.Unit then we have a problem, throw an exception if that happens?
-            if (agg.Amount == null) //This aggregation contains an empty amount, so we can't aggregate
-               continue;
-            else if (!usage.Amt.HasValue) //This amount is null, cancel aggregation
-               agg.Amount = null;
-            else
-               agg.Amount += usage.Amt.Value;
-         }
-      }
-
-      return ings.Values.ToList();
+      ArgumentNullException.ThrowIfNull(recipeIds);
+      cancellationToken.ThrowIfCancellationRequested();
+      recipeIds = (Guid[])recipeIds.Clone();
+      var cached = recipeIds.Distinct().ToDictionary(id => id, id => ModelerProxy.FindRecipe(id));
+      return RecipeAggregation.AggregateAsync(
+         recipeIds,
+         cached,
+         RecipeResolver,
+         () => Identity,
+         cancellationToken
+      );
    }
 
    /// <summary>

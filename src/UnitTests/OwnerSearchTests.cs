@@ -466,6 +466,34 @@ public class OwnerSearchTests
    }
 
    [TestMethod]
+   public void DatabaseModelerLoadersExcludeHiddenRecipes()
+   {
+      _ = Provider(true);
+      using (var session = adapter.GetSession())
+      using (var transaction = session.BeginTransaction())
+      {
+         foreach (var recipe in store.Recipes.Take(2))
+            session.Save(
+               new Db.RecipeRatings
+               {
+                  Recipe = session.Load<Db.Recipes>(recipe.RecipeId),
+                  UserId = Owner,
+                  Rating = 5,
+               }
+            );
+         transaction.Commit();
+      }
+      var hidden = store.Recipes.Where(r => r.Hidden).Select(r => r.RecipeId).ToHashSet();
+      var recipes = adapter.LoadRecipeGraph().ToArray();
+      var ingredients = adapter.LoadIngredientGraph().ToArray();
+      var ratings = adapter.LoadRatingGraph().ToArray();
+      Assert.IsTrue(recipes.Length > 0 && ingredients.Length > 0 && ratings.Length > 0);
+      Assert.IsFalse(recipes.Any(r => hidden.Contains(r.Id)));
+      Assert.IsFalse(ingredients.Any(r => hidden.Contains(r.RecipeId)));
+      Assert.IsFalse(ratings.Any(r => hidden.Contains(r.RecipeId)));
+   }
+
+   [TestMethod]
    public async Task DatabaseReadAndExportPreserveOwnershipAndIngredientRanges()
    {
       _ = Provider(true);
