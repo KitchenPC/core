@@ -36,7 +36,7 @@
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.11" Condition="'$(TargetFramework)' == 'net8.0'" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0" Condition="'$(TargetFramework)' != 'net8.0'" />
       <PackageReference Include="NHibernate" Version="5.7.1" />
-      <PackageReference Include="Npgsql" Version="10.0.3" />
+      <PackageReference Include="Npgsql" Version="10.0.4" />
    </ItemGroup>
    <ItemGroup>
       <ProjectReference Include="..\Core\Core.csproj" />
