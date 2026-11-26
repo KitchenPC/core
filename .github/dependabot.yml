@@ -4,6 +4,12 @@ updates:
     directory: /src
     schedule:
       interval: weekly
+    # Logging 11+ drops net8.0 support. Review major upgrades per target framework;
+    # continue patch/minor updates for both the 10.x and 11.x references.
+    ignore:
+      - dependency-name: Microsoft.Extensions.Logging.Abstractions
+        update-types:
+          - version-update:semver-major
     groups:
       nuget-dependencies:
         patterns:
